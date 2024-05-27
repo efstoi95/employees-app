@@ -1,2 +1,2 @@
-## Employee Management System
-### it's about managing employees in my organisation
+# employees-app
+Employee management system
