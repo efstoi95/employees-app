@@ -123,8 +123,10 @@ public class WebController {
         logger.info("Entering infoEmployee method with ID: {}", id);
         Employee existingEmployee = employeeService.getEmployeeById(id);
         if(existingEmployee!= null){
-            logger.info("Employee retrieved: {}", existingEmployee);
+            List<Department> departments = employeeService.getAllDepartments();
+            model.addAttribute("departments", departments);
             model.addAttribute("employee", existingEmployee);
+            logger.info("Employee retrieved: {}", existingEmployee);
         }else{
             logger.warn("Employee with ID {} not found",id);
         }

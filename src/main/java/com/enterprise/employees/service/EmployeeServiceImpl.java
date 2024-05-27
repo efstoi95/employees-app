@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -158,13 +159,9 @@ public class EmployeeServiceImpl implements EmployeeService {
                     .filter(password -> !password.isEmpty())
                     .ifPresent(password -> {
                         String encodedPassword = passwordEncoder.encode(password);
-                        employee.setPassword(encodedPassword);
+                        existingEmployee.setPassword(encodedPassword);
                     });
-            Optional.ofNullable(employee.getDepartment())
-                    .ifPresent(department -> {
-                        Department newDepartment = departmentRepository.save(department);
-                        employee.setDepartment(newDepartment);
-                    });
+
             // Update the username if it has been changed
             if(employeesRepository.existsByUsername(employee.getUsername())) {
                 bindingResult.rejectValue("username", "error.employee", "Username already exists");
@@ -172,9 +169,11 @@ public class EmployeeServiceImpl implements EmployeeService {
             if(bindingResult.hasErrors()) {
                 return;
             }
-            employeesRepository.save(employee);
+            existingEmployee.setUsername(employee.getUsername());
+            employeesRepository.save(existingEmployee);
         });
     }
+
 
     @Override
     public List<Employee> searchEmployeeByName(String name) {
