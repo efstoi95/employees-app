@@ -1,4 +1,5 @@
 package com.enterprise.employees.controller.web;
+
 import com.enterprise.employees.model.Department;
 import com.enterprise.employees.model.Employee;
 import com.enterprise.employees.service.EmployeeService;
@@ -94,6 +95,18 @@ public class WebController {
         logger.info("The information of the employee edited.");
         return "successEdit";
     }
+    /**
+     * Retrieves the success message for deleting an user's information and adds it to the model.
+     *
+     * @param  model  the model to hold the success message
+     * @return        the view name to display the success message
+     */
+    @GetMapping("/successDelete")
+    public String successDelete(Model model) {
+        model.addAttribute("message", "The information of the user deleted");
+        logger.info("The information of the employee deleted.");
+        return "successDelete";
+    }
 
     /**
      * Retrieves all employees and adds them to the model for display.
@@ -131,8 +144,6 @@ public class WebController {
             logger.warn("Employee with ID {} not found",id);
         }
 
-
-
         return "infoEmployee";
     }
 
@@ -145,9 +156,10 @@ public class WebController {
      */
     @Secured("ROLE_USER")
     @PostMapping("/editedInfoEmployee")
-    public String editedInfoEmployee( Employee employee, BindingResult bindingResult,Model model){
+    public String editedInfoEmployee(@Validated @ModelAttribute("employee") Employee employee, BindingResult bindingResult,Model model){
         logger.info("Editing employee information: {}", employee);
         employeeService.editInfoEmployee(employee, bindingResult);
+
         if(bindingResult.hasErrors()){
             logger.info("Validation error encountered while editing your information: {}", bindingResult.getAllErrors());
             model.addAttribute("employee", employee);
@@ -169,7 +181,7 @@ public class WebController {
         logger.info("Deleting employee with ID: {}", id);
         employeeService.deleteEmployee(id);
         logger.info("Employee with ID {} deleted successfully", id);
-        return "redirect:/web/allEmployees";
+        return "redirect:/web/successDelete";
     }
     /**
      * Retrieves an employee for editing based on the provided ID.

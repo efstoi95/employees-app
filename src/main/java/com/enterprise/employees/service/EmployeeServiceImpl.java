@@ -1,6 +1,6 @@
 package com.enterprise.employees.service;
 
-import com.enterprise.employees.exception.FieldTooLongException;
+
 import com.enterprise.employees.model.Department;
 import com.enterprise.employees.model.Employee;
 import com.enterprise.employees.repository.DepartmentRepository;
@@ -8,6 +8,7 @@ import com.enterprise.employees.repository.EmployeesRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
 import java.util.Objects;
@@ -41,20 +42,6 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public void createEmployee(Employee employee, BindingResult bindingResult) {
 
-        int MAX_LENGTH = 30;
-
-        // Validate the length of the input fields
-        if (employee.getFullName().length() > MAX_LENGTH) {
-            throw new FieldTooLongException("Full name is too long.");
-        }
-        if (employee.getUsername().length() > MAX_LENGTH) {
-            throw new FieldTooLongException("Username is too long.");
-        }
-        if (employee.getEmail().length() > MAX_LENGTH) {
-            throw new FieldTooLongException("Email is too long.");
-        }
-
-//
         String hashedPassword = passwordEncoder.encode(employee.getPassword());
         employee.setPassword(hashedPassword);
         if(employeesRepository.existsByUsername(employee.getUsername())) {
@@ -114,10 +101,10 @@ public class EmployeeServiceImpl implements EmployeeService {
             // Update the existing employee details
             String encodedPassword = passwordEncoder.encode(employee.getPassword());
             employee.setPassword(encodedPassword);
-            if(employeesRepository.existsByUsername(employee.getUsername())) {
+            if(employeesRepository.existsByUsername(employee.getUsername()) && !Objects.equals(existingEmployee.getUsername(), employee.getUsername())) {
                 bindingResult.rejectValue("username", "error.employee", "Username already exists");
             }
-            if(employeesRepository.existsByEmail(employee.getEmail())) {
+            if(employeesRepository.existsByEmail(employee.getEmail()) && !Objects.equals(existingEmployee.getEmail(), employee.getEmail())) {
                 bindingResult.rejectValue("email", "error.employee", "Email already exists");
             }
             if(bindingResult.hasErrors()) {
@@ -162,8 +149,7 @@ public class EmployeeServiceImpl implements EmployeeService {
                         existingEmployee.setPassword(encodedPassword);
                     });
 
-            // Update the username if it has been changed
-            if(employeesRepository.existsByUsername(employee.getUsername())) {
+            if (employeesRepository.existsByUsername(employee.getUsername()) && !Objects.equals(existingEmployee.getUsername(), employee.getUsername())) {
                 bindingResult.rejectValue("username", "error.employee", "Username already exists");
             }
             if(bindingResult.hasErrors()) {
@@ -171,6 +157,9 @@ public class EmployeeServiceImpl implements EmployeeService {
             }
             existingEmployee.setUsername(employee.getUsername());
             employeesRepository.save(existingEmployee);
+
+            // Update the username if it has been changed
+
         });
     }
 
@@ -199,7 +188,4 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
 
-    private String validateName() throws Exception{
-        throw new Exception("Name cannot be null");
-    }
 }

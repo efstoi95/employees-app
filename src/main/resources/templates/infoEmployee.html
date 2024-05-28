@@ -90,15 +90,16 @@
     <input type="hidden" th:field="*{email}">
     <input type="hidden" th:field="*{department.name}">
     <input type="hidden" th:field="*{role}">
+
     <label for="fullName">Full Name:</label>
     <input type="text" id="fullName" th:field="*{fullName}" required minlength="4" pattern="[a-zA-Z\s]+" title="Full Name should contain only letters and spaces" disabled>
+
     <label for="email">Email:</label>
     <input type="email" id="email" th:field="*{email}" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" disabled>
 
     <!-- Display selected department -->
     <label for="department">Department:</label>
     <input type="text" id="department" th:value="${employee.department != null ? employee.department.name : 'N/A'}" disabled>
-
 
     <!-- Display selected role -->
     <label for="role">Role:</label>
@@ -109,7 +110,8 @@
     <input type="text" id="username" th:field="*{username}" required minlength="4" pattern="[a-zA-Z\s]+" th:style="${#fields.hasErrors('username')} ? 'background-color: #FF7F7F;' : ''" title="Username should contain only letters and spaces">
 
     <label for="password">Password:</label>
-    <input type="password" id="password" th:field="*{password}" required minlength="4" pattern="[a-zA-Z0-9]+" title="Password should contain only letters and numbers">
+    <div class="error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+    <input type="password" id="password" th:field="*{password}" required minlength="4" pattern="[a-zA-Z0-9]+" th:style="${#fields.hasErrors('password')} ? 'background-color: #FF7F7F;' : ''" title="Password should contain only letters and numbers">
 
     <input type="submit" value="Submit" >
     <a th:href="@{/login?logout}" class="button" >Logout</a>
