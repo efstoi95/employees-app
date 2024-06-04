@@ -16,7 +16,19 @@ services:
     image: ems:latest
     depends_on:
       - db
+      - maildev
     ports:
       - "8080:8080"
     environment:
       - SPRING_DATASOURCE_URL=jdbc:mariadb://db:3306/emsdb?createDatabaseIfNotExist=1
+      - SPRING_MAIL_HOST=maildev
+      - SPRING_MAIL_PORT=1025
+      - SPRING_MAIL_USERNAME=
+      - SPRING_MAIL_PASSWORD=
+      - SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH=false
+      - SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE=false
+  maildev:
+    image: maildev/maildev:latest
+    ports:
+      - "1080:1080"
+      - "1025:1025"

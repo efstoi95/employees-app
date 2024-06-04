@@ -2,6 +2,7 @@ package com.enterprise.employees.controller.web;
 
 import com.enterprise.employees.model.Department;
 import com.enterprise.employees.model.Employee;
+import com.enterprise.employees.service.EmailService;
 import com.enterprise.employees.service.EmployeeService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -14,6 +15,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Collections;
 import java.util.List;
 
@@ -21,6 +23,9 @@ import java.util.List;
 @RequestMapping("/web")
 @Controller
 public class WebController {
+
+    @Autowired
+    EmailService emailService;
 
     private static final Logger logger = LoggerFactory.getLogger(WebController.class);
     private  final EmployeeService employeeService;
@@ -49,7 +54,7 @@ public class WebController {
      */
     @PostMapping("/employee")
     public String createEmployee(@Validated @ModelAttribute("employee") Employee employee,
-                                 BindingResult bindingResult, Model model) {
+                                 BindingResult bindingResult, Model model) throws UnsupportedEncodingException {
 
         logger.info("Entering (POST)createEmployee method");
         logger.debug("Employee data: {}", employee);
@@ -64,8 +69,9 @@ public class WebController {
             logger.info("Returning to employee creation form due to validation errors");
             return "emp"; // Return to the employee creation form view
         }
-
-
+        String employeeEmail = employee.getEmail();
+        emailService.sendEmail(employeeEmail, "Welcome", "Welcome to our company: " + employee.getFullName());
+        logger.info("Email sent successfully to employee: {}", employeeEmail);
         logger.info("Employee created successfully");
         return "redirect:/web/success";
     }

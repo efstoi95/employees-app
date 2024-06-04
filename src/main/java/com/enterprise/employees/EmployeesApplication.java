@@ -2,6 +2,7 @@ package com.enterprise.employees;
 
 import com.enterprise.employees.model.Department;
 import com.enterprise.employees.repository.DepartmentRepository;
+import com.enterprise.employees.service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -15,6 +16,8 @@ public class EmployeesApplication implements CommandLineRunner {
 
 	@Autowired
 	DepartmentRepository departmentRepository;
+
+
 
 
 	/**
@@ -48,5 +51,6 @@ public class EmployeesApplication implements CommandLineRunner {
 
 			departmentRepository.saveAll(List.of(d, d2, d3));
 		}
+
 	}
 }
