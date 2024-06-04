@@ -4,6 +4,7 @@ import com.enterprise.employees.model.Department;
 import com.enterprise.employees.model.Employee;
 import com.enterprise.employees.service.EmailService;
 import com.enterprise.employees.service.EmployeeService;
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +16,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 
@@ -54,7 +58,7 @@ public class WebController {
      */
     @PostMapping("/employee")
     public String createEmployee(@Validated @ModelAttribute("employee") Employee employee,
-                                 BindingResult bindingResult, Model model) throws UnsupportedEncodingException {
+                                 BindingResult bindingResult, Model model) throws IOException, MessagingException {
 
         logger.info("Entering (POST)createEmployee method");
         logger.debug("Employee data: {}", employee);
@@ -70,7 +74,13 @@ public class WebController {
             return "emp"; // Return to the employee creation form view
         }
         String employeeEmail = employee.getEmail();
-        emailService.sendEmail(employeeEmail, "Welcome", "Welcome to our company: " + employee.getFullName());
+        String htmlTemplate = new String(Files.readAllBytes(Paths.get("src/main/resources/templates/welcome-email.html")));
+
+        // Replace placeholders with actual values
+        String htmlBody = htmlTemplate.replace("[EmployeeName]", employee.getFullName());
+
+        // Send the email
+        emailService.sendEmail(employeeEmail, "Welcome to Our Company", htmlBody);
         logger.info("Email sent successfully to employee: {}", employeeEmail);
         logger.info("Employee created successfully");
         return "redirect:/web/success";
