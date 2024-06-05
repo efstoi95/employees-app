@@ -187,5 +187,15 @@ public class EmployeeServiceImpl implements EmployeeService {
         return employeesRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Employee not found with ID: " + id));
     }
 
+    @Override
+    public void updateEmployee(Employee employee) {
+        Employee existingEmployee = employeesRepository.findById(employee.getId()).orElse(null);
+        assert existingEmployee != null;
+        employeesRepository.save(existingEmployee);
+
+    }
+
+
+
 
 }

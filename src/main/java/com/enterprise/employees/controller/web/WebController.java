@@ -15,12 +15,10 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Collections;
+import java.security.SecureRandom;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -62,6 +60,10 @@ public class WebController {
 
         logger.info("Entering (POST)createEmployee method");
         logger.debug("Employee data: {}", employee);
+        // Generate a random 4-digit number
+        SecureRandom random = new SecureRandom();
+        int randomNumber = 1000 + random.nextInt(9000); // ensures a 4-digit number
+        employee.setVerifiedCode(String.valueOf(randomNumber));
         employeeService.createEmployee(employee, bindingResult);
 
         if (bindingResult.hasErrors()) {
@@ -74,17 +76,47 @@ public class WebController {
             return "emp"; // Return to the employee creation form view
         }
         String employeeEmail = employee.getEmail();
-        String htmlTemplate = new String(Files.readAllBytes(Paths.get("src/main/resources/templates/welcome-email.html")));
-
+        String htmlTemplate = new String(Files.readAllBytes(Paths.get("src/main/resources/templates/verify.html")));
         // Replace placeholders with actual values
-        String htmlBody = htmlTemplate.replace("[EmployeeName]", employee.getFullName());
-
+        String htmlBody = htmlTemplate.replace("[VerificationNumber]", String.valueOf(randomNumber));
         // Send the email
-        emailService.sendEmail(employeeEmail, "Welcome to Our Company", htmlBody);
-        logger.info("Email sent successfully to employee: {}", employeeEmail);
+        emailService.sendEmail(employeeEmail, "Your verification code", htmlBody);
+        logger.info("Verification code sent successfully to employee: {}", employeeEmail);
         logger.info("Employee created successfully");
-        return "redirect:/web/success";
+        return "redirect:/web/verify/" + employee.getId();
     }
+    @GetMapping("/verify/{id}")
+    public String showVerificationPage(@PathVariable("id") Long id, Model model) {
+        logger.info("Entering (GET)showVerificationPage method");
+        Employee employee = employeeService.getEmployeeById(id);
+        model.addAttribute("employee", employee);
+        return "addVerifyCode";
+    }
+
+    @PostMapping("/verified")
+    public String verifyCode(@Validated @RequestParam("verifiedCode") String verifiedCode, @ModelAttribute("employee") Employee employee, Model model) {
+        logger.info("Entering (POST) verifyCode method with code: {}", verifiedCode);
+        logger.info("Employee ID: {}", employee.getId());
+        // Check if the entered verification code matches the stored one
+        String storedCode = employee.getVerifiedCode();
+        if (verifiedCode.equals(storedCode)) {
+            // Set the 'Verified' status to true and save to the database
+            employee.setVerified(true);
+            employeeService.updateEmployee(employee); // Assuming you have an update method in your service
+            logger.info("Verification successful for employee ID: {}", employee.getId());
+            // Redirect to success page
+            return "redirect:/web/success";
+        } else {
+            logger.warn("Incorrect verification code entered for employee ID: {}", employee.getId());
+            model.addAttribute("error", "Incorrect verification code entered.");
+            return "addVerifyCode"; // Return to the verification page with error message
+        }
+    }
+
+
+
+
+
 
     /**
      * Retrieves the success message and adds it to the model.

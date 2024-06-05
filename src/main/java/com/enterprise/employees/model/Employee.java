@@ -44,10 +44,15 @@ public class Employee implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     private EmployeeRoles role;
+    private boolean verified = false;
+
+    private String verifiedCode;
 
     @ManyToOne
     @JoinColumn(name = "department_id")
     private Department department;
+
+
 
 
     /**

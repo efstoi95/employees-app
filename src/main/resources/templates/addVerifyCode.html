@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Your Code</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .verify-container {
+            background-color: #fff;
+            padding: 27px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .verify-container h1 {
+            margin: 0 0 20px;
+            font-size: 24px;
+        }
+        .verify-container label {
+            display: block;
+            margin: 0 0 10px;
+        }
+        .verify-container input[type="text"],
+        .verify-container input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            margin: 0 0 10px;
+        }
+        .verify-container input[type="submit"] {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+        .verify-container input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+<div class="verify-container">
+    <h1>Verify Your Code</h1>
+    <form th:action="@{/web/verified}" th:object="${employee}" method="post">
+        <input type="hidden" th:field="*{id}">
+        <input type="hidden" th:field="*{fullName}">
+        <input type="hidden" th:field="*{password}">
+        <input type="hidden" th:field="*{email}">
+        <input type="hidden" th:field="*{username}">
+        <input type="hidden" th:field="*{role}">
+        <label for="verifiedCode">Enter the 4-digit code sent to your email:</label>
+        <input type="text" id="verifiedCode" field="*{verifiedCode}" name="verifiedCode" required>
+        <input type="submit" value="Verify">
+    </form>
+</div>
+</body>
+</html>

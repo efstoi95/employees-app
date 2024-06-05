@@ -67,4 +67,6 @@ public interface EmployeeService {
      */
     Employee getEmployeeById(Long id);
 
+    void updateEmployee(Employee employee);
+
 }
