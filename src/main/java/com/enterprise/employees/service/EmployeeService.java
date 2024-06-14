@@ -2,8 +2,11 @@ package com.enterprise.employees.service;
 
 import com.enterprise.employees.model.Department;
 import com.enterprise.employees.model.Employee;
+import com.enterprise.employees.model.Skill;
+import jakarta.mail.MessagingException;
 import org.springframework.validation.BindingResult;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface EmployeeService {
@@ -67,6 +70,17 @@ public interface EmployeeService {
      */
     Employee getEmployeeById(Long id);
 
-    void updateEmployee(Employee employee);
+    void updateEmployee(Employee employee,BindingResult bindingResult);
 
+    List<Employee> findEmployeesByIds(List<Long> selectedEmployeesIds);
+
+    List<Employee> findEmployeesWithUserRole();
+
+    List<Skill> getAllSkills();
+    void generateAndSendPassword(Employee employee) throws IOException, MessagingException;
+
+    List<Employee> getEmployeesByProjectsAndSkills(Long projectId, List<Skill> skills);
+
+
+    void save(Employee employee);
 }

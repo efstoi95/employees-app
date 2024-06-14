@@ -12,6 +12,7 @@ services:
       MYSQL_DATABASE: emsdb
       MYSQL_USER: emsUser
       MYSQL_PASSWORD: 123456
+
   app:
     image: ems:latest
     depends_on:
@@ -27,6 +28,7 @@ services:
       - SPRING_MAIL_PASSWORD=
       - SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH=false
       - SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE=false
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=create-drop
   maildev:
     image: maildev/maildev:latest
     ports:

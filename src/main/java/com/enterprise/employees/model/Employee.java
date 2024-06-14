@@ -12,6 +12,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -19,7 +20,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@ToString(exclude = "department")
+@ToString(exclude = "projects")
 @Entity
 public class Employee implements UserDetails {
 
@@ -44,13 +45,56 @@ public class Employee implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     private EmployeeRoles role;
+
     private boolean verified = false;
 
     private String verifiedCode;
 
+    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+    private List<Project> projects = new ArrayList<>();
+
+    @ManyToMany(mappedBy ="employees", cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+    private List<Task> tasks = new ArrayList<>();
+
+    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+    private List<Skill> skills = new ArrayList<>();
+
+
+
+
     @ManyToOne
     @JoinColumn(name = "department_id")
     private Department department;
+
+    // Helper methods for Project and Task
+    public void addProject(Project project) {
+        this.projects.add(project);
+        project.getEmployees().add(this);
+    }
+
+    public void removeProject(Project project) {
+        this.projects.remove(project);
+        project.getEmployees().remove(this);
+    }
+
+    public void addTask(Task task) {
+        this.tasks.add(task);
+        task.getEmployees().add(this);
+    }
+
+    public void removeTask(Task task) {
+        this.tasks.remove(task);
+        task.getEmployees().remove(this);
+    }
+    public void addSkill(Skill skill) {
+        this.skills.add(skill);
+        skill.getEmployees().add(this);
+    }
+
+    public void removeSkill(Skill skill) {
+        this.skills.remove(skill);
+        skill.getEmployees().remove(this);
+    }
 
 
 

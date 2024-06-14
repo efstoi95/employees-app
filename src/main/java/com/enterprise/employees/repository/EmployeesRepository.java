@@ -1,10 +1,13 @@
 package com.enterprise.employees.repository;
 
 import com.enterprise.employees.model.Employee;
+import com.enterprise.employees.model.EmployeeRoles;
+import com.enterprise.employees.model.Skill;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface EmployeesRepository extends JpaRepository<Employee, Long> {
     /**
@@ -44,4 +47,9 @@ public interface EmployeesRepository extends JpaRepository<Employee, Long> {
      * @return        true if an employee with the given email exists, false otherwise
      */
     boolean existsByEmail(String email);
+
+    List<Employee> findByRole(EmployeeRoles role);
+
+    @Query("SELECT e FROM Employee e JOIN e.projects p JOIN e.skills s WHERE p.id = :projectId AND s IN :skills")
+    List<Employee> getEmployeesByProjectIdAndSkills(@Param("projectId") Long projectId, @Param("skills") List<Skill> skills);
 }

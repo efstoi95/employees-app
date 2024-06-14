@@ -91,6 +91,13 @@
         </option>
     </select>
 
+    <label for="skills">Skills:</label>
+    <select id="skills" th:field="*{skills}" multiple="multiple" size="5">
+        <option th:each="skill : ${skills}" th:value="${skill.id}" th:text="${skill.name}">
+        </option>
+    </select>
+
+
     <label for="username">Username:</label>
     <div class="error" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></div>
     <input type="text" id="username" th:field="*{username}" required minlength="4" pattern="[a-zA-Z\s]+" th:style="${#fields.hasErrors('username')} ? 'background-color: #FF7F7F;' : ''" title="Username should contain only letters and spaces">

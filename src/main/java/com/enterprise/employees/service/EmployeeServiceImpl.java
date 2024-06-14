@@ -3,13 +3,22 @@ package com.enterprise.employees.service;
 
 import com.enterprise.employees.model.Department;
 import com.enterprise.employees.model.Employee;
+import com.enterprise.employees.model.EmployeeRoles;
+import com.enterprise.employees.model.Skill;
 import com.enterprise.employees.repository.DepartmentRepository;
 import com.enterprise.employees.repository.EmployeesRepository;
+import com.enterprise.employees.repository.SkillRepository;
+import jakarta.mail.MessagingException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -20,11 +29,16 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     EmployeesRepository employeesRepository;
     DepartmentRepository departmentRepository;
+    SkillRepository skillRepository;
     PasswordEncoder passwordEncoder;
+    @Autowired
+    EmailService emailService;
 
-    public EmployeeServiceImpl(EmployeesRepository employeesRepository, DepartmentRepository departmentRepository, PasswordEncoder passwordEncoder) {
+
+    public EmployeeServiceImpl(EmployeesRepository employeesRepository, DepartmentRepository departmentRepository,SkillRepository skillRepository, PasswordEncoder passwordEncoder) {
         this.employeesRepository = employeesRepository;
         this.departmentRepository = departmentRepository;
+        this.skillRepository = skillRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -40,8 +54,31 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public void createEmployee(Employee employee, BindingResult bindingResult) {
+    public List<Skill> getAllSkills() {
+        return skillRepository.findAll();
+    }
 
+    @Override
+    public void generateAndSendPassword(Employee employee) throws IOException, MessagingException {
+        SecureRandom random = new SecureRandom();
+        int randomNumber = 1000 + random.nextInt(9000); // ensures a 4-digit number
+        employee.setVerifiedCode(String.valueOf(randomNumber));
+        employeesRepository.save(employee);
+
+        String employeeEmail = employee.getEmail();
+        String htmlTemplate = new String(Files.readAllBytes(Paths.get("src/main/resources/templates/verify.html")));
+        String htmlBody = htmlTemplate.replace("[VerificationNumber]", employee.getVerifiedCode());
+        emailService.sendEmail(employeeEmail, "Your new verification code", htmlBody);
+
+    }
+
+
+
+    @Override
+    public void createEmployee(Employee employee, BindingResult bindingResult) {
+        SecureRandom random = new SecureRandom();
+        int randomNumber = 1000 + random.nextInt(9000); // ensures a 4-digit number
+        employee.setVerifiedCode(String.valueOf(randomNumber));
         String hashedPassword = passwordEncoder.encode(employee.getPassword());
         employee.setPassword(hashedPassword);
         if(employeesRepository.existsByUsername(employee.getUsername())) {
@@ -54,6 +91,15 @@ public class EmployeeServiceImpl implements EmployeeService {
         if(bindingResult.hasErrors()) {
             return ;
         }
+        // Fetch and set the selected skills
+        List<Skill> selectedSkills = new ArrayList<>();
+        for (Skill skill : employee.getSkills()) {
+            Skill foundSkill = skillRepository.findById(skill.getId()).orElse(null);
+            if (foundSkill != null) {
+                selectedSkills.add(foundSkill);
+            }
+        }
+        employee.setSkills(selectedSkills);
 
         employeesRepository.save(employee);
         Department department = departmentRepository.findById(employee.getDepartment().getId()).orElse(null);
@@ -83,6 +129,13 @@ public class EmployeeServiceImpl implements EmployeeService {
                     departmentRepository.save(department);
                 }
             }
+            // Remove the employee from each skill's list of employees
+            List<Skill> skills = employee.getSkills();
+            for (Skill skill : skills) {
+                skill.getEmployees().remove(employee);
+            }
+            // Clear the employee's list of skills
+            employee.getSkills().clear();
             // Now delete the employee
             employeesRepository.deleteById(id);
         }
@@ -110,7 +163,6 @@ public class EmployeeServiceImpl implements EmployeeService {
             if(bindingResult.hasErrors()) {
                 return;
             }
-
             // Fetch the existing department by ID
             Department newDepartment = departmentRepository.findById(employee.getDepartment().getId()).orElse(null);
             if (newDepartment != null) {
@@ -188,14 +240,38 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public void updateEmployee(Employee employee) {
+    public void updateEmployee(Employee employee,BindingResult bindingResult) {
         Employee existingEmployee = employeesRepository.findById(employee.getId()).orElse(null);
         assert existingEmployee != null;
+        if(!employee.getVerifiedCode().equals(existingEmployee.getVerifiedCode())) {
+            bindingResult.rejectValue("verifiedCode", "error.employee", "Enter a valid code");
+        }
+        if(bindingResult.hasErrors()) {
+            return;
+        }
+        existingEmployee.setVerified(true);
         employeesRepository.save(existingEmployee);
 
     }
 
+    @Override
+    public List<Employee> findEmployeesByIds(List<Long> selectedEmployeesIds) {
+        return employeesRepository.findAllById(selectedEmployeesIds);
+    }
 
+    @Override
+    public List<Employee> findEmployeesWithUserRole() {
+        return employeesRepository.findByRole(EmployeeRoles.USER);
+    }
+
+    public List<Employee> getEmployeesByProjectsAndSkills(Long projectId, List<Skill> skills) {
+        return employeesRepository.getEmployeesByProjectIdAndSkills(projectId, skills);
+    }
+
+    @Override
+    public void save(Employee employee) {
+        employeesRepository.save(employee);
+    }
 
 
 }

@@ -79,6 +79,12 @@
         </option>
     </select>
 
+    <label for="skills">Skills:</label>
+    <select id="skills" th:field="*{skills}" multiple="multiple" size="5">
+        <option th:each="skill : ${skills}" th:value="${skill.id}" th:text="${skill.name}">
+        </option>
+    </select>
+
     <label for="role">Role:</label>
     <select id="role" th:field="*{role}" required>
         <option th:each="role : ${T(com.enterprise.employees.model.EmployeeRoles).values()}"

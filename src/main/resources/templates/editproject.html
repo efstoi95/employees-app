@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        form {
+            width: 50%;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        input[type="textarea"],
+        input[type="text"],
+        input[type="password"],
+        input[type="email"],
+        select,
+         textarea{
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        input[type="submit"] {
+            background-color: #9fc5e8;
+            color: white;
+            padding: 14px 20px;
+            margin: 8px 0;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #7bb5eb;
+        }
+    </style>
+</head>
+<body>
+<h2>Project Information</h2>
+<form th:action="@{/web/editedProject}" th:object="${proj}"  method="post">
+    <input type="hidden" th:field="*{id}">
+<!--    <input type="hidden" th:field="*{start}">-->
+<!--    <input type="hidden" th:field="*{end}">-->
+
+    <div>
+        <label for="name">Project:</label>
+        <input type="text" id="name" th:field="*{name}" readonly>
+    </div>
+
+    <div>
+        <label for="description">Description</label>
+        <textarea id="description" th:field="*{description}" readonly></textarea>
+    </div>
+    <div>
+        <label for="start">Start:</label>
+        <input type="text" id="start" th:field="*{start}" readonly>
+    </div>
+    <div>
+        <label for="end">End:</label>
+        <input type="text" id="end" th:field="*{end}" readonly>
+    </div>
+
+    <div>
+        <label>Assign Employees:</label>
+        <div>
+            <div th:each="employee : ${employees}">
+                <label class="employee-checkbox">
+                    <input type="checkbox" name="selectedEmployees" th:value="${employee.id}">
+                    <span th:text="${employee.fullName}"></span>
+                </label>
+            </div>
+        </div>
+    </div>
+
+
+    <input type="submit" value="Submit">
+</form>
+</body>
+</html>
