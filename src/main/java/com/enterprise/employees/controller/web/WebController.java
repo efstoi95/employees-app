@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.Duration;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -308,11 +309,40 @@ public class WebController {
     public String showAllTasks(@PathVariable("id") Long id, Model model) {
         Project project = projectService.findById(id);
         List<Task> tasks = project.getTasks();
+        tasks.forEach(task -> {
+            task.setDurationInput(format(task.getDuration()));
+        });
         logger.info("Number of tasks retrieved: {}", tasks.size());
         model.addAttribute("tasks", tasks);
         model.addAttribute("taskId", id);
         return "allTasks";
     }
+    public static String format(Duration duration){
+        long days = duration.toDays();
+        long hours = duration.toHours() % 24;
+        long minutes = duration.toMinutes() % 60;
+
+        if (days > 0) {
+            if (hours > 0 && minutes > 0) {
+                return String.format("%dd %dh %dm", days, hours, minutes);
+            } else if (hours > 0) {
+                return String.format("%dd %dh", days, hours);
+            } else if (minutes > 0) {
+                return String.format("%dd %dm", days, minutes);
+            } else {
+                return String.format("%dd", days);
+            }
+        } else if (hours > 0) {
+            if (minutes > 0) {
+                return String.format("%dh %dm", hours, minutes);
+            } else {
+                return String.format("%dh", hours);
+            }
+        } else {
+            return String.format("%dm", minutes);
+        }
+    }
+
 
     /**
      * Retrieves employee information by ID and adds it to the model.

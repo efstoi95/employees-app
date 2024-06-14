@@ -77,6 +77,7 @@
             margin-bottom: 5px;
         }
     </style>
+
 </head>
 <body>
 <h2>Create Task</h2>
@@ -103,8 +104,17 @@
         <option th:each="skill : ${skills}" th:value="${skill.id}" th:text="${skill.name}"></option>
     </select>
 
+    <label for="status">Status:</label>
+    <select id="status" th:field="*{status}" required>
+        <option th:each="status : ${T(com.enterprise.employees.model.Status).values()}"
+                th:value="${status}" th:text="${status}">
+        </option>
+    </select>
+
     <input type="hidden" th:field="*{project.id}"> <!-- Hidden field for project id -->
-    <input type="hidden" th:field="*{project.name}"> <
+    <input type="hidden" th:field="*{project.name}">
+
+
 
 
 

@@ -40,6 +40,8 @@ public class Project {
 
     private LocalDateTime end;
 
+    private boolean finished;
+
     public void addEmployee(Employee employee) {
         this.employees.add(employee);
         employee.getProjects().add(this);

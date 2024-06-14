@@ -44,6 +44,7 @@
             background-color: #7bb5eb;
             color: #ffffff;
         }
+
     </style>
 </head>
 <body>
@@ -56,6 +57,7 @@
             <th>Name</th>
             <th>Description</th>
             <th>Duration</th>
+            <th>Status</th>
             <th>Action</th> <!-- Added a new column for action -->
         </tr>
         </thead>
@@ -69,7 +71,8 @@
             <td th:text="${task.id}"></td>
             <td th:text="${task.name}"></td>
             <td th:text="${task.description}"></td>
-            <td th:text="${task.duration}"></td>
+            <td th:text="${task.durationInput}"></td>
+            <td th:text="${task.status}"></td>
             <td> <!-- Moved the action column here -->
                 <span sec:authorize="hasRole('ADMIN')">
                     <a th:href="@{/web/deleteTask/{id}(id=${task.id})}" class="button">Delete</a>

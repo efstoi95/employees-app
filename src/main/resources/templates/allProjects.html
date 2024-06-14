@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>All Employees</title>
+    <title>All Projects</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -55,6 +55,9 @@
             <th>ID</th>
             <th>Name</th>
             <th>Description</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Status</th>
             <th>Action</th> <!-- Added a new column for action -->
         </tr>
         </thead>
@@ -68,6 +71,9 @@
             <td th:text="${proj.id}"></td>
             <td th:text="${proj.name}"></td>
             <td th:text="${proj.description}"></td>
+            <td th:text="${#temporals.format(proj.start, 'dd/MM/yyyy HH:mm:ss')}"></td>
+            <td th:text="${#temporals.format(proj.end, 'dd/MM/yyyy HH:mm:ss')}"></td>
+            <td th:text="${proj.finished} ? 'Closed' : 'Open'"></td>
             <td> <!-- Moved the action column here -->
                 <span sec:authorize="hasRole('ADMIN')">
                     <a th:href="@{/web/deleteProject/{id}(id=${proj.id})}" class="button">Delete</a>

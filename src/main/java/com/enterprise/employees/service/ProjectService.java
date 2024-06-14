@@ -1,9 +1,6 @@
 package com.enterprise.employees.service;
 
-import com.enterprise.employees.model.Employee;
-import com.enterprise.employees.model.Project;
-import com.enterprise.employees.model.Skill;
-import com.enterprise.employees.model.Task;
+import com.enterprise.employees.model.*;
 import com.enterprise.employees.repository.ProjectRepository;
 import com.enterprise.employees.repository.TaskRepository;
 import jakarta.transaction.Transactional;

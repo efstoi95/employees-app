@@ -112,10 +112,12 @@
             </div>
         </div>
     </div>
-<!--    <div>-->
-<!--        <label for="finished">Finished:</label>-->
-<!--        <input type="checkbox" id="finished" th:field="*{finished}" th:checked="${finished}">-->
-<!--    </div>-->
+    <label for="status">Status:</label>
+    <select id="status" th:field="*{status}" required>
+        <option th:each="status : ${T(com.enterprise.employees.model.Status).values()}"
+                th:value="${status}" th:text="${status}">
+        </option>
+    </select>
     <div>
         <input type="submit" value="Submit">
     </div>

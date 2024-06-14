@@ -1,9 +1,6 @@
 package com.enterprise.employees.service;
 
-import com.enterprise.employees.model.Employee;
-import com.enterprise.employees.model.Project;
-import com.enterprise.employees.model.Skill;
-import com.enterprise.employees.model.Task;
+import com.enterprise.employees.model.*;
 import com.enterprise.employees.repository.ProjectRepository;
 import com.enterprise.employees.repository.SkillRepository;
 import com.enterprise.employees.repository.TaskRepository;
@@ -111,7 +108,7 @@ public class TaskService implements CrudService<Task> {
 
     @Override
     public Task findById(Long id) {
-        return taskRepository.findById(id).orElse(null);
+        return taskRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Task not found"));
     }
 
     @Override
@@ -169,27 +166,34 @@ public class TaskService implements CrudService<Task> {
     public void addEmployeeToTask(Task task, BindingResult bindingResult) {
         Task existingTask = findById(task.getId());
 
-//
-//            if(taskRepository.existsByName(task.getName()) && !Objects.equals(existingTask.getName(), task.getName())) {
-//                bindingResult.rejectValue("name", "error.task", "Name already exists");
-//            }
-//            if(bindingResult.hasErrors()) {
-//                return;
-//            }
         if(existingTask != null){
+            // Update task properties
             existingTask.setName(task.getName());
             existingTask.setDescription(task.getDescription());
+            existingTask.setStatus(task.getStatus());
+            // Parse and set duration
             String durationStr = task.getDurationInput();
             Duration duration = parseDuration(durationStr);
             task.setDuration(duration);
             existingTask.setDuration(task.getDuration());
+            // Clear existing employees and add new ones
             existingTask.getEmployees().clear();
            for(Employee employee : task.getEmployees()){
                existingTask.addEmployee(employee);
             }
+            // Save updated task
             taskRepository.save(existingTask);
+            // Update project finished status based on task statuses
+           Project project = existingTask.getProject();
+            boolean allTasksClosed = project.getTasks().stream()
+                    .allMatch(t -> t.getStatus() == Status.CLOSED);
+            project.setFinished(allTasksClosed);
+            // Save updated project
+           projectRepository.save(project);
+        }else {
+            // Handle case where task with given ID is not found
+            throw new IllegalArgumentException("Task not found with ID: " + task.getId());
         }
     }
-
 
 }

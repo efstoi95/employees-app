@@ -39,6 +39,9 @@ public class Task {
     private boolean erledigt;
     private boolean finished;
 
+    @Enumerated(EnumType.STRING)
+    private Status status;
+
     @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     @JoinTable(
             name = "employee_tasks",
