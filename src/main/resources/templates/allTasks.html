@@ -44,6 +44,38 @@
             background-color: #7bb5eb;
             color: #ffffff;
         }
+         .upload-form {
+            margin-top: 10px;
+            border: 1px solid #ccc;
+            padding: 15px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        .upload-form input[type=file] {
+            margin-bottom: 10px;
+        }
+
+        .upload-form button[type=submit] {
+            display: inline-block;
+            padding: 8px 16px;
+            background-color: #9fc5e8; /* light blue */
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-bottom: 10px;
+            margin-right: 10px;
+        }
+
+        .upload-form button[type=submit]:hover {
+            background-color: #7bb5eb;
+            color: #ffffff;
+        }
+
 
     </style>
 </head>
@@ -58,7 +90,8 @@
             <th>Description</th>
             <th>Duration</th>
             <th>Status</th>
-            <th>Action</th> <!-- Added a new column for action -->
+            <th>Action</th>
+            <th>Files</th> <!-- Added a new column for action -->
         </tr>
         </thead>
         <tbody>
@@ -73,6 +106,7 @@
             <td th:text="${task.description}"></td>
             <td th:text="${task.durationInput}"></td>
             <td th:text="${task.status}"></td>
+<!--            <td th:text="${task.fileContent}"></td>-->
             <td> <!-- Moved the action column here -->
                 <span sec:authorize="hasRole('ADMIN')">
                     <a th:href="@{/web/deleteTask/{id}(id=${task.id})}" class="button">Delete</a>
@@ -80,7 +114,30 @@
                 <span sec:authorize="hasRole('ADMIN')">
                     <a th:href="@{/web/addEmployeeToTask/{id}(id=${task.id})}" class="button">Edit</a>
                 </span>
-
+            </td>
+            <td>
+                <span sec:authorize="hasRole('ADMIN')">
+                    <div class="upload-form">
+                        <form method="post" th:action="@{/tasks/upload/{taskId}(taskId=${task.id})}" enctype="multipart/form-data">
+                            <input type="file" name="file" />
+                            <button type="submit">Upload</button>
+                        </form>
+                        <!-- Display uploaded file names if available -->
+                        <div th:if="${not #lists.isEmpty(task.fileNames)}">
+                            <p>Uploaded Files:</p>
+                            <ul>
+                                <li th:each="fileName, index : ${task.fileNames}">
+                                    <span th:text="${fileName}"></span>
+                                    <a th:href="@{/tasks/downloadFile/{taskId}/{fileName}(taskId=${task.id}, fileName=${fileName})}" class="button">Download</a>
+                                    <!-- Form to delete file -->
+                                     <form method="post" th:action="@{/tasks/deleteFile/{taskId}/{index}(taskId=${task.id}, index=${index.index})}" style="display:inline;">
+                                        <button type="submit" style="display:inline;" class="button">Delete</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </span>
             </td>
         </tr>
         </tbody>

@@ -44,6 +44,37 @@
             background-color: #7bb5eb;
             color: #ffffff;
         }
+         .upload-form {
+            margin-top: 10px;
+            border: 1px solid #ccc;
+            padding: 15px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        .upload-form input[type=file] {
+            margin-bottom: 10px;
+        }
+
+        .upload-form button[type=submit] {
+           display: inline-block;
+            padding: 8px 16px;
+            background-color: #9fc5e8; /* light blue */
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-bottom: 10px;
+            margin-right: 10px;
+        }
+
+        .upload-form button[type=submit]:hover {
+            background-color: #7bb5eb;
+            color: #ffffff;
+        }
     </style>
 </head>
 <body>
@@ -58,7 +89,8 @@
             <th>Start Date</th>
             <th>End Date</th>
             <th>Status</th>
-            <th>Action</th> <!-- Added a new column for action -->
+            <th>Action</th>
+            <th>Files</th><!-- Added a new column for action -->
         </tr>
         </thead>
         <tbody>
@@ -85,6 +117,30 @@
                     <a th:href="@{/web/allTasks/{id}(id=${proj.id})}" class="button">View tasks</a>
                 </span>
            </td>
+            <td>
+                <span sec:authorize="hasRole('ADMIN')">
+                    <div class="upload-form">
+                        <form method="post" th:action="@{/projects/upload/{projectId}(projectId=${proj.id})}" enctype="multipart/form-data">
+                            <input type="file" name="file" />
+                            <button type="submit">Upload</button>
+                        </form>
+                        <!-- Display uploaded file names if available -->
+                        <div th:if="${not #lists.isEmpty(proj.fileNames)}">
+                            <p>Uploaded Files:</p>
+                            <ul>
+                                <li th:each="fileName, index : ${proj.fileNames}">
+                                    <span th:text="${fileName}"></span>
+                                    <a th:href="@{/projects/downloadFile/{projectId}/{fileName}(projectId=${proj.id}, fileName=${fileName})}" class="button">Download</a>
+                                    <!-- Form to delete file -->
+                                     <form method="post" th:action="@{/projects/deleteFile/{projectId}/{index}(projectId=${proj.id}, index=${index.index})}" style="display:inline;">
+                                        <button type="submit" style="display:inline;" class="button">Delete</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </span>
+            </td>
         </tr>
         </tbody>
     </table>

@@ -7,6 +7,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +43,13 @@ public class Project {
 
     private LocalDateTime end;
 
+    @ElementCollection
+    @Lob
+    private List<byte[]> fileContent = new ArrayList<>();
+
+    @ElementCollection
+    private List<String> fileNames = new ArrayList<>();
+
     private boolean finished;
 
     public void addEmployee(Employee employee) {
@@ -60,6 +70,19 @@ public class Project {
     public void removeTask(Task task) {
         this.tasks.remove(task);
         task.setProject(null);
+    }
+
+    public byte[] getFileContentByFileName(String fileName) {
+        int index = fileNames.indexOf(fileName);
+        if (index != -1) {
+            return fileContent.get(index);
+        }
+        return null;
+    }
+
+    public void addFile(MultipartFile file) throws IOException {
+        this.fileContent.add(file.getBytes());
+        this.fileNames.add(file.getOriginalFilename());
     }
 
 

@@ -9,7 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -21,9 +23,10 @@ public class ProjectService implements CrudService<Project> {
 
     private final ProjectRepository projectRepository;
     private final EmployeeService employeeService;
-    private final SkillService skillService;
+    private final TaskRepository taskRepository;
     @Lazy
     private final TaskService taskService;
+    private final FileStorageService fileStorageService;
 
     @Override
     public Project save(Project project) {
@@ -90,6 +93,7 @@ public class ProjectService implements CrudService<Project> {
             projectRepository.save(existingProject);
         }
     }
+
 
     @Override
     public void addEmployeeToTask(Task task, BindingResult bindingResult) {

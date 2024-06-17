@@ -7,7 +7,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -42,6 +44,13 @@ public class Task {
     @Enumerated(EnumType.STRING)
     private Status status;
 
+    @ElementCollection
+    @Lob
+    private List<byte[]> fileContent = new ArrayList<>();
+
+    @ElementCollection
+    private List<String> fileNames = new ArrayList<>();
+
     @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     @JoinTable(
             name = "employee_tasks",
@@ -67,6 +76,26 @@ public class Task {
         this.employees.remove(employee);
         employee.getTasks().remove(this);
     }
+
+
+    public void addDescriptionFile(byte[] file) {
+        this.fileContent.add(file);
+    }
+
+    public byte[] getFileContentByFileName(String fileName) {
+        int index = fileNames.indexOf(fileName);
+        if (index != -1) {
+            return fileContent.get(index);
+        }
+        return null;
+    }
+
+    public void addFile(MultipartFile file) throws IOException {
+        this.fileContent.add(file.getBytes());
+        this.fileNames.add(file.getOriginalFilename());
+    }
+
+
 
 
 }
