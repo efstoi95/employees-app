@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Employees</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #dddddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+                .button  {
+  display: inline-block;
+  padding: 8px 16px;
+  background-color: #9fc5e8; /* light blue */
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-bottom: 10px;
+  margin-right: 10px;
+}
+        .button:hover {
+            background-color: #7bb5eb;
+            color: #ffffff;
+        }
+
+
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>All Employees</h2>
+    <!-- Filtering options -->
+    <form action="/web/search/department" method="get">
+        <label for="department">Filter by Department:</label>
+        <select id="department" name="department">
+            <option value="">All Departments</option>
+            <option value="Finance">Finance</option>
+            <option value="Hr">Hr</option>
+            <option value="Software">Software</option>
+        </select>
+        <button type="submit" class="button">Apply Filter</button>
+    </form>
+
+
+    <form action="/web/search/name" method="get">
+        <input type="text" name="name"  placeholder="Enter name to search">
+        <button type="submit" class="button">Search</button>
+    </form>
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Department</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Check if employees list is empty -->
+        <th:block th:if="${#lists.isEmpty(employees)}">
+            <tr>
+                <td colspan="4">No employees found.</td>
+            </tr>
+        </th:block>
+        <!-- Iterate over employees -->
+        <tr th:each="employee : ${employees}">
+            <td th:text="${employee.id}"></td>
+            <td th:text="${employee.fullName}"></td>
+            <td th:text="${employee.email}"></td>
+            <td th:text="${employee.department.name}"></td>
+            <div sec:authorize="hasRole('ADMIN')">
+                <td>
+
+                    <span>
+
+                        <a th:href="@{/web/admin/delete/{id}(id=${employee.id})}" class="button">Delete</a>
+
+                    </span>
+                </td>
+                <td >
+                    <span>
+
+                        <a th:href="@{/web/admin/edit/{id}(id=${employee.id})}" class="button">Edit</a>
+
+                    </span>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <a th:href="@{/login?logout}" class="button">Logout</a>
+    <a th:href="@{/web/allProjects}" class="button">View all projects</a>
+</div>
+</body>
+</html>

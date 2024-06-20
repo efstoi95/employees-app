@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>User Information Form</title>
+    <style>
+        .panel {
+            width: 50%;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+         .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #9fc5e8; /* light blue */
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+          }
+         .button:hover,.button:hover:visited {
+            background-color: #7bb5eb;
+            color: #ffffff; /* text color on hover */
+          }
+
+    </style>
+</head>
+<body>
+<div class="panel">
+    <h2 th:text="${message}">File deleted</h2>
+    <a class="button" th:href="@{/web/allProjects}">Return to the List of Projects</a>
+    <form action="#" method="post">
+    </form>
+</div>
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:background-color="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+
+        }
+
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        form {
+            width: 50%;
+            margin: 0 auto;
+            background-color: #fff;
+           padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="email"],
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        input[type="submit"] {
+            background-color: #9fc5e8;
+            color: white;
+            padding: 14px 20px;
+            margin: 8px 0;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #7bb5eb;
+        }
+
+    </style>
+</head>
+<body>
+<h2>Project Information</h2>
+<form th:action="@{/web/createdProject}" th:object="${proj}" method="post">
+    <input type="hidden" th:field="*{id}">
+    <label for="name">Name:</label>
+    <div class="error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+    <input type="text" id="name" th:field="*{name}" required minlength="4" pattern="[a-zA-Z\s]+" th:style="${#fields.hasErrors('name')} ? 'background-color: #FF7F7F;' : ''" title="Name should contain only letters and spaces">
+
+    <label for="description">Description:</label>
+    <div class="error" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
+    <input type="text" id="description" th:field="*{description}" th:style="${#fields.hasErrors('description')} ? 'background-color: #FF7F7F;' : ''">
+
+    <label for="start">Start Date:</label>
+    <input type="datetime-local" id="start" th:field="*{start}" th:style="${#fields.hasErrors('start')} ? 'background-color: #FF7F7F;' : ''">
+
+    <label for="end">End Date:</label>
+    <input type="datetime-local" id="end" th:field="*{end}" th:style="${#fields.hasErrors('end')} ? 'background-color: #FF7F7F;' : ''">
+
+
+
+    <input type="submit" value="Submit">
+</form>
+</body>
+</html>

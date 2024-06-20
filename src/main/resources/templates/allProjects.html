@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Projects</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #dddddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .button  {
+            display: inline-block;
+            padding: 8px 16px;
+            background-color: #9fc5e8; /* light blue */
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-bottom: 10px;
+            margin-right: 10px;
+        }
+        .button:hover {
+            background-color: #7bb5eb;
+            color: #ffffff;
+        }
+         .upload-form {
+            margin-top: 10px;
+            border: 1px solid #ccc;
+            padding: 15px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        .upload-form input[type=file] {
+            margin-bottom: 10px;
+        }
+
+        .upload-form button[type=submit] {
+           display: inline-block;
+            padding: 8px 16px;
+            background-color: #9fc5e8; /* light blue */
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-bottom: 10px;
+            margin-right: 10px;
+        }
+
+        .upload-form button[type=submit]:hover {
+            background-color: #7bb5eb;
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>All Projects</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Status</th>
+            <th>Action</th>
+            <th>Files</th><!-- Added a new column for action -->
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Check if projects list is empty -->
+        <tr th:if="${#lists.isEmpty(projects)}">
+            <td colspan="4">No Projects found.</td>
+        </tr>
+        <!-- Iterate over projects -->
+        <tr th:each="proj : ${projects}">
+            <td th:text="${proj.id}"></td>
+            <td th:text="${proj.name}"></td>
+            <td th:text="${proj.description}"></td>
+            <td th:text="${#temporals.format(proj.start, 'dd/MM/yyyy HH:mm:ss')}"></td>
+            <td th:text="${#temporals.format(proj.end, 'dd/MM/yyyy HH:mm:ss')}"></td>
+            <td th:text="${proj.finished} ? 'Closed' : 'Open'"></td>
+            <td> <!-- Moved the action column here -->
+                <span sec:authorize="hasRole('ADMIN')">
+                    <a th:href="@{/web/deleteProject/{id}(id=${proj.id})}" class="button">Delete</a>
+                </span>
+                <span sec:authorize="hasRole('ADMIN')">
+                    <a th:href="@{/web/editProject/{id}(id=${proj.id})}" class="button">Add employees</a>
+                </span>
+                <span sec:authorize="hasRole('ADMIN')">
+                    <a th:href="@{/web/allTasks/{id}(id=${proj.id})}" class="button">View tasks</a>
+                </span>
+           </td>
+            <td>
+                <span sec:authorize="hasRole('ADMIN')">
+                    <div class="upload-form">
+                        <form method="post" th:action="@{/projects/upload/{projectId}(projectId=${proj.id})}" enctype="multipart/form-data">
+                            <input type="file" name="file" />
+                            <button type="submit">Upload</button>
+                        </form>
+                        <!-- Display uploaded file names if available -->
+                        <div th:if="${not #lists.isEmpty(proj.fileNames)}">
+                            <p>Uploaded Files:</p>
+                            <ul>
+                                <li th:each="fileName, index : ${proj.fileNames}">
+                                    <span th:text="${fileName}"></span>
+                                    <a th:href="@{/projects/downloadFile/{projectId}/{fileName}(projectId=${proj.id}, fileName=${fileName})}" class="button">Download</a>
+                                    <!-- Form to delete file -->
+                                     <form method="post" th:action="@{/projects/deleteFile/{projectId}/{index}(projectId=${proj.id}, index=${index.index})}" style="display:inline;">
+                                        <button type="submit" style="display:inline;" class="button">Delete</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <a th:href="@{/login?logout}" class="button">Logout</a>
+    <a th:href="@{/web/createProject}" class="button">Create Project</a>
+    <a th:href="@{/web/allEmployees}" class="button">View all employees</a>
+    <a class="button" href="/reports/employees/pdf">Print Report</a>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xmlns:c="http://jasperreports.sourceforge.net/jasperreports/components"
+              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports
+                                  http://jasperreports.sourceforge.net/xsd/jasperreport.xsd
+                                  "
+              name="employee_report"
+              language="groovy"
+              pageWidth="595" pageHeight="842" columnWidth="555" whenNoDataType="AllSectionsNoDetail"
+              leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+
+    <!-- Define styles -->
+    <style name="Title" fontSize="18" isBold="true"/>
+    <style name="Header" fontSize="14" isBold="true"/>
+    <style name="Detail" fontSize="12"/>
+    <style name="TableHeader" vAlign="Middle" hAlign="Center" isBold="true"/>
+    <style name="TableCell" hAlign="Center" vAlign="Middle"/>
+    <style name="TableFooter" hAlign="Right" vAlign="Middle"/>
+
+    <style name="Table">
+        <box>
+            <pen lineWidth="0.5"/>
+        </box>
+    </style>
+
+    <parameter name="totalEmployees" class="java.lang.Long"/>
+    <parameter name="employeesInProjectsCount" class="java.lang.Long"/>
+    <parameter name="employeesInTasksCount" class="java.lang.Long"/>
+    <parameter name="remainingEmployees" class="java.lang.Long"/>
+    <parameter name="subReportDataSource" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
+    <parameter name="SUBREPORT_DIR" class="java.lang.String"/>
+
+
+
+
+    <field name="label"/>
+    <field name="value" class="java.lang.Double"/>
+
+
+    <title>
+        <band height="60">
+            <staticText>
+                <reportElement x="0" y="10" width="555" height="30"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="20" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Employee Report]]></text>
+            </staticText>
+        </band>
+    </title>
+
+
+    <detail>
+        <band height="200">
+            <subreport>
+                <reportElement x="0" y="0" width="460" height="200"/>
+                <dataSourceExpression><![CDATA[$P{subReportDataSource}]]></dataSourceExpression>
+                <subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "jasperStudioSubReport.jasper"]]></subreportExpression>
+            </subreport>
+        </band>
+    </detail>
+
+
+
+    <summary>
+        <band height="500">
+            <!-- Show summary counts -->
+            <staticText>
+                <reportElement x="0" y="10" width="555" height="20" style="Header"/>
+                <textElement>
+                    <font isBold="true"/>
+                </textElement>
+                <text><![CDATA[Summary of Employees]]></text>
+            </staticText>
+
+            <textField>
+                <reportElement x="0" y="30" width="555" height="20" style="Detail"/>
+                <textElement/>
+                <textFieldExpression><![CDATA["Total Employees: " + $P{totalEmployees}]]></textFieldExpression>
+            </textField>
+
+            <textField>
+                <reportElement x="0" y="50" width="555" height="20" style="Detail"/>
+                <textElement/>
+                <textFieldExpression><![CDATA["Employees in Projects: " + $P{employeesInProjectsCount}]]></textFieldExpression>
+            </textField>
+
+            <textField>
+                <reportElement x="0" y="70" width="555" height="20" style="Detail"/>
+                <textElement/>
+                <textFieldExpression><![CDATA["Employees in Tasks: " + $P{employeesInTasksCount}]]></textFieldExpression>
+            </textField>
+
+            <textField>
+                <reportElement x="0" y="90" width="555" height="20" style="Detail"/>
+                <textElement/>
+                <textFieldExpression><![CDATA["Remaining Employees: " + $P{remainingEmployees}]]></textFieldExpression>
+            </textField>
+
+            <pieChart>
+                <chart>
+                    <reportElement x="0" y="100" width="555" height="300"/>
+                    <chartTitle/>
+                    <chartSubtitle/>
+                    <chartLegend/>
+                </chart>
+                <pieDataset>
+                    <keyExpression><![CDATA[$F{label}]]></keyExpression>
+                    <valueExpression><![CDATA[$F{value}]]></valueExpression>
+                    <labelExpression><![CDATA[$F{label} + " (" + $F{value} + " - " +
+                        new java.text.DecimalFormat("#,##0.00").format(($F{value}*100.0) / $P{totalEmployees}) + "%)"]]></labelExpression>
+                </pieDataset>
+
+                <piePlot>
+                    <plot/>
+                </piePlot>
+            </pieChart>
+
+
+
+
+
+        </band>
+    </summary>
+
+    <!-- Define fields for name, projects, and tasks -->
+
+</jasperReport>
