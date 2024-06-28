@@ -39,20 +39,7 @@ public class LoginController {
         }
         return "redirect:/web/login";
     }
-//    public String defaultAfterLogin() {
-//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-//        if (auth != null && auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
-//            return "redirect:/web/successLogin"; // Redirect to the admin page
-//        } else {
-//            assert auth != null;
-//            Employee employee = (Employee) auth.getPrincipal();
-//            if(!employee.isVerified()) {
-//                return "redirect:/web/lockedAccount/" + employee.getId();
-//            }
-////            System.out.println(employee);
-//            return "redirect:/web/infoEmployee/" + employee.getId(); // Redirect to the default page for other users
-//        }
-//    }
+
 
 
 }

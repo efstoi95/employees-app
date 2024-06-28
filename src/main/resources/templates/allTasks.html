@@ -6,24 +6,30 @@
     <title>All Employees</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-        }
+              width: 100%;
+              height: 100vh;
+              margin: 0;
+              background: linear-gradient(to right, white 0%, white 50%, #add8e6 50%, #add8e6 100%);
+          }
         .container {
             max-width: 800px;
-            margin: 0 auto;
+            margin-left: 250px;
             padding: 20px;
         }
         table {
-            width: 100%;
+            width: 190%;
             border-collapse: collapse;
             margin-bottom: 20px;
         }
         th, td {
-            border: 1px solid #dddddd;
+            border: 3px black solid;
             padding: 8px;
-            text-align: left;
+            text-align: center;
         }
         th {
+            background-color: #d3d3d3;
+        }
+        td{
             background-color: #f2f2f2;
         }
         .button  {
@@ -33,7 +39,7 @@
             color: white;
             text-align: center;
             text-decoration: none;
-            border: none;
+            border: 1px black solid;
             border-radius: 8px;
             cursor: pointer;
             font-size: 14px;
@@ -46,10 +52,9 @@
         }
          .upload-form {
             margin-top: 10px;
-            border: 1px solid #ccc;
             padding: 15px;
             border-radius: 5px;
-            background-color: #f9f9f9;
+            background-color: #f2f2f2;
         }
 
         .upload-form input[type=file] {
@@ -57,13 +62,13 @@
         }
 
         .upload-form button[type=submit] {
-            display: inline-block;
+           display: inline-block;
             padding: 8px 16px;
             background-color: #9fc5e8; /* light blue */
             color: white;
             text-align: center;
             text-decoration: none;
-            border: none;
+            border: 1px black ;
             border-radius: 8px;
             cursor: pointer;
             font-size: 14px;
@@ -75,6 +80,19 @@
             background-color: #7bb5eb;
             color: #ffffff;
         }
+         .bounce-icon:hover {
+     animation: bounce 0.5s infinite alternate;
+ }
+
+ @keyframes bounce {
+     0% {
+         transform: translateY(0);
+     }
+     100% {
+         transform: translateY(-5px);
+     }
+ }
+    </style>
 
 
     </style>
@@ -109,10 +127,10 @@
 <!--            <td th:text="${task.fileContent}"></td>-->
             <td> <!-- Moved the action column here -->
                 <span sec:authorize="hasRole('ADMIN')">
-                    <a th:href="@{/web/deleteTask/{id}(id=${task.id})}" class="button">Delete</a>
+                    <a th:href="@{/tasks/deleteTask/{id}(id=${task.id})}" class="button">Delete</a>
                 </span>
                 <span sec:authorize="hasRole('ADMIN')">
-                    <a th:href="@{/web/addEmployeeToTask/{id}(id=${task.id})}" class="button">Edit</a>
+                    <a th:href="@{/tasks/editTask/{id}(id=${task.id})}" class="button">Edit</a>
                 </span>
             </td>
             <td>
@@ -142,9 +160,9 @@
         </tr>
         </tbody>
     </table>
-    <a th:href="@{/web/allProjects}" class="button">Return to Projects</a>
+    <a th:href="@{/projects/allProjects}" class="button">Return to Projects</a>
     <span sec:authorize="hasRole('ADMIN')">
-        <a th:href="@{/web/createTask/{id}(id=${taskId})}" class="button">Create Task</a>
+        <a th:href="@{/tasks/createTask/{id}(id=${taskId})}" class="button">Create Task</a>
     </span>
 </div>
 </body>

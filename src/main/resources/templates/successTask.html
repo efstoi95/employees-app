@@ -36,7 +36,7 @@
 <body>
 <div class="panel">
     <h2 th:text="${message}">New task created</h2>
-    <a class="button" th:href="@{/web/allTasks/{id}(id=${projectId})}">Return to the List of Tasks</a>
+    <a class="button" th:href="@{/tasks/allTasks/{id}(id=${projectId})}">Return to the List of Tasks</a>
     <!--    <a href="/web/allEmployees" class="button">Show all employees</a>-->
     <form action="#" method="post">
     </form>

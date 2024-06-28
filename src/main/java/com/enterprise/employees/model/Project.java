@@ -32,6 +32,14 @@ public class Project {
     @OneToMany(mappedBy ="project", cascade = CascadeType.MERGE,fetch = FetchType.EAGER)
     private List<Task> tasks = new ArrayList<>();
 
+    @ManyToOne
+    @JoinColumn(name = "customer_id")
+    private Customer customer;
+
+    @Enumerated(EnumType.STRING)
+    private Status status;
+
+
     @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     @JoinTable(
             name = "project_employee",
@@ -57,6 +65,10 @@ public class Project {
         this.employees.add(employee);
         employee.getProjects().add(this);
     }
+
+
+
+
 
     public void removeEmployee(Employee employee) {
         this.employees.remove(employee);
@@ -85,6 +97,7 @@ public class Project {
         this.fileContent.add(file.getBytes());
         this.fileNames.add(file.getOriginalFilename());
     }
+
 
 
 }

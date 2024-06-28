@@ -68,23 +68,31 @@
     </style>
 </head>
 <body>
-<h2>Project Information</h2>
-<form th:action="@{/projects/createdProject}" th:object="${proj}" method="post">
-    <input type="hidden" th:field="*{id}">
-    <label for="name">Name:</label>
-    <div class="error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
-    <input type="text" id="name" th:field="*{name}" required minlength="4" pattern="[a-zA-Z\s]+" th:style="${#fields.hasErrors('name')} ? 'background-color: #FF7F7F;' : ''" title="Name should contain only letters and spaces">
+<h2>Customer Information</h2>
+<form th:action="@{/customer/createdCustomer}" th:object="${customer}" method="post">
+    <label for="fullName">Full Name:</label>
+    <div class="error" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}"></div>
+    <input type="text" id="fullName" th:field="*{fullName}" required minlength="4" pattern="[a-zA-Z\s]+" th:style="${#fields.hasErrors('fullName')} ? 'background-color: #FF7F7F;' : ''" title="Full Name should contain only letters and spaces">
+
+    <label for="email">Email:</label>
+    <div class="error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+    <input type="email" id="email" th:field="*{email}" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}" th:style="${#fields.hasErrors('email')} ? 'background-color: #FF7F7F;' : ''">
 
     <label for="description">Description:</label>
-    <div class="error" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
-    <input type="text" id="description" th:field="*{description}" th:style="${#fields.hasErrors('description')} ? 'background-color: #FF7F7F;' : ''">
+    <textarea id="description" name="description" th:field="*{description}" required></textarea>
 
-    <label for="start">Start Date:</label>
-    <input type="datetime-local" id="start" th:field="*{start}" th:style="${#fields.hasErrors('start')} ? 'background-color: #FF7F7F;' : ''">
+    <label for="address">Address:</label>
+    <div class="error" th:if="${#fields.hasErrors('address')}" th:errors="*{address}"></div>
+    <input type="text" id="address" th:field="*{address}" th:style="${#fields.hasErrors('address')} ? 'background-color: #FF7F7F;' : ''">
 
-    <label for="end">End Date:</label>
-    <input type="datetime-local" id="end" th:field="*{end}" th:style="${#fields.hasErrors('end')} ? 'background-color: #FF7F7F;' : ''">
 
+    <label for="city">City:</label>
+    <div class="error" th:if="${#fields.hasErrors('city')}" th:errors="*{city}"></div>
+    <input type="text" id="city" th:field="*{city}" required  pattern="[a-zA-Z\s]+" th:style="${#fields.hasErrors('city')} ? 'background-color: #FF7F7F;' : ''">
+
+    <label for="postalCode">Postal Code:</label>
+    <div class="error" th:if="${#fields.hasErrors('postalCode')}" th:errors="*{postalCode}"></div>
+    <input type="text" id="postalCode" class="small-input" th:field="*{postalCode}" required pattern="\d{5}" title="Postal code must be exactly 5 digits" th:style="${#fields.hasErrors('postalCode')} ? 'background-color: #FF7F7F;' : ''">
 
 
     <input type="submit" value="Submit">

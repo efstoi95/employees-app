@@ -39,6 +39,7 @@ public class Task {
     private String durationInput;
 
     private boolean erledigt;
+
     private boolean finished;
 
     @Enumerated(EnumType.STRING)

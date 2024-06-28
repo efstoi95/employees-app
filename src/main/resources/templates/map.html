@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="">
+<head>
+    <title>Customer Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+</head>
+<body>
+<div id="map" style="height: 800px; width: 100%;"></div>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    var customerLocations = /*[[${customerLocations}]]*/ [];
+    /*]]>*/
+
+    var map = L.map('map').setView([0, 0], 2);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    if (customerLocations.length > 0) {
+        var bounds = L.latLngBounds();
+
+        customerLocations.forEach(function(location) {
+            var address = location.address + ", " + location.city + ", " + location.postalCode;
+            var marker = L.marker([0, 0]).addTo(map); // Placeholder marker
+
+            // Use Nominatim API to fetch coordinates based on address
+            var url = "https://nominatim.openstreetmap.org/search?format=json&q=" + encodeURIComponent(address);
+            fetch(url)
+                .then(function(response) {
+                    return response.json();
+                })
+                .then(function(data) {
+                    if (data.length > 0) {
+                        var latlng = [data[0].lat, data[0].lon];
+                        marker.setLatLng(latlng).bindTooltip(location.name, {permanent: true, direction: 'top'}).openTooltip();
+                        var popupContent = "<b>Project Name:</b> " + location.projectName + "<br>" +
+                                           "<b>Address:</b> " + location.address + "<br>" +
+                                           "<b>City:</b> " + location.city + "<br>" +
+                                           "<b>Postal Code:</b> " + location.postalCode;
+                        marker.bindPopup(popupContent);
+                        bounds.extend(latlng);
+                    }
+                })
+                .catch(function(error) {
+                    console.log("Error fetching coordinates:", error);
+                });
+        });
+        map.fitBounds(bounds);
+    }
+</script>
+</body>
+</html>

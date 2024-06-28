@@ -17,6 +17,7 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.servlet.DispatcherServlet;
 
 import java.util.Optional;
 
@@ -38,6 +39,8 @@ public class WebSecurityConfig  {
                 Optional.ofNullable(employeeRepository.findByUsername(username))
                         .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
+
+
 
     /**
      * Configures the WebSecurityCustomizer to ignore requests to the "/h2-console/**" URL pattern.

@@ -44,6 +44,15 @@
             background-color: #7bb5eb;
             color: #ffffff;
         }
+        .tooltip {
+            display: none;
+            position: absolute;
+            background-color: white;
+            border: 1px solid #ccc;
+            padding: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
 
 
     </style>
@@ -87,23 +96,41 @@
         <!-- Iterate over employees -->
         <tr th:each="employee : ${employees}">
             <td th:text="${employee.id}"></td>
-            <td th:text="${employee.fullName}"></td>
+            <td onmouseover="showTooltip(this)" onmouseout="hideTooltip(this)">
+                <span th:text="${employee.fullName}"></span>
+                <div class="tooltip">
+                    <span th:text="'Email: ' + ${employee.email}"></span><br>
+                    <span th:text="'Department: ' + ${employee.department.name}"></span><br>
+                    <span th:text="'Role: ' + ${employee.role}"></span><br>
+                    <span th:text="'Verified: ' + (${employee.verified} ? 'Yes' : 'No')"></span><br>
+                    <span>Projects:</span>
+                    <th:block th:if="${#lists.isEmpty(employee.projects)}">
+                        <span>None</span><br>
+                    </th:block>
+                    <ol th:if="${!#lists.isEmpty(employee.projects)}">
+                        <li th:each="project : ${employee.projects}" th:text="${project.name}"></li>
+                    </ol>
+                    <span>Tasks:</span>
+                    <th:block th:if="${#lists.isEmpty(employee.tasks)}">
+                        <span>None</span>
+                    </th:block>
+                    <ol th:if="${!#lists.isEmpty(employee.tasks)}">
+                        <li th:each="task : ${employee.tasks}" th:text="${task.name}"></li>
+                    </ol>
+
+                </div>
+            </td>
             <td th:text="${employee.email}"></td>
             <td th:text="${employee.department.name}"></td>
             <div sec:authorize="hasRole('ADMIN')">
                 <td>
-
                     <span>
-
                         <a th:href="@{/web/admin/delete/{id}(id=${employee.id})}" class="button">Delete</a>
-
                     </span>
                 </td>
                 <td >
                     <span>
-
                         <a th:href="@{/web/admin/edit/{id}(id=${employee.id})}" class="button">Edit</a>
-
                     </span>
                 </div>
             </td>
@@ -111,7 +138,24 @@
         </tbody>
     </table>
     <a th:href="@{/login?logout}" class="button">Logout</a>
-    <a th:href="@{/web/allProjects}" class="button">View all projects</a>
+    <a th:href="@{/projects/allProjects}" class="button">View all projects</a>
 </div>
+<script>
+
+    // Function to display a tooltip for the given element
+function showTooltip(element) {
+    var tooltip = element.querySelector('.tooltip');
+    tooltip.style.display = 'block';
+    var rect = element.getBoundingClientRect();
+    tooltip.style.top = rect.top + window.scrollY + element.offsetHeight + 'px';
+    tooltip.style.left = rect.left + window.scrollX + 'px';
+}
+    // Hides the tooltip associated with the given element by setting its display style to 'none'.
+function hideTooltip(element) {
+    var tooltip = element.querySelector('.tooltip');
+    tooltip.style.display = 'none';
+}
+</script>
+
 </body>
 </html>

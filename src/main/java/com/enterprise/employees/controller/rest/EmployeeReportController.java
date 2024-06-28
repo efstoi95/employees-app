@@ -6,8 +6,11 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.io.FileNotFoundException;
 
 @RestController
 @RequestMapping("/reports")
@@ -30,4 +33,11 @@ public class EmployeeReportController {
             return ResponseEntity.status(500).body(null);
         }
     }
+
+//    @GetMapping("/{fileName}")
+//    public ResponseEntity<String> loadFile(@PathVariable String fileName) throws FileNotFoundException {
+//        // Trigger FileNotFoundException
+//        throw new FileNotFoundException("File with file name " + fileName+ " is not found");
+//    }
+
 }

@@ -1,14 +1,12 @@
 package com.enterprise.employees.service;
 
 
-import com.enterprise.employees.model.Department;
-import com.enterprise.employees.model.Employee;
-import com.enterprise.employees.model.EmployeeRoles;
-import com.enterprise.employees.model.Skill;
+import com.enterprise.employees.model.*;
 import com.enterprise.employees.repository.DepartmentRepository;
 import com.enterprise.employees.repository.EmployeesRepository;
 import com.enterprise.employees.repository.SkillRepository;
 import jakarta.mail.MessagingException;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -33,6 +31,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     PasswordEncoder passwordEncoder;
     @Autowired
     EmailService emailService;
+    @Autowired
+    ModelMapper modelMapper;
 
 
     public EmployeeServiceImpl(EmployeesRepository employeesRepository, DepartmentRepository departmentRepository,SkillRepository skillRepository, PasswordEncoder passwordEncoder) {
@@ -66,6 +66,9 @@ public class EmployeeServiceImpl implements EmployeeService {
         employeesRepository.save(employee);
 
         String employeeEmail = employee.getEmail();
+        if(employeeEmail == null) {
+            throw new IllegalArgumentException("Employee email cannot be null");
+        }
         String htmlTemplate = new String(Files.readAllBytes(Paths.get("src/main/resources/templates/verify.html")));
         String htmlBody = htmlTemplate.replace("[VerificationNumber]", employee.getVerifiedCode());
         emailService.sendEmail(employeeEmail, "Your new verification code", htmlBody);
@@ -75,12 +78,16 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 
     @Override
-    public void createEmployee(Employee employee, BindingResult bindingResult) {
+    public Employee createEmployee(EmployeeDTO employeeDTO, BindingResult bindingResult) {
         SecureRandom random = new SecureRandom();
         int randomNumber = 1000 + random.nextInt(9000); // ensures a 4-digit number
-        employee.setVerifiedCode(String.valueOf(randomNumber));
+        employeeDTO.setVerifiedCode(String.valueOf(randomNumber));
+
+        Employee employee = modelMapper.map(employeeDTO, Employee.class);
+
         String hashedPassword = passwordEncoder.encode(employee.getPassword());
         employee.setPassword(hashedPassword);
+
         if(employeesRepository.existsByUsername(employee.getUsername())) {
             bindingResult.rejectValue("username", "error.employee", "Username already exists");
         }
@@ -89,26 +96,30 @@ public class EmployeeServiceImpl implements EmployeeService {
         }
 
         if(bindingResult.hasErrors()) {
-            return ;
+            return null;
         }
-        // Fetch and set the selected skills
         List<Skill> selectedSkills = new ArrayList<>();
-        for (Skill skill : employee.getSkills()) {
-            Skill foundSkill = skillRepository.findById(skill.getId()).orElse(null);
-            if (foundSkill != null) {
-                selectedSkills.add(foundSkill);
-            }
+        if(employeeDTO.getSkillIds() == null || employeeDTO.getSkillIds().isEmpty()) {
+            bindingResult.rejectValue("skillIds", "error.employee", "Please select at least one skill");
+            return null;
+        }
+        for (Long skillId : employeeDTO.getSkillIds()) {
+            skillRepository.findById(skillId).ifPresent(selectedSkills::add);
         }
         employee.setSkills(selectedSkills);
-
-        employeesRepository.save(employee);
-        Department department = departmentRepository.findById(employee.getDepartment().getId()).orElse(null);
+        Department department = departmentRepository.findById(employeeDTO.getDepartmentId()).orElseThrow(() -> new RuntimeException("Department not found"));
         employee.setDepartment(department);
-        assert department != null;
-        department.getEmployees().add(employee);
-        departmentRepository.save(department);
 
+        Employee savedEmployee = employeesRepository.save(employee);
+
+        if (department != null) {
+            department.getEmployees().add(employee);
+            departmentRepository.save(department);
+        }
+        return savedEmployee;
     }
+
+
 
     @Override
     public void deleteEmployee(Long id) {
@@ -146,7 +157,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 
     @Override
-    public void editEmployee(Employee employee, BindingResult bindingResult) {
+    public void editEmployee(EmployeeDTO employeeEditDTO, BindingResult bindingResult) {
+
+        Employee employee = modelMapper.map(employeeEditDTO, Employee.class);
         // Fetch the existing employee by ID
         Employee existingEmployee = employeesRepository.findById(employee.getId()).orElse(null);
 
@@ -257,6 +270,15 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public List<Employee> findEmployeesByIds(List<Long> selectedEmployeesIds) {
         return employeesRepository.findAllById(selectedEmployeesIds);
+    }
+
+    @Override
+    public List<EmployeeDTO> findEmployeesWithUserRoleDTO() {
+        List<Employee> employees = findEmployeesWithUserRole();
+        return employees.stream()
+                        .map(employee -> modelMapper.map(employee, EmployeeDTO.class))
+                        .collect(Collectors.toList());
+
     }
 
     @Override

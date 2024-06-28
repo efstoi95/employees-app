@@ -2,6 +2,7 @@ package com.enterprise.employees.service;
 
 import com.enterprise.employees.model.Department;
 import com.enterprise.employees.model.Employee;
+import com.enterprise.employees.model.EmployeeDTO;
 import com.enterprise.employees.model.Skill;
 import jakarta.mail.MessagingException;
 import org.springframework.validation.BindingResult;
@@ -27,9 +28,9 @@ public interface EmployeeService {
      * Creates a new employee and saves it to the database. The employee's password is hashed before saving.
      * The employee is associated with a department, which is retrieved from the department repository.
      *
-     * @param employee the employee to be created
+     * @param employeeCreateDTO the employee to be created
      */
-    void createEmployee(Employee employee, BindingResult bindingResult);
+    Employee createEmployee(EmployeeDTO employeeCreateDTO, BindingResult bindingResult);
     /**
      * Deletes an employee with the given ID from the database.
      *
@@ -39,9 +40,9 @@ public interface EmployeeService {
     /**
      * Updates an existing employee in the database with the provided details.
      *
-     * @param  employee  the employee object containing the updated details
+     * @param  employeeEditDTO  the employee object containing the updated details
      */
-    void editEmployee(Employee employee, BindingResult bindingResult);
+    void editEmployee(EmployeeDTO employeeEditDTO, BindingResult bindingResult);
     /**
      * Updates the information of an existing employee in the database.
      *
@@ -73,6 +74,8 @@ public interface EmployeeService {
     void updateEmployee(Employee employee,BindingResult bindingResult);
 
     List<Employee> findEmployeesByIds(List<Long> selectedEmployeesIds);
+
+    List<EmployeeDTO> findEmployeesWithUserRoleDTO();
 
     List<Employee> findEmployeesWithUserRole();
 

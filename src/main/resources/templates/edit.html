@@ -74,13 +74,13 @@
     <input type="email" id="email" th:field="*{email}" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}" th:style="${#fields.hasErrors('email')} ? 'background-color: #FF7F7F;' : ''">
 
     <label for="department">Department:</label>
-    <select id="department" th:field="*{department.id}" required>
+    <select id="department" th:field="*{departmentId}" required>
         <option th:each="dept : ${departments}" th:value="${dept.id}" th:text="${dept.name}">
         </option>
     </select>
 
     <label for="skills">Skills:</label>
-    <select id="skills" th:field="*{skills}" multiple="multiple" size="5">
+    <select id="skills" th:field="*{skillIds}" multiple="multiple" size="5">
         <option th:each="skill : ${skills}" th:value="${skill.id}" th:text="${skill.name}">
         </option>
     </select>

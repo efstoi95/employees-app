@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Projects</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #dddddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .button  {
+            display: inline-block;
+            padding: 8px 16px;
+            background-color: #9fc5e8; /* light blue */
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-bottom: 10px;
+            margin-right: 10px;
+        }
+        .button:hover {
+            background-color: #7bb5eb;
+            color: #ffffff;
+        }
+         .upload-form {
+            margin-top: 10px;
+            border: 1px solid #ccc;
+            padding: 15px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        .upload-form input[type=file] {
+            margin-bottom: 10px;
+        }
+
+        .upload-form button[type=submit] {
+           display: inline-block;
+            padding: 8px 16px;
+            background-color: #9fc5e8; /* light blue */
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-bottom: 10px;
+            margin-right: 10px;
+        }
+
+        .upload-form button[type=submit]:hover {
+            background-color: #7bb5eb;
+            color: #ffffff;
+        }
+
+         .tooltip {
+            display: none;
+            position: absolute;
+            background-color: white;
+            border: 1px solid #ccc;
+            padding: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>All Customers</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Action</th>
+<!--            <th>Files</th>&lt;!&ndash; Added a new column for action &ndash;&gt;-->
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Check if projects list is empty -->
+        <tr th:if="${#lists.isEmpty(customers)}">
+            <td colspan="4">No Customers found.</td>
+        </tr>
+        <!-- Iterate over projects -->
+        <tr th:each="customer : ${customers}">
+            <td th:text="${customer.id}"></td>
+            <td onmouseover="showTooltip(this)" onmouseout="hideTooltip(this)">
+                <span th:text="${customer.fullName}"></span>
+                <div class="tooltip">
+                    <span th:text="'Email: ' + ${customer.email}"></span><br>
+                    <span th:text="'Address: ' + ${customer.address}"></span><br>
+                    <span th:text="'City: ' + ${customer.city}"></span><br>
+                    <span th:text="'Postal Code: ' + ${customer.postalCode}"></span><br>
+                    <span>Projects:</span>
+                    <th:block th:if="${#lists.isEmpty(customer.projects)}">
+                        <span>None</span><br>
+                    </th:block>
+                    <ol th:if="${!#lists.isEmpty(customer.projects)}">
+                        <li th:each="project : ${customer.projects}" th:text="${project.name}"></li>
+                    </ol>
+
+                </div>
+            </td>
+            <td th:text="${customer.description}"></td>
+
+            <td> <!-- Moved the action column here -->
+                <span sec:authorize="hasRole('ADMIN')">
+                    <a th:href="@{/customer/deleteCustomer/{id}(id=${customer.id})}" class="button">Delete</a>
+                </span>
+                <span sec:authorize="hasRole('ADMIN')">
+                    <a th:href="@{/customer/updateCustomer/{id}(id=${customer.id})}" class="button">Edit</a>
+                </span>
+
+            </td>
+<!--            <td>-->
+<!--                <span sec:authorize="hasRole('ADMIN')">-->
+<!--                    <div class="upload-form">-->
+<!--                        <form method="post" th:action="@{/projects/upload/{projectId}(projectId=${customer.id})}" enctype="multipart/form-data">-->
+<!--                            <input type="file" name="file" />-->
+<!--                            <button type="submit">Upload</button>-->
+<!--                        </form>-->
+<!--                        &lt;!&ndash; Display uploaded file names if available &ndash;&gt;-->
+<!--                        <div th:if="${not #lists.isEmpty(customer.fileNames)}">-->
+<!--                            <p>Uploaded Files:</p>-->
+<!--                            <ul>-->
+<!--                                <li th:each="fileName, index : ${customer.fileNames}">-->
+<!--                                    <span th:text="${fileName}"></span>-->
+<!--                                    <a th:href="@{/projects/downloadFile/{projectId}/{fileName}(projectId=${customer.id}, fileName=${fileName})}" class="button">Download</a>-->
+<!--                                    &lt;!&ndash; Form to delete file &ndash;&gt;-->
+<!--                                     <form method="post" th:action="@{/projects/deleteFile/{projectId}/{index}(projectId=${proj.id}, index=${index.index})}" style="display:inline;">-->
+<!--                                        <button type="submit" style="display:inline;" class="button">Delete</button>-->
+<!--                                    </form>-->
+<!--                                </li>-->
+<!--                            </ul>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </span>-->
+<!--            </td>-->
+        </tr>
+        </tbody>
+    </table>
+    <a th:href="@{/login?logout}" class="button">Logout</a>
+    <a th:href="@{/customer/createCustomer}" class="button">Create Customer</a>
+    <a th:href="@{/projects/allProjects}" class="button">View all Projects</a>
+    <a th:href="@{/map/allCustomers}" class="button">View Map</a>
+    <a class="button" href="/reports/employees/pdf">Print Report</a>
+
+</div>
+
+<script>
+
+    // Function to display a tooltip for the given element
+function showTooltip(element) {
+    var tooltip = element.querySelector('.tooltip');
+    tooltip.style.display = 'block';
+    var rect = element.getBoundingClientRect();
+    tooltip.style.top = rect.top + window.scrollY + element.offsetHeight + 'px';
+    tooltip.style.left = rect.left + window.scrollX + 'px';
+}
+    // Hides the tooltip associated with the given element by setting its display style to 'none'.
+function hideTooltip(element) {
+    var tooltip = element.querySelector('.tooltip');
+    tooltip.style.display = 'none';
+}
+</script>
+</body>
+</html>
