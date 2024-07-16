@@ -20,7 +20,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@ToString(exclude = "projects")
+@ToString(exclude = {"projects", "tasks", "files", "skills"})
 @Entity
 public class Employee implements UserDetails {
 
@@ -46,12 +46,21 @@ public class Employee implements UserDetails {
     @Enumerated(EnumType.STRING)
     private EmployeeRoles role;
 
+
+    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+    private List<File> files = new ArrayList<>();
+
+
+
+
     private boolean verified = false;
 
     private String verifiedCode;
 
     @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     private List<Project> projects = new ArrayList<>();
+
+    private List<Long> fileEmployeeIds = new ArrayList<>();
 
     @ManyToMany(mappedBy ="employees", cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     private List<Task> tasks = new ArrayList<>();

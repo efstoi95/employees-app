@@ -4,102 +4,98 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Task</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-               width: 100%;
-               height: 100vh;
-               margin: 0;
-               background: linear-gradient(to right, white 0%, white 50%, #add8e6 50%, #add8e6 100%);
-           }
+            font-family: Roboto, sans-serif;
+            font-size:22px;
+        }
 
+        h2 {
+            font-family: cursive, sans-serif;
+            text-align: center;
+            color: #333;
+            padding: 20px;
+        }
 
-          h2 {
-              font-family: cursive, sans-serif;
-              text-align: center;
-              color: #333;
-          }
+        .form-container {
+            width: 50%;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 5.1);
+        }
 
-          form {
-              width: 50%;
-              margin: 0 auto;
-              background-color: #fff;
-             padding: 20px;
-              border-radius: 8px;
-              box-shadow: 0 0 10px rgba(0, 0, 0, 5.1);
-          }
+        .form-control {
+            height: calc(2.25rem + 10px); /* Increase the height */
+            font-size: 1.25rem; /* Increase the font size */
+        }
 
-          label {
-              font-family: cursive, sans-serif;
-              font-weight: bold;
-              display: block;
-              margin-bottom: 8px;
-          }
+        .form-control-lg {
+            height: calc(2.875rem + 10px); /* Even larger height for large inputs */
+            font-size: 1.5rem; /* Larger font size for large inputs */
+        }
 
-          input[type="text"],
-          input[type="password"],
-          input[type="email"],
-          select {
-              font-family: cursive, sans-serif;
-              width: 100%;
-              padding: 10px;
-              margin-bottom: 15px;
-              border: 1px solid #ccc;
-              border-radius: 4px;
-              box-sizing: border-box;
-          }
+        .btn-custom {
+            background-color: #fecb01;
+            color: black;
+            font-size: 1.25rem;
+            height: calc(2.875rem + 10px); /* Match height with form-control-lg */
+        }
 
-          input[type="submit"] {
-              background-color: #9fc5e8;
-              color: white;
-              padding: 14px 20px;
-              margin: 8px 0;
-              border: none;
-              border-radius: 4px;
-              cursor: pointer;
-              width: 100%;
-          }
-
-          input[type="submit"]:hover {
-              background-color: #7bb5eb;
-          }
-
-
-
+        .btn-custom:hover {
+            color: white;
+            background-color: #7e6501;
+        }
     </style>
 </head>
 <body>
 <h2>Create Task</h2>
-<form th:action="@{/tasks/createdTask}" th:object="${task}" method="post">
-    <input type="hidden" th:field="*{id}">
+<div class="form-container">
+    <form th:action="@{/tasks/createdTask}" th:object="${task}" method="post">
+        <input type="hidden" th:field="*{id}">
 
+        <div class="form-group">
+            <label for="name">Task Name:</label>
+            <div class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+            <input type="text" class="form-control form-control-lg" id="name" th:field="*{name}" required minlength="4" th:classappend="${#fields.hasErrors('name')} ? 'is-invalid' : ''">
+        </div>
 
+        <div class="form-group">
+            <label for="description">Description:</label>
+            <div class="text-danger" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
+            <textarea class="form-control form-control-lg" id="description" th:field="*{description}" required th:classappend="${#fields.hasErrors('description')} ? 'is-invalid' : ''"></textarea>
+        </div>
 
+        <div class="form-group">
+            <label for="durationInput">Task Duration:</label>
+            <div class="text-danger" th:if="${#fields.hasErrors('durationInput')}" th:errors="*{durationInput}"></div>
+            <input type="text" class="form-control form-control-lg" id="durationInput" th:field="*{durationInput}" required th:classappend="${#fields.hasErrors('durationInput')} ? 'is-invalid' : ''">
+        </div>
 
-    <label for="name">Task Name:</label>
-    <input type="text" id="name" name="name" th:field="*{name}" required>
+        <div class="form-group">
+            <label for="skills">Required Skills:</label>
+            <select class="form-control form-control-lg" id="skills" th:field="*{skillsIds}" multiple required size="5">
+                <option th:each="skill : ${skills}" th:value="${skill.id}" th:text="${skill.name}"></option>
+            </select>
+        </div>
 
-    <label for="description">Description:</label>
-    <textarea id="description" name="description" th:field="*{description}" required></textarea>
+        <div class="form-group">
+            <label for="status">Status:</label>
+            <select class="form-control form-control-lg" id="status" th:field="*{status}" required>
+                <option th:each="status : ${T(com.enterprise.employees.model.Status).values()}" th:value="${status}" th:text="${status}"></option>
+            </select>
+        </div>
 
-    <label for="durationInput">Task Duration:</label>
-    <div th:if="${#fields.hasErrors('durationInput')}" th:errors="*{durationInput}"></div>
-    <input type="text" id="durationInput" name="durationInput" th:field="*{durationInput}" required>
+        <input type="hidden" th:field="*{projectId}"> <!-- Hidden field for project id -->
 
-    <label for="skills">Required Skills:</label>
-    <select id="skills" th:field="*{skillsIds}" multiple required>
-        <option th:each="skill : ${skills}" th:value="${skill.id}" th:text="${skill.name}"></option>
-    </select>
+        <button type="submit" class="btn btn-custom btn-block">Create Task</button>
+    </form>
+</div>
 
-    <label for="status">Status:</label>
-    <select id="status" th:field="*{status}" required>
-        <option th:each="status : ${T(com.enterprise.employees.model.Status).values()}"
-                th:value="${status}" th:text="${status}">
-        </option>
-    </select>
-
-    <input type="hidden" th:field="*{projectId}"> <!-- Hidden field for project id -->
-
-    <button type="submit">Create Task</button>
-</form>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

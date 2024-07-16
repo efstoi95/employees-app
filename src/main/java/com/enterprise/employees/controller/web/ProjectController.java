@@ -1,8 +1,7 @@
 package com.enterprise.employees.controller.web;
 
-import com.enterprise.employees.model.EmployeeDTO;
-import com.enterprise.employees.model.Project;
-import com.enterprise.employees.model.ProjectDTO;
+import com.enterprise.employees.model.*;
+import com.enterprise.employees.repository.FileRepository;
 import com.enterprise.employees.repository.ProjectRepository;
 import com.enterprise.employees.service.CustomerServiceImpl;
 import com.enterprise.employees.service.EmployeeService;
@@ -24,9 +23,13 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RequestMapping("/projects")
@@ -35,6 +38,8 @@ public class ProjectController {
 
     @Autowired
     private ProjectRepository projectRepository;
+    @Autowired
+    private FileRepository fileRepository;
     private final FileStorageService fileStorageService;
     private static final Logger logger = LoggerFactory.getLogger(ProjectController.class);
     private final ProjectServiceImpl projectServiceImpl;
@@ -66,7 +71,10 @@ public class ProjectController {
      * @return                 the view name after project creation
      */
     @PostMapping("/createdProject")
-    public String createProject(@Validated @ModelAttribute("proj") ProjectDTO projectDTO, BindingResult bindingResult, Model model) {
+    public String createProject(@Validated @ModelAttribute("proj") ProjectDTO projectDTO,
+                                BindingResult bindingResult,
+                                Model model,
+                                RedirectAttributes redirectAttributes) {
         logger.info("Entering (POST)createProject method");
         projectServiceImpl.create(projectDTO, bindingResult);
         if (bindingResult.hasErrors()) {
@@ -75,7 +83,9 @@ public class ProjectController {
             return "createProject";
         }
         logger.info("Project created successfully");
-        return "redirect:/projects/successCreateProject";
+        redirectAttributes.addFlashAttribute("projectCreated", true);
+        redirectAttributes.addFlashAttribute("projectName", projectDTO.getName());
+        return "redirect:/projects/allProjects";
 
     }
     /**
@@ -126,7 +136,10 @@ public class ProjectController {
      */
     @PostMapping("/editedProject")
     public String editedProject(@RequestParam(value = "employeeIds", required = false) List<Long> selectedEmployeesIds,
-                                @Validated @ModelAttribute("proj") ProjectDTO projectDTO, BindingResult bindingResult, Model model) {
+                                @Validated @ModelAttribute("proj") ProjectDTO projectDTO,
+                                BindingResult bindingResult,
+                                Model model,
+                                RedirectAttributes redirectAttributes) {
         logger.info("Editing project: {}", projectDTO);
         projectDTO.setEmployeeIds(selectedEmployeesIds);
         // Proceed with your project update logic
@@ -139,7 +152,10 @@ public class ProjectController {
             return "editProject";
         }
 
-        return "redirect:/projects/successEditProject";
+        redirectAttributes.addFlashAttribute("projectUpdated", true);
+        redirectAttributes.addFlashAttribute("projectId", projectDTO.getId());
+        redirectAttributes.addFlashAttribute("projectName", projectDTO.getName());
+        return "redirect:/projects/allProjects";
     }
     /**
      * Deletes a project based on the provided ID and redirects to a success page.
@@ -149,12 +165,20 @@ public class ProjectController {
      * @return       a string representing the redirect URL after project deletion
      */
     @GetMapping("/deleteProject/{id}")
-    public String deleteProject(@PathVariable Long id,Model model) {
+    public String deleteProject(@PathVariable Long id,
+                                Model model,
+                                RedirectAttributes redirectAttributes) {
         logger.info("Deleting project with ID: {}", id);
+        String projectName = projectServiceImpl.findById(id).getName();
         projectServiceImpl.deleteById(id);
         logger.info("Project with ID {} deleted successfully", id);
-        return "redirect:/projects/successDeleteProject";
+        redirectAttributes.addFlashAttribute("projectDeleted", true);
+        redirectAttributes.addFlashAttribute("projectId", id);
+        redirectAttributes.addFlashAttribute("projectName", projectName);
+        return "redirect:/projects/allProjects";
     }
+
+
     /**
      * Uploads a file.
      *
@@ -163,10 +187,37 @@ public class ProjectController {
      * @return         	description of return value
      */
     @PostMapping("/upload/{projectId}")
-    public String uploadProjectDescriptionFile(@PathVariable Long projectId, @RequestParam("file") MultipartFile[] files,Model model) throws IOException {
-            logger.info("Uploading file to project with ID: {}", projectId);
-            fileStorageService.uploadProjectFile(projectId, files);
-            return "redirect:/projects/successUploadToProject";
+    public String uploadProjectDescriptionFile(@PathVariable Long projectId,
+                                               @RequestParam("file") MultipartFile[] files,
+                                               Model model,
+                                               RedirectAttributes redirectAttributes) throws IOException {
+
+        //Check the size
+        for(MultipartFile file : files) {
+            if (file.isEmpty()) {
+                Project project = projectServiceImpl.findById(projectId);
+                return handleFileError(model, project, "File is empty. Please enter a valid file");
+            }
+            byte[] fileContent = file.getBytes();
+            if (fileContent.length > 5 * 1024 * 1024) {
+                Project project = projectServiceImpl.findById(projectId);
+                return handleFileError(model, project, "File size exceeds maximum allowed size of 5MB");
+            }
+        }
+        logger.info("Uploading file to project with ID: {}", projectId);
+        fileStorageService.uploadProjectFile(projectId, files);
+        redirectAttributes.addFlashAttribute("fileUploaded", true);
+        redirectAttributes.addFlashAttribute("projectId", projectId);
+        redirectAttributes.addFlashAttribute("projectName", projectServiceImpl.findById(projectId).getName());
+        redirectAttributes.addFlashAttribute("fileName", files[0].getOriginalFilename());
+        return "redirect:/projects/allProjects";
+    }
+
+    private String handleFileError(Model model, Project project, String errorMessage) {
+        model.addAttribute("error", errorMessage);
+        model.addAttribute("project", project);
+        model.addAttribute("fileNames", project.getFiles().stream().map(File::getFileName).collect(Collectors.toList()));
+        return "showProjectFiles";
     }
     /**
      * Downloads a file.
@@ -178,11 +229,11 @@ public class ProjectController {
     public ResponseEntity<ByteArrayResource> downloadTaskDescriptionFile(@PathVariable Long projectId, @PathVariable String fileName,Model model) {
             logger.info("Downloading file from project with ID: {}", projectId);
             Project project = projectRepository.findById(projectId).orElseThrow(() -> new IllegalArgumentException("Invalid task ID: " + projectId));
-
-            byte[] fileContent = project.getFileContentByFileName(fileName);
-            if(fileContent == null) {
-                throw new IllegalArgumentException("Invalid file name: " + fileName);
-            }
+            File file = project.getFiles().stream()
+                    .filter(f -> f.getFileName().equals(fileName))
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid file name: " + fileName));
+            byte[] fileContent = file.getFileContent();
             ByteArrayResource resource = new ByteArrayResource(fileContent);
 
             return ResponseEntity.ok()
@@ -190,35 +241,96 @@ public class ProjectController {
                     .body(resource);
 
     }
-    /**
-     * Deletes a file.
-     *
-     * @param  projectId	description of parameter
-     * @param  index	    description of parameter
-     * @return         	description of return value
-     */
-    @PostMapping("/deleteFile/{projectId}/{index}")
-    public String deleteFile(@PathVariable Long projectId, @PathVariable int index, Model model) {
-            logger.info("Deleting file from project with ID: {}", projectId);
-            Project project = projectRepository.findById(projectId)
-                    .orElseThrow(() -> new IllegalArgumentException("Invalid task ID: " + projectId));
+    @PostMapping("/deleteFile/{projectId}/{fileId}")
+    public String deleteFile(@PathVariable Long projectId,
+                             @PathVariable Long fileId,
+                             RedirectAttributes redirectAttributes) {
+        logger.info("Deleting file from project with ID: {}", projectId);
 
-            // Remove file content and file name at the specified index
-            List<byte[]> fileContents = project.getFileContent();
-            List<String> fileNames = project.getFileNames();
+        // Retrieve the project by projectId
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid project ID: " + projectId));
 
-            if (fileContents != null && index >= 0 && index < fileContents.size()) {
-                fileContents.remove(index);
-                fileNames.remove(index);
-            }
+        // Retrieve the file by fileId
+        File file = fileRepository.findById(fileId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid file ID: " + fileId));
+        String fileName = file.getFileName();
 
-            // Update task with updated lists
-            project.setFileContent(fileContents);
-            project.setFileNames(fileNames);
-            projectRepository.save(project);
+        // Check if the project contains the file
+        if (!project.getFiles().contains(file)) {
+            throw new IllegalArgumentException("Invalid file ID: " + fileId);
+        }
 
-            // Redirect back to the task details page or wherever appropriate
-            return "redirect:/projects/successDeleteProjectFile"; // Adjust the redirect URL as per your application's navigation
+        // Find the employee who has the file
+        Optional<Employee> employeeOpt = project.getEmployees().stream()
+                .filter(emp -> emp.getFiles().contains(file))
+                .findFirst();
+
+        // Remove the file from the project
+        project.getFiles().remove(file);
+        projectRepository.save(project);
+
+        // If an employee was found, remove the file from the employee and save
+        if (employeeOpt.isPresent()) {
+            Employee employee = employeeOpt.get();
+            employee.getFiles().remove(file);
+            employeeService.save(employee);
+
+            // Remove the employee association from the file
+            file.getEmployees().remove(employee);
+        }
+        // Remove the project association from the file
+        file.getProjects().remove(project);
+
+        // Delete the file if it is not associated with any other projects or employees
+        if (file.getProjects().isEmpty() && file.getEmployees().isEmpty()) {
+            fileRepository.deleteById(fileId);
+        } else {
+            fileRepository.save(file);
+        }
+
+        redirectAttributes.addFlashAttribute("fileDeleted", true);
+        redirectAttributes.addFlashAttribute("projectId", projectId);
+        redirectAttributes.addFlashAttribute("projectName", project.getName());
+        redirectAttributes.addFlashAttribute("fileName", fileName);
+        // Redirect to a success page or wherever appropriate
+        return "redirect:/projects/allProjects"; // Adjust the redirect URL as per your application's navigation
+    }
+
+
+
+    @GetMapping("/showFiles/{projectId}")
+    public String showFiles(@PathVariable("projectId") Long projectId, Model model) {
+        Project project = projectServiceImpl.findById(projectId);
+        model.addAttribute("project", project);
+        model.addAttribute("fileNames", project.getFiles().stream().map(File::getFileName).collect(Collectors.toList()));
+        return "showProjectFiles";
+    }
+
+    @GetMapping("/viewFile/{projectId}/{fileName}")
+    public ResponseEntity<byte[]> viewFile(@PathVariable Long projectId, @PathVariable String fileName, Model model) {
+        Project project = projectRepository.findById(projectId).orElseThrow(() -> new IllegalArgumentException("Invalid task ID: " + projectId));
+        File file = project.getFiles().stream()
+                .filter(f -> f.getFileName().equals(fileName))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Invalid file name: " + fileName));
+
+
+        HttpHeaders headers = new HttpHeaders();
+        if (fileName.endsWith(".pdf")) {
+            headers.add(HttpHeaders.CONTENT_TYPE, "application/pdf");
+        } else if (fileName.endsWith(".txt")) {
+            headers.add(HttpHeaders.CONTENT_TYPE, "text/plain; charset=UTF-8");
+        } else if (fileName.endsWith(".png")) {
+            headers.add(HttpHeaders.CONTENT_TYPE, "image/png");
+        }  else if (fileName.endsWith(".jpg")) {
+            headers.add(HttpHeaders.CONTENT_TYPE, "image/jpg");
+        }else {
+            throw new IllegalArgumentException("Unsupported file type: " + fileName);
+        }
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(file.getFileContent());
 
     }
 

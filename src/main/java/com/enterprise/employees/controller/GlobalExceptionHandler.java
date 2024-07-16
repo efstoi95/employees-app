@@ -5,12 +5,14 @@ import jakarta.mail.MessagingException;
 import org.hibernate.boot.MappingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.expression.spel.SpelEvaluationException;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import org.thymeleaf.exceptions.TemplateEngineException;
 import org.thymeleaf.exceptions.TemplateProcessingException;
 
 import java.io.IOException;
@@ -19,6 +21,22 @@ import java.io.IOException;
 public class GlobalExceptionHandler  {
 
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
+    @ExceptionHandler(SpelEvaluationException.class)
+    public String handleSpelEvaluationException(SpelEvaluationException e) {
+        logger.error("Spel evaluation error occurred: {}", e.getMessage());
+        ModelAndView modelAndView = new ModelAndView("error");
+        modelAndView.addObject("error", "An error occurred while processing your request. Please try again later. " + e.getMessage());
+        return "error";
+    }
+
+    @ExceptionHandler(TemplateEngineException.class)
+    public String handleTemplateEngineException(TemplateEngineException e) {
+        logger.error("Template engine error occurred: {}", e.getMessage());
+        ModelAndView modelAndView = new ModelAndView("error");
+        modelAndView.addObject("error", "An error occurred while processing your request. Please try again later. " + e.getMessage());
+        return "error";
+    }
 
     /**
      * Handle TemplateProcessingException and add error message to the model.

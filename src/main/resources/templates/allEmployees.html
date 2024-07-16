@@ -4,45 +4,71 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>All Employees</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            font-family: Arial, sans-serif;
+           font-family: Roboto, sans-serif;
+           font-size:22px;
         }
         .container {
-            max-width: 800px;
+            max-width: 1600px;
             margin: 0 auto;
             padding: 20px;
         }
-        table {
+        .table-responsive {
+            overflow-x: auto;
+        }
+        .table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
         }
-        th, td {
-            border: 1px solid #dddddd;
-            padding: 8px;
+        .table th, .table td {
             text-align: left;
+            border: 1px solid #dee2e6;
+            padding: 8px;
         }
-        th {
+        .table th {
             background-color: #f2f2f2;
         }
-                .button  {
-  display: inline-block;
-  padding: 8px 16px;
-  background-color: #9fc5e8; /* light blue */
-  color: white;
-  text-align: center;
-  text-decoration: none;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 14px;
-  margin-bottom: 10px;
-  margin-right: 10px;
-}
+
+         .split-view {
+            display: flex;
+            gap: 15px;
+            width: 1740px;
+        }
+        .tasks-container {
+            flex: 70%;
+        }
+        .edit-container {
+            flex: 30%;
+            display: none;
+            height: auto;
+            border: 1px solid #dee2e6;
+        }
+        .files-container {
+            flex: 37%;
+            display: none;
+            height: 100%;
+            border: 1px solid #dee2e6;
+
+        }
+        .button {
+            display: inline-block;
+            padding: 8px 16px;
+            background-color: #fecb01;
+            color: black;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+            margin-bottom: 10px;
+            margin-right: 10px;
+            width: 124px;
+        }
         .button:hover {
-            background-color: #7bb5eb;
-            color: #ffffff;
+            background-color: #7e6501;
         }
         .tooltip {
             display: none;
@@ -53,108 +79,196 @@
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
             z-index: 1000;
         }
+        .tooltip.show {
+            display: block !important;
+        }
+
+        .return-button-container {
+            text-align: right;
+            margin-bottom: 10px;
+        }
+
+               .popup {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.4);
+        }
+
+  .popup-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 35%;
+            height: 14%;
+            text-align: center;
+            border-radius: 10px;
+        }
 
 
+   .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
-<div class="container">
+<div class="container" style="max-width: 1780px">
     <h2>All Employees</h2>
-    <!-- Filtering options -->
-    <form action="/web/search/department" method="get">
-        <label for="department">Filter by Department:</label>
-        <select id="department" name="department">
-            <option value="">All Departments</option>
-            <option value="Finance">Finance</option>
-            <option value="Hr">Hr</option>
-            <option value="Software">Software</option>
-        </select>
-        <button type="submit" class="button">Apply Filter</button>
-    </form>
+    <div class="return-button-container">
+        <a th:href="@{/web/successLogin}" class="button">Back to Menu</a>
+        <a th:href="@{/login?logout}" class="button">Logout</a>
+    </div>
+    <div class="split-view">
+        <div class="tasks-container">
+            <div class="table-responsive">
+                <!-- Filtering options -->
+                <form action="/web/search/department" method="get">
+                    <label for="department">Filter by Department:</label>
+                    <select id="department" name="department" class="form-control d-inline-block w-auto">
+                        <option value="">All Departments</option>
+                        <option value="Finance">Finance</option>
+                        <option value="Hr">Hr</option>
+                        <option value="Software">Software</option>
+                    </select>
+                    <button type="submit" class="button">Apply Filter</button>
+                </form>
+                <form action="/web/search/name" method="get" class="mt-2">
+                    <input type="text" name="name" placeholder="Enter name to search" class="form-control d-inline-block w-auto">
+                    <button type="submit" class="button">Search</button>
+                </form>
 
-
-    <form action="/web/search/name" method="get">
-        <input type="text" name="name"  placeholder="Enter name to search">
-        <button type="submit" class="button">Search</button>
-    </form>
-    <table>
-        <thead>
-        <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Department</th>
-        </tr>
-        </thead>
-        <tbody>
-        <!-- Check if employees list is empty -->
-        <th:block th:if="${#lists.isEmpty(employees)}">
-            <tr>
-                <td colspan="4">No employees found.</td>
-            </tr>
-        </th:block>
-        <!-- Iterate over employees -->
-        <tr th:each="employee : ${employees}">
-            <td th:text="${employee.id}"></td>
-            <td onmouseover="showTooltip(this)" onmouseout="hideTooltip(this)">
-                <span th:text="${employee.fullName}"></span>
-                <div class="tooltip">
-                    <span th:text="'Email: ' + ${employee.email}"></span><br>
-                    <span th:text="'Department: ' + ${employee.department.name}"></span><br>
-                    <span th:text="'Role: ' + ${employee.role}"></span><br>
-                    <span th:text="'Verified: ' + (${employee.verified} ? 'Yes' : 'No')"></span><br>
-                    <span>Projects:</span>
-                    <th:block th:if="${#lists.isEmpty(employee.projects)}">
-                        <span>None</span><br>
-                    </th:block>
-                    <ol th:if="${!#lists.isEmpty(employee.projects)}">
-                        <li th:each="project : ${employee.projects}" th:text="${project.name}"></li>
-                    </ol>
-                    <span>Tasks:</span>
-                    <th:block th:if="${#lists.isEmpty(employee.tasks)}">
-                        <span>None</span>
-                    </th:block>
-                    <ol th:if="${!#lists.isEmpty(employee.tasks)}">
-                        <li th:each="task : ${employee.tasks}" th:text="${task.name}"></li>
-                    </ol>
-
+                <div class="table-responsive mt-3">
+                    <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Department</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <!-- Check if employees list is empty -->
+                        <tr th:if="${#lists.isEmpty(employees)}">
+                            <td colspan="5">No employees found.</td>
+                        </tr>
+                        <!-- Iterate over employees -->
+                        <tr th:each="employee : ${employees}">
+                            <td th:text="${employee.id}"></td>
+                            <td onmouseover="showTooltip(this)" onmouseout="hideTooltip(this)">
+                                <span th:text="${employee.fullName}"></span>
+                                <div class="tooltip">
+                                    <span th:text="'Email: ' + ${employee.email}"></span><br>
+                                    <span th:text="'Department: ' + (${employee.department} != null ? ${employee.department.name} : 'N/A')"></span><br>
+                                    <span th:text="'Role: ' + ${employee.role}"></span><br>
+                                    <span th:text="'Verified: ' + (${employee.verified} ? 'Yes' : 'No')"></span><br>
+                                    <span>Projects:</span>
+                                    <th:block th:if="${#lists.isEmpty(employee.projects)}">
+                                        <span>None</span><br>
+                                    </th:block>
+                                    <ol th:if="${!#lists.isEmpty(employee.projects)}">
+                                        <li th:each="project : ${employee.projects}" th:text="${project.name}"></li>
+                                    </ol>
+                                    <span>Tasks:</span>
+                                    <th:block th:if="${#lists.isEmpty(employee.tasks)}">
+                                        <span>None</span>
+                                    </th:block>
+                                    <ol th:if="${!#lists.isEmpty(employee.tasks)}">
+                                        <li th:each="task : ${employee.tasks}" th:text="${task.name}"></li>
+                                    </ol>
+                                </div>
+                            </td>
+                            <td th:text="${employee.email}"></td>
+                            <td th:text="${employee.department.name}"></td>
+                            <td>
+                                <span sec:authorize="hasRole('ADMIN')">
+                                    <a th:href="@{/web/admin/delete/{id}(id=${employee.id})}" class="button">Delete</a>
+                                </span>
+                                <span sec:authorize="hasRole('ADMIN')">
+                                    <a th:href="@{/web/admin/edit/{id}(id=${employee.id})}" class="button files-link">Edit</a>
+                                </span>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
                 </div>
-            </td>
-            <td th:text="${employee.email}"></td>
-            <td th:text="${employee.department.name}"></td>
-            <div sec:authorize="hasRole('ADMIN')">
-                <td>
-                    <span>
-                        <a th:href="@{/web/admin/delete/{id}(id=${employee.id})}" class="button">Delete</a>
-                    </span>
-                </td>
-                <td >
-                    <span>
-                        <a th:href="@{/web/admin/edit/{id}(id=${employee.id})}" class="button">Edit</a>
-                    </span>
-                </div>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-    <a th:href="@{/login?logout}" class="button">Logout</a>
-    <a th:href="@{/projects/allProjects}" class="button">View all projects</a>
+            </div>
+        </div>
+        <div class="files-container" id="filesContainer">
+
+        </div>
+    </div>
 </div>
-<script>
+<div th:if="${employeeEdited}" class="popup" th:style="'display:block;'">
+    <div class="popup-content">
+        <span class="close" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
+        <p> Employee edited successfully!<br>
+            Id: <span th:text="${employeeId}"></span> , Name: <span th:text="${employeeName}"></span></p>
+    </div>
+</div>
 
-    // Function to display a tooltip for the given element
-function showTooltip(element) {
-    var tooltip = element.querySelector('.tooltip');
-    tooltip.style.display = 'block';
-    var rect = element.getBoundingClientRect();
-    tooltip.style.top = rect.top + window.scrollY + element.offsetHeight + 'px';
-    tooltip.style.left = rect.left + window.scrollX + 'px';
-}
-    // Hides the tooltip associated with the given element by setting its display style to 'none'.
-function hideTooltip(element) {
-    var tooltip = element.querySelector('.tooltip');
-    tooltip.style.display = 'none';
-}
+<div th:if="${employeeDeleted}" class="popup" th:style="'display:block;'">
+    <div class="popup-content">
+        <span class="close" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
+        <p> Employee deleted successfully!<br>
+            Id: <span th:text="${employeeId}"></span> , Name: <span th:text="${employeeName}"></span></p>
+    </div>
+</div>
+
+<!-- Bootstrap JS and dependencies -->
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+    function showTooltip(element) {
+        var tooltip = element.querySelector('.tooltip');
+        console.log(tooltip);
+        tooltip.classList.add('show');
+        var rect = element.getBoundingClientRect();
+        console.log(rect);
+        tooltip.style.top = rect.top + window.scrollY + element.offsetHeight + 'px';
+        tooltip.style.left = rect.left + window.scrollX + 'px';
+    }
+
+    function hideTooltip(element) {
+        var tooltip = element.querySelector('.tooltip');
+        console.log(tooltip);
+        tooltip.classList.remove('show');
+    }
+
+    document.addEventListener('DOMContentLoaded', (event) => {
+         document.querySelectorAll('.files-link').forEach(link => {
+            link.addEventListener('click', function(event) {
+                event.preventDefault();
+                fetch(link.href)
+                    .then(response => response.text())
+                    .then(html => {
+                        document.getElementById('filesContainer').innerHTML = html;
+                        document.getElementById('filesContainer').style.display = 'block';
+                        document.getElementById('editContainer').style.display = 'none';
+                    })
+                    .catch(error => console.warn('Error fetching files content:', error));
+            });
+        });
+    });
 </script>
 
 </body>

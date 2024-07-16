@@ -1,10 +1,7 @@
 package com.enterprise.employees.service;
 
 import com.enterprise.employees.model.*;
-import com.enterprise.employees.repository.CustomerRepository;
-import com.enterprise.employees.repository.EmployeesRepository;
-import com.enterprise.employees.repository.ProjectRepository;
-import com.enterprise.employees.repository.TaskRepository;
+import com.enterprise.employees.repository.*;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,9 +9,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,6 +18,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     private final ProjectRepository projectRepository;
     private final EmployeesRepository employeesRepository;
+    private final FileRepository fileRepository;
     private final EmployeeService employeeService;
     private final TaskRepository taskRepository;
     @Lazy
@@ -70,17 +66,39 @@ public class ProjectServiceImpl implements ProjectService {
         if (existingProject != null) {
             Set<Employee> employeesToRemoveFromProject = new HashSet<>(existingProject.getEmployees());
             Set<Task> tasksToRemove = new HashSet<>(existingProject.getTasks());
+            Set<File> filesToRemove = new HashSet<>(existingProject.getFiles());
+
+            Customer customer = existingProject.getCustomer();
+            if (customer != null) {
+                Optional<Customer> customerOpt = customerRepository.findById(customer.getId());
+
+                // Remove project from customer's project lists
+                if (customerOpt.isPresent()) {
+                    customerOpt.get().getProjects().remove(existingProject);
+                    existingProject.setCustomer(null);
+                    customerRepository.save(customerOpt.get());
+                }
+            }
 
             // Remove project from employees' project lists
             for (Employee employee : employeesToRemoveFromProject) {
                 employee.getProjects().remove(existingProject);
+                existingProject.removeEmployee(employee);
                 employeeService.save(employee);
             }
             for(Task task : tasksToRemove){
+                task.removeProject(existingProject);
+                existingProject.removeTask(task);
                 taskServiceImpl.deleteById(task.getId());
+
             }
 
-            // The cascade and orphanRemoval settings on the Project.tasks field handle task deletion.
+            // Remove project from files' project lists
+            for (File file : filesToRemove) {
+                file.getProjects().remove(existingProject);
+                existingProject.getFiles().remove(file);
+                fileRepository.delete(file);
+            }
             projectRepository.deleteById(id);
         }
     }
@@ -95,30 +113,63 @@ public class ProjectServiceImpl implements ProjectService {
     public void update(ProjectDTO projectDTO, BindingResult bindingResult) {
 
         Project existingProject = findById(projectDTO.getId());
-        Customer existingCustomer = customerRepository.findById (projectDTO.getCustomerId()).orElse(null);
-        if(existingProject != null){
+        Customer newCustomer = customerRepository.findById(projectDTO.getCustomerId()).orElse(null);
+
+        if (existingProject != null) {
+            Customer oldCustomer = existingProject.getCustomer();
+
             existingProject.setName(projectDTO.getName());
             existingProject.setDescription(projectDTO.getDescription());
             existingProject.setStart(projectDTO.getStart());
             existingProject.setEnd(projectDTO.getEnd());
 
+
             // Update employees
-            existingProject.getEmployees().clear();
             if (projectDTO.getEmployeeIds() != null) {
-                for (Long employeeId : projectDTO.getEmployeeIds()) {
-                    employeesRepository.findById(employeeId).ifPresent(existingProject::addEmployee);
+                Set<Long> newEmployeeIds = new HashSet<>(projectDTO.getEmployeeIds());
+                Set<Long> currentEmployeeIds = existingProject.getEmployees().stream()
+                        .map(Employee::getId)
+                        .collect(Collectors.toSet());
+
+                // Remove employees that are no longer in the new list
+                for (Long currentEmployeeId : currentEmployeeIds) {
+                    if (!newEmployeeIds.contains(currentEmployeeId)) {
+                        employeesRepository.findById(currentEmployeeId).ifPresent(existingProject::removeEmployee);
+                    }
+                }
+
+                // Add new employees that are not in the current list
+                for (Long newEmployeeId : newEmployeeIds) {
+                    if (!currentEmployeeIds.contains(newEmployeeId)) {
+                        employeesRepository.findById(newEmployeeId).ifPresent(existingProject::addEmployee);
+                    }
                 }
             }
 
+                if (newCustomer != null) {
+                    if (oldCustomer != null) {
+                        if (oldCustomer.getProjects().stream().anyMatch(p -> p.getId().equals(existingProject.getId()))) {
+                            existingProject.setCustomer(null);
+                            projectRepository.save(existingProject);
+                            oldCustomer.setProjects(oldCustomer.getProjects()
+                                    .stream()
+                                    .filter(p -> !p.getId().equals(existingProject.getId()))
+                                    .collect(Collectors.toList()));
+                            customerRepository.save(oldCustomer);
+                        }
+                    }
+                    existingProject.setCustomer(newCustomer);
+                    newCustomer.getProjects().add(existingProject);
+                    customerRepository.save(newCustomer);
 
-            existingProject.setCustomer(existingCustomer);
-            projectRepository.save(existingProject);
+                }
 
-            // Ensure not to add the project if it already exists
-            if (existingCustomer != null && !existingCustomer.getProjects().contains(existingProject)) {
-                existingCustomer.addProject(existingProject);
-                customerRepository.save(existingCustomer);
+                projectRepository.save(existingProject);
             }
         }
+
+
+
+
     }
-}
+

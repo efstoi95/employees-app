@@ -51,13 +51,8 @@ public class Project {
 
     private LocalDateTime end;
 
-    @ElementCollection
-    @Lob
-    @Column(columnDefinition = "LONGBLOB")
-    private List<byte[]> fileContent = new ArrayList<>();
-
-    @ElementCollection
-    private List<String> fileNames = new ArrayList<>();
+    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+    private List<File> files = new ArrayList<>();
 
     private boolean finished;
 
@@ -65,10 +60,6 @@ public class Project {
         this.employees.add(employee);
         employee.getProjects().add(this);
     }
-
-
-
-
 
     public void removeEmployee(Employee employee) {
         this.employees.remove(employee);
@@ -84,20 +75,5 @@ public class Project {
         this.tasks.remove(task);
         task.setProject(null);
     }
-
-    public byte[] getFileContentByFileName(String fileName) {
-        int index = fileNames.indexOf(fileName);
-        if (index != -1) {
-            return fileContent.get(index);
-        }
-        return null;
-    }
-
-    public void addFile(MultipartFile file) throws IOException {
-        this.fileContent.add(file.getBytes());
-        this.fileNames.add(file.getOriginalFilename());
-    }
-
-
 
 }

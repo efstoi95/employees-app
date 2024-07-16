@@ -35,7 +35,7 @@ public class LoginController {
             }else if(auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
                 return "redirect:/web/successLogin";
             }
-            return "redirect:/web/infoEmployee/" + employee.getId();
+            return "redirect:/web/successUserLogin/" + employee.getId();
         }
         return "redirect:/web/login";
     }

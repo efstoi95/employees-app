@@ -3,105 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Employee Form</title>
+    <title>Edit Employee</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f5f5f5;
+            width: 100%;
+            font-family: Roboto, sans-serif;
+            font-size:22px;
         }
 
         h2 {
+            font-family: cursive, sans-serif;
             text-align: center;
             color: #333;
+            padding: 20px;
         }
 
-        form {
-            width: 50%;
+        .form-container {
+            width: 98%;
             margin: 0 auto;
             background-color: #fff;
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 5.1);
         }
 
-        label {
-            font-weight: bold;
-            display: block;
-            margin-bottom: 8px;
+        .form-control {
+            height: calc(2.25rem + 10px); /* Increase the height */
+            font-size: 1.25rem; /* Increase the font size */
         }
 
-        input[type="text"],
-        input[type="password"],
-        input[type="email"],
-        select {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
+        .form-control-lg {
+            height: calc(2.875rem + 10px); /* Even larger height for large inputs */
+            font-size: 1.5rem; /* Larger font size for large inputs */
         }
 
-        input[type="submit"] {
-            background-color: #9fc5e8;
+        .btn-custom {
+            background-color: #fecb01;
+            color: black;
+            font-size: 1.25rem;
+            height: calc(2.875rem + 10px); /* Match height with form-control-lg */
+        }
+
+        .btn-custom:hover {
             color: white;
-            padding: 14px 20px;
-            margin: 8px 0;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            width: 100%;
-        }
-
-        input[type="submit"]:hover {
-            background-color: #7bb5eb;
+            background-color: #7e6501;
         }
     </style>
 </head>
 <body>
-<h2>Employee Information</h2>
-<form th:action="@{/web/admin/editedEmployee}" th:object="${employee}" method="post">
-    <input type="hidden" th:field="*{id}">
+<h2>Edit Employee Information</h2>
+<div class="form-container">
+    <form th:action="@{/web/admin/editedEmployee}" th:object="${employee}" method="post">
+        <input type="hidden" th:field="*{id}">
 
-    <label for="fullName">Full Name:</label>
-    <div class="error" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}"></div>
-    <input type="text" id="fullName" th:field="*{fullName}" required minlength="4" pattern="[a-zA-Z\s]+" th:style="${#fields.hasErrors('fullName')} ? 'background-color: #FF7F7F;' : ''" title="Full Name should contain only letters and spaces">
+        <div class="form-group">
+            <label for="fullName">Full Name:</label>
+            <div class="text-danger" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}"></div>
+            <input type="text" class="form-control form-control-lg" id="fullName" th:field="*{fullName}" required minlength="4" pattern="[a-zA-Z\s]+" th:classappend="${#fields.hasErrors('fullName')} ? 'is-invalid' : ''" title="Full Name should contain only letters and spaces">
+        </div>
 
-    <label for="email">Email:</label>
-    <div class="error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
-    <input type="email" id="email" th:field="*{email}" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}" th:style="${#fields.hasErrors('email')} ? 'background-color: #FF7F7F;' : ''">
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <div class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+            <input type="email" class="form-control form-control-lg" id="email" th:field="*{email}" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}" th:classappend="${#fields.hasErrors('email')} ? 'is-invalid' : ''">
+        </div>
 
-    <label for="department">Department:</label>
-    <select id="department" th:field="*{departmentId}" required>
-        <option th:each="dept : ${departments}" th:value="${dept.id}" th:text="${dept.name}">
-        </option>
-    </select>
+        <div class="form-group">
+            <label for="department">Department:</label>
+            <select class="form-control form-control-lg" id="department" th:field="*{departmentId}" required>
+                <option th:each="dept : ${departments}" th:value="${dept.id}" th:text="${dept.name}"></option>
+            </select>
+        </div>
 
-    <label for="skills">Skills:</label>
-    <select id="skills" th:field="*{skillIds}" multiple="multiple" size="5">
-        <option th:each="skill : ${skills}" th:value="${skill.id}" th:text="${skill.name}">
-        </option>
-    </select>
+        <div class="form-group">
+            <label for="skills">Skills:</label>
+            <div class="text-danger" th:if="${#fields.hasErrors('skillIds')}" th:errors="*{skillIds}"></div>
+            <select class="form-control form-control-lg" id="skills" th:field="*{skillIds}" multiple="multiple" size="5">
+                <option th:each="skill : ${skills}" th:value="${skill.id}" th:text="${skill.name}"></option>
+            </select>
+        </div>
 
-    <label for="role">Role:</label>
-    <select id="role" th:field="*{role}" required>
-        <option th:each="role : ${T(com.enterprise.employees.model.EmployeeRoles).values()}"
-                th:value="${role}" th:text="${role}">
-        </option>
-    </select>
+        <div class="form-group">
+            <label for="role">Role:</label>
+            <select class="form-control form-control-lg" id="role" th:field="*{role}" required>
+                <option th:each="role : ${T(com.enterprise.employees.model.EmployeeRoles).values()}" th:value="${role}" th:text="${role}"></option>
+            </select>
+        </div>
 
-    <label for="username">Username:</label>
-    <div class="error" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></div>
-    <input type="text" id="username" th:field="*{username}" required minlength="4" pattern="[a-zA-Z\s]+" th:style="${#fields.hasErrors('username')} ? 'background-color: #FF7F7F;' : ''" title="Username should contain only letters and spaces">
+        <div class="form-group">
+            <label for="username">Username:</label>
+            <div class="text-danger" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></div>
+            <input type="text" class="form-control form-control-lg" id="username" th:field="*{username}" required minlength="4" pattern="[a-zA-Z\s]+" th:classappend="${#fields.hasErrors('username')} ? 'is-invalid' : ''" title="Username should contain only letters and spaces">
+        </div>
 
-    <label for="password">Password:</label>
-    <div class="error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
-    <input type="password" id="password" th:field="*{password}" required minlength="4" pattern="[a-zA-Z0-9]+" th:style="${#fields.hasErrors('password')} ? 'background-color: #FF7F7F;' : ''" title="Password should contain only letters and numbers">
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <div class="text-danger" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+            <input type="password" class="form-control form-control-lg" id="password" th:field="*{password}" required minlength="4" pattern="[a-zA-Z0-9]+" th:classappend="${#fields.hasErrors('password')} ? 'is-invalid' : ''" title="Password should contain only letters and numbers">
+        </div>
 
+        <button type="submit" class="btn btn-custom btn-block">Submit</button>
+    </form>
+</div>
 
-    <input type="submit" value="Submit">
-</form>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

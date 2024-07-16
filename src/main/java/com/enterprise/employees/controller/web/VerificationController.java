@@ -50,7 +50,7 @@ public class VerificationController {
                              @ModelAttribute("employee") Employee employee, Model model, BindingResult bindingResult) {
         logger.info("Entering (POST) verifyCode method with code: {}", verifiedCode);
         logger.info("Employee ID: {}", employee.getId());
-        employeeService.updateEmployee(employee, bindingResult); // Assuming you have an update method in your service
+        employeeService.updateEmployee(employee, bindingResult);
         if (bindingResult.hasErrors()) {
             logger.warn("Incorrect verification code entered for employee ID: {}", employee.getId());
             return "addVerifyCode"; // Return to the verification page with error message

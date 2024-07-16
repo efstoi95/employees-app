@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://kit.fontawesome.com/5b019c160d.js" crossorigin="anonymous"></script>
+    <title>All Projects</title>
+    <style>
+        body {
+             font-family: Roboto, sans-serif;
+             font-size:22px;
+         }
+       .container {
+           max-width: 800px;
+           margin-left: 250px;
+           padding: 20px;
+       }
+       table {
+           width: 190%;
+           border-collapse: collapse;
+           margin-bottom: 20px;
+       }
+       th, td {
+           border: 3px black solid;
+           padding: 8px;
+           text-align: center;
+       }
+       th {
+           background-color: #d3d3d3;
+       }
+       td{
+           background-color: #f2f2f2;
+       }
+       .button  {
+           display: inline-block;
+           padding: 8px 16px;
+           background-color: #9fc5e8; /* light blue */
+           color: black;
+           text-align: center;
+           text-decoration: none;
+           border: 1px black solid;
+           border-radius: 8px;
+           cursor: pointer;
+           font-size: 14px;
+           margin-bottom: 10px;
+           margin-right: 10px;
+       }
+       .button:hover {
+           background-color: #7bb5eb;
+           color: #ffffff;
+       }
+        .upload-form {
+           margin-top: 10px;
+           padding: 15px;
+           border-radius: 5px;
+           background-color: #f2f2f2;
+       }
+
+       .upload-form input[type=file] {
+           margin-bottom: 10px;
+       }
+
+       .upload-form button[type=submit] {
+          display: inline-block;
+           padding: 8px 16px;
+           background-color: #9fc5e8; /* light blue */
+           color: white;
+           text-align: center;
+           text-decoration: none;
+           border: 1px black ;
+           border-radius: 8px;
+           cursor: pointer;
+           font-size: 14px;
+           margin-bottom: 10px;
+           margin-right: 10px;
+       }
+
+       .upload-form button[type=submit]:hover {
+           background-color: #7bb5eb;
+           color: #ffffff;
+       }
+        .bounce-icon:hover {
+    animation: bounce 0.5s infinite alternate;
+}
+
+@keyframes bounce {
+    0% {
+        transform: translateY(0);
+    }
+    100% {
+        transform: translateY(-5px);
+    }
+}
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>All Resources</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Action</th>
+            <th>Files</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Check if projects list is empty -->
+        <tr th:if="${#lists.isEmpty(resources)}">
+            <td colspan="4">No Resources found.</td>
+        </tr>
+        <!-- Iterate over projects -->
+        <tr th:each="resource : ${resources}">
+            <td th:text="${resource.id}"></td>
+            <td th:text="${resource.name}"></td>
+            <td th:text="${resource.description}"></td>
+            <td> <!-- Moved the action column here -->
+                <span sec:authorize="hasRole('ADMIN')">
+                    <a th:href="@{/resources/deleteResource/{id}(id=${resource.id})}" class="button">Delete</a>
+                </span>
+                <span sec:authorize="hasRole('ADMIN')">
+                    <a th:href="@{/resources/editResource/{id}(id=${resource.id})}" class="button">Edit</a>
+                </span>
+            </td>
+            <td>
+                <span sec:authorize="hasRole('ADMIN')">
+                    <div class="upload-form">
+                        <form method="post" th:action="@{/projects/upload/{projectId}(projectId=${resource.id})}" enctype="multipart/form-data">
+                            <input type="file" name="file" />
+                            <button type="submit">Upload</button>
+                        </form>
+                        <!-- Display uploaded file names if available -->
+                        <div th:if="${not #lists.isEmpty(resource.fileNames)}">
+                            <p>Uploaded Files:</p>
+                            <ul>
+                                <li th:each="fileName, index : ${resource.fileNames}" style="margin-bottom: 10px;">
+                                    <span th:text="${fileName}"></span>
+                                    <a th:href="@{/projects/downloadFile/{projectId}/{fileName}(projectId=${resource.id}, fileName=${fileName})}" style="margin-left: 15px;" >
+                                         <i class="fa-solid fa-download fa-xl" style="color: #74C0FC;"></i>
+                                    </a>
+                                    <!-- Form to delete file -->
+                                     <form method="post" th:action="@{/projects/deleteFile/{projectId}/{index}(projectId=${resource.id}, index=${index.index})}" style="display:inline;">
+                                        <button  style="border: none;" class="bounce-icon" >
+                                             <i class="fa-solid fa-trash fa-xl" style="color: #ed0202;"></i>
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <a th:href="@{/login?logout}" class="button">Logout</a>
+    <a th:href="@{/web/successLogin}" class="button">Back to Menu</a>
+    <a th:href="@{/resources/createResource}" class="button">Create a Resource</a>
+
+
+
+</div>
+</body>
+</html>

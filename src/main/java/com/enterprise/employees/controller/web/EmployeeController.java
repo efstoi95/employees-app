@@ -1,21 +1,25 @@
 package com.enterprise.employees.controller.web;
 
-import com.enterprise.employees.model.Department;
-import com.enterprise.employees.model.Employee;
-import com.enterprise.employees.model.EmployeeDTO;
-import com.enterprise.employees.service.EmailService;
-import com.enterprise.employees.service.EmployeeService;
+import com.enterprise.employees.model.*;
+import com.enterprise.employees.repository.TaskRepository;
+import com.enterprise.employees.service.*;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.thymeleaf.exceptions.TemplateProcessingException;
 
 import java.io.IOException;
@@ -23,6 +27,9 @@ import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static com.enterprise.employees.controller.web.TaskController.format;
 
 @RequiredArgsConstructor
 @RequestMapping("/web")
@@ -33,6 +40,11 @@ public class EmployeeController {
     private final EmployeeService employeeService;
     private final EmailService emailService;
     private final ModelMapper modelMapper;
+    private final TaskService taskService;
+    private final FileStorageService fileStorageService;
+    private final ProjectService projectService;
+    @Autowired
+    private TaskRepository taskRepository;
 
     /**
      * Creates a new Employee object and adds it to the model for display in the "emp" view.
@@ -114,11 +126,17 @@ public class EmployeeController {
      */
     @Secured("ROLE_ADMIN")
     @GetMapping("/admin/delete/{id}")
-    public String deleteEmployee(@PathVariable("id") Long id,Model model) {
+    public String deleteEmployee(@PathVariable("id") Long id,
+                                 Model model,
+                                 RedirectAttributes redirectAttributes) {
         logger.info("Deleting employee with ID: {}", id);
+        String FullName = employeeService.getEmployeeById(id).getFullName();
         employeeService.deleteEmployee(id);
         logger.info("Employee with ID {} deleted successfully", id);
-        return "redirect:/web/successDelete";
+        redirectAttributes.addFlashAttribute("employeeDeleted", true);
+        redirectAttributes.addFlashAttribute("employeeId", id);
+        redirectAttributes.addFlashAttribute("employeeName", FullName);
+        return "redirect:/web/allEmployees";
     }
     /**
      * Retrieves an employee for editing based on the provided ID.
@@ -153,7 +171,9 @@ public class EmployeeController {
      */
     @Secured("ROLE_ADMIN")
     @PostMapping("/admin/editedEmployee")
-    public String editEmployee(@Validated @ModelAttribute("employee") EmployeeDTO employeeEditDTO, BindingResult bindingResult, Model model) {
+    public String editEmployee(@Validated @ModelAttribute("employee") EmployeeDTO employeeEditDTO,
+                               BindingResult bindingResult,
+                               Model model,RedirectAttributes redirectAttributes) {
         logger.info("Editing employee: {}", employeeEditDTO);
         employeeService.editEmployee(employeeEditDTO, bindingResult);
         if (bindingResult.hasErrors()) {
@@ -163,7 +183,20 @@ public class EmployeeController {
             return "edit";
         }
         logger.info("Employee edited successfully");
-        return "redirect:/web/successEdit";
+        redirectAttributes.addFlashAttribute("employeeEdited", true);
+        redirectAttributes.addFlashAttribute("employeeId", employeeEditDTO.getId());
+        redirectAttributes.addFlashAttribute("employeeName", employeeService.getEmployeeById(employeeEditDTO.getId()).getFullName());
+        return "redirect:/web/allEmployees";
+    }
+
+
+
+
+    @Secured("ROLE_USER")
+    @GetMapping("successUserLogin/{id}")
+    public String successUserLogin(@PathVariable("id") Long id, Model model) {
+        model.addAttribute("employeeId", id);
+        return "successUserLogin";
     }
 
     /**
@@ -183,6 +216,7 @@ public class EmployeeController {
                 model.addAttribute("skills",employeeService.getAllSkills());
                 model.addAttribute("departments", departments);
                 model.addAttribute("employee", existingEmployee);
+                model.addAttribute("employeeId", id);
                 logger.info("Employee retrieved: {}", existingEmployee);
             }else{
                 logger.warn("Employee with ID {} not found",id);
@@ -190,6 +224,19 @@ public class EmployeeController {
 
 
         return "infoEmployee";
+    }
+
+    @GetMapping("editInfoEmployee/{id}")
+    @Secured("ROLE_USER")
+    public String editInfoEmployee(@PathVariable("id") Long id,Model model) {
+        Employee employee = employeeService.getEmployeeById(id);
+        if(employee!= null){
+            model.addAttribute("employee", employee);
+            logger.info("Employee retrieved for edit: {}", employee);
+        }else{
+            logger.warn("Employee with ID {} not found",id);
+        }
+        return "editInfoEmployee";
     }
 
 
@@ -201,18 +248,25 @@ public class EmployeeController {
      */
     @Secured("ROLE_USER")
     @PostMapping("/editedInfoEmployee")
-    public String editedInfoEmployee(@Validated @ModelAttribute("employee") Employee employee, BindingResult bindingResult,Model model){
+    public String editedInfoEmployee(@Validated @ModelAttribute("employee") Employee employee,
+                                     BindingResult bindingResult,
+                                     Model model,
+                                     RedirectAttributes redirectAttributes) {
         logger.info("Editing employee information: {}", employee);
+        Long employeeId = employee.getId();
             employeeService.editInfoEmployee(employee, bindingResult);
             if(bindingResult.hasErrors()){
                 logger.info("Validation error encountered while editing your information: {}", bindingResult.getAllErrors());
                 model.addAttribute("employee", employee);
                 logger.info("Returning to employee creation form due to validation errors");
-                return "infoEmployee";
+
+                return "editInfoEmployee";
             }
 
         logger.info("Employee information edited successfully");
-        return "redirect:/web/success";
+        redirectAttributes.addFlashAttribute("employeeUpdated", true);
+        return "redirect:/web/infoEmployee/"+employeeId;
+
     }
 
     /**

@@ -1,127 +1,255 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Add Employee to Task</title>
+    <title>Edit Task</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-                width: 100%;
-                height: 100vh;
-                margin: 0;
-                background: linear-gradient(to right, white 0%, white 50%, #add8e6 50%, #add8e6 100%);
-            }
+            font-family: Roboto, sans-serif;
+            font-size:22px;
+        }
 
-         h1 {
-             color: #333;
-             text-align: center;
-         }
+        label {
+            font-family: cursive, sans-serif;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+        }
 
-         form {
-             max-width: 600px;
-             margin: 0 auto;
-             background-color: #fff;
-             padding: 20px;
-             border-radius: 8px;
-             box-shadow: 0 0 10px rgba(0, 0, 0, 5.1);
-         }
+        span {
+            display: block;
+            padding: 8px;
 
-         label {
-          font-family: cursive, sans-serif;
-              font-weight: bold;
-             display: block;
-             margin-bottom: 5px;
-             color: #333;
-         }
-          span {
-             display: block;
-             padding: 8px;
-             border: 1px solid #ccc;
-             border-radius: 4px;
-             background-color: #f9f9f9;
-             margin-bottom: 10px;
-         }
-          input[type="text"],
-         input[type="password"],
-         input[type="email"],
-         select {
-             width: 100%;
-             padding: 10px;
-             margin-bottom: 15px;
-             border: 1px solid #ccc;
-             border-radius: 4px;
-             box-sizing: border-box;
-         }
+        }
 
 
-         .employee-checkbox {
-             display: flex;
-             align-items: center;
-             margin-bottom: 10px;
-         }
-         .employee-checkbox input {
-             margin-left: 10px;
-         }
 
-          input[type="submit"] {
-             background-color: #9fc5e8;
-             color: white;
-             padding: 14px 20px;
-             margin: 8px 0;
-             border: none;
-             border-radius: 4px;
-             cursor: pointer;
-             width: 100%;
-         }
+        input[type="submit"] {
+            background-color: #fecb01;
+            color: black;
+            padding: 14px 20px;
+            margin: 8px 0;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
 
-         input[type="submit"]:hover {
-             background-color: #7bb5eb;
-         }
-         .light-green {
-             background-color: #d4edda;
-         }
+        input[type="submit"]:hover {
+            background-color: #7e6501;
+        }
+
+        .light-green {
+            background-color: #d4edda;
+        }
+
+        .table-content{
+            width: 80%;
+            font-size: 20px;
+        }
+
+        .popup {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .popup-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 30px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 600px;
+            border-radius: 8px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .popup-button {
+            background-color: #fecb01;
+            color: black;
+            padding: 10px 20px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            text-align: center;
+        }
+
+        .popup-button:hover {
+            background-color: #7e6501;
+            color: white;
+        }
+
+         .form-container {
+            width: 80%;
+            margin: 0 auto;
+
+
+        }
+
+         .form-control {
+            height: calc(2.25rem + 10px); /* Increase the height */
+            font-size: 1.25rem; /* Increase the font size */
+        }
+
+        .form-control-lg {
+            height: calc(2.875rem + 10px); /* Even larger height for large inputs */
+            font-size: 1.5rem; /* Larger font size for large inputs */
+        }
     </style>
-
 </head>
 <body>
-<h1>Edit Task</h1>
-<form th:action="@{/tasks/editedTask}" th:object="${task}" method="post">
-    <input type="hidden" th:field="*{id}">
-    <input type="hidden" th:field="*{projectId}">
 
+<div class="form-container">
+    <form th:action="@{/tasks/editedTask}" th:object="${task}" method="post" >
+        <input type="hidden" th:field="*{id}">
+        <input type="hidden" th:field="*{projectId}">
 
-    <label for="name">Name:</label>
-    <div class="error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
-    <input type="text" id="name" th:field="*{name}" required minlength="4"  th:style="${#fields.hasErrors('name')} ? 'background-color: #FF7F7F;' : ''" >
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <div class="error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+            <input type="text" class="form-control form-control-lg" id="name" th:field="*{name}"  required minlength="4" th:style="${#fields.hasErrors('name')} ? 'background-color: #FF7F7F;' : ''" >
+        </div>
 
-    <div>
-        <label>Project:</label>
-        <span th:text="${projectName}"></span>
+        <div class="form-group">
+            <label>Project:</label>
+            <span class="form-control form-control-lg" th:text="${projectName}"></span>
+        </div>
+
+        <div class="form-group">
+            <label for="description">Description:</label>
+            <div class="error" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
+            <input type="text" id="description" th:field="*{description}" class="form-control form-control-lg" required minlength="4" th:style="${#fields.hasErrors('description')} ? 'background-color: #FF7F7F;' : ''">
+        </div>
+
+        <div class="form-group">
+            <label for="durationInput">Duration:</label>
+            <div class="error" th:if="${#fields.hasErrors('durationInput')}" th:errors="*{durationInput}"></div>
+            <input type="text" id="durationInput" th:field="*{durationInput}" class="form-control form-control-lg" required minlength="1" title="Duration cannot be empty">
+        </div>
+
+        <div class="form-group">
+            <label for="resources">Resources:</label>
+            <button type="button" onclick="openResourcePopup()">+</button>
+            <select id="resources" name="resources" multiple="multiple" size="5" class="form-control">
+                <option th:each="resource : ${assignedResources}"
+                        th:value="${resource.id}"
+                        th:text="${resource.name}"
+                        th:selected="${resourcesIds.contains(resource.id)}">
+                </option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="eligibleEmployees">Eligible Employees:</label>
+            <button type="button" onclick="openAddPopup()">+</button>
+            <select id="eligibleEmployees" name="eligibleEmployees" multiple="multiple" size="5" class="form-control">
+                <option th:each="employee : ${assignedEmployees}"
+                        th:value="${employee.id}"
+                        th:text="${employee.fullName}"
+                        th:selected="${eligibleEmployeesIds.contains(employee.id)}">
+                </option>
+            </select>
+        </div>
+
+        <input type="submit" value="Submit" class="btn btn-primary">
+    </form>
+
+    <!-- The add Popup -->
+    <div id="addEmployeePopup" class="popup">
+        <div class="popup-content">
+            <span class="close" onclick="closeAddPopup()">&times;</span>
+            <h2>Select Eligible Employees</h2>
+            <table class="table-content">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Checked</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${#lists.isEmpty(employees)}">
+                    <td colspan="2">No Employees found.</td>
+                </tr>
+                <tr th:each="employee : ${employees}">
+                    <td th:text="${employee.fullName}"></td>
+                    <td>
+                        <div class="employee-checkbox">
+                            <label>
+                                <input type="checkbox" th:id="'employee-' + ${employee.id}" th:value="${employee.id}">
+                            </label>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <div>
+                <button type="button" onclick="addSelectedEmployees()" class="popup-button">Add Selected Employees</button>
+            </div>
+        </div>
     </div>
 
-    <label for="description">Description:</label>
-    <div class="error" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
-    <input type="text" id="description" th:field="*{description}" required minlength="4" th:style="${#fields.hasErrors('description')} ? 'background-color: #FF7F7F;' : ''">
-
-    <label for="durationInput">Duration:</label>
-    <div class="error" th:if="${#fields.hasErrors('durationInput')}" th:errors="*{durationInput}"></div>
-    <input type="text" id="durationInput" th:field="*{durationInput}" required minlength="1" title="Duration can not be empty">
-
-
-    <div>
-        <label for="eligibleEmployees">Eligible Employees:</label>
-        <select id="eligibleEmployees" name="eligibleEmployees" multiple="multiple" size="5">
-            <option th:each="employee : ${employees}" th:value="${employee.id}" th:text="${employee.fullName}">
-            </option>
-        </select>
+    <div id="addResourcePopup" class="popup">
+        <div class="popup-content">
+            <span class="close" onclick="closeResourcePopup()">&times;</span>
+            <h2>Select Resources</h2>
+            <table class="table-content">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Checked</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${#lists.isEmpty(resources)}">
+                    <td colspan="2">No Resources found.</td>
+                </tr>
+                <tr th:each="resource : ${resources}">
+                    <td th:text="${resource.name}"></td>
+                    <td>
+                        <div class="resource-checkbox">
+                            <label>
+                                <input type="checkbox" th:id="'resource-' + ${resource.id}" th:value="${resource.id}">
+                            </label>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <div>
+                <button type="button" onclick="addSelectedResources()" class="popup-button">Add Selected Resources</button>
+            </div>
+        </div>
     </div>
-    <label for="status">Status:</label>
-    <select id="status" th:field="*{status}" required>
-        <option th:each="status : ${T(com.enterprise.employees.model.Status).values()}"
-                th:value="${status}" th:text="${status}">
-        </option>
-    </select>
-    <div>
-        <input type="submit" value="Submit">
-    </div>
-</form>
+
+
+    <!-- Bootstrap JS and jQuery (optional) -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
 </body>
 </html>

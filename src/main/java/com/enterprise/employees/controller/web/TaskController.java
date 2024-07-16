@@ -1,8 +1,11 @@
 package com.enterprise.employees.controller.web;
 
 import com.enterprise.employees.model.*;
+import com.enterprise.employees.repository.FileRepository;
 import com.enterprise.employees.repository.TaskRepository;
 import com.enterprise.employees.service.*;
+import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.parser.PdfTextExtractor;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -18,10 +21,13 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -31,10 +37,13 @@ public class TaskController {
 
     @Autowired
     private TaskRepository taskRepository;
+    @Autowired
+    private FileRepository fileRepository;
     private final FileStorageService fileStorageService;
     private final ProjectServiceImpl projectServiceImpl;
     private final SkillServiceImpl skillService;
     private final TaskServiceImpl taskServiceImpl;
+    private final ResourceService resourceService;
     private final EmployeeService employeeService;
     private final ModelMapper modelMapper;
     private static final Logger logger = LoggerFactory.getLogger(TaskController.class);
@@ -61,7 +70,10 @@ public class TaskController {
 
 
     @PostMapping("/createdTask")
-    public String createTask(@Validated @ModelAttribute("task") TaskDTO taskDTO, BindingResult bindingResult, Model model) {
+    public String createTask(@Validated @ModelAttribute("task") TaskDTO taskDTO,
+                             BindingResult bindingResult,
+                             Model model,
+                             RedirectAttributes redirectAttributes) {
         logger.info("Creating new task: {}", taskDTO);
         Long projectId = taskDTO.getProjectId();
         taskServiceImpl.create(taskDTO , bindingResult);
@@ -70,7 +82,9 @@ public class TaskController {
             model.addAttribute("skills", skillService.getAllSkillsDTO());
             return "createTask";
         }
-        return "redirect:/tasks/successCreateTask/"+projectId; // A new template to show the task creation success and available employees
+        redirectAttributes.addFlashAttribute("taskCreated", true);
+        redirectAttributes.addFlashAttribute("taskName", taskDTO.getName());
+        return "redirect:/tasks/allTasks/"+projectId; // A new template to show the task creation success and available employees
     }
 
 
@@ -84,8 +98,23 @@ public class TaskController {
 
         List<Long> skillsId = taskDTO.getSkillsIds();
         List<Skill> requiredSkills = skillService.findSkillsByIds(skillsId);
+        List<ResourceDTO> resources = resourceService.findAllDTO();
+        List<Long> eligibleEmployeesIds = taskDTO.getEmployeeIds();
+        List<Long> resourcesIds = taskDTO.getResourcesIds();
+
+        // Retrieve employees already assigned to the task
+        List<Employee> assignedEmployees = taskDTO.getEmployeeIds().stream()
+                .map(employeeService::getEmployeeById)
+                .toList();
+
         model.addAttribute("projectName",projectName);
         model.addAttribute("task",taskDTO);
+        model.addAttribute("assignedResources", resources.stream().
+                filter(resource -> taskDTO.getResourcesIds().contains(resource.getId()))
+                .collect(Collectors.toList()));
+        model.addAttribute("resourcesIds",resourcesIds);
+        model.addAttribute("eligibleEmployeesIds",eligibleEmployeesIds);
+        model.addAttribute("assignedEmployees", assignedEmployees);
         model.addAttribute(
                 "employees",
                 project.getEmployees().stream()
@@ -96,23 +125,40 @@ public class TaskController {
     }
     @PostMapping("/editedTask")
     public String editedTask(@RequestParam(value = "eligibleEmployees", required = false) List<Long> eligibleEmployeesIds,
-                             @Validated @ModelAttribute("task") TaskDTO taskDTO, BindingResult bindingResult, Model model) {
-            Long projectId = taskDTO.getProjectId();
-            if(eligibleEmployeesIds != null) {
-                taskDTO.setEmployeeIds(eligibleEmployeesIds);
-            }
-            taskServiceImpl.editTask(taskDTO, bindingResult);
-            System.out.println(taskDTO);
-            return "redirect:/tasks/successEditTask/"+ projectId;
+                             @RequestParam(value = "resources", required = false) List<Long> resourcesIds,
+                             @Validated @ModelAttribute("task") TaskDTO taskDTO, BindingResult bindingResult,
+                             RedirectAttributes redirectAttributes) {
+        Long projectId = taskDTO.getProjectId();
+
+        if(eligibleEmployeesIds == null) {
+            taskDTO.setEmployeeIds(Collections.emptyList());
+        }
+        taskDTO.setEmployeeIds(eligibleEmployeesIds);
+
+
+        if(resourcesIds == null) {
+            taskDTO.setResourcesIds(Collections.emptyList());
+        }
+        taskDTO.setResourcesIds(resourcesIds);
+
+        taskServiceImpl.editTask(taskDTO, bindingResult);
+
+        redirectAttributes.addFlashAttribute("taskUpdated", true);
+        redirectAttributes.addFlashAttribute("taskName", taskDTO.getName());
+        return "redirect:/tasks/allTasks/"+ projectId;
     }
     @GetMapping("/deleteTask/{id}")
-    public String deleteTask(@PathVariable Long id,Model model) {
+    public String deleteTask(@PathVariable Long id,
+                             RedirectAttributes redirectAttributes) {
         logger.info("Deleting task with ID: {}", id);
         Task existingTask = taskServiceImpl.findById(id);
         Long projectId = existingTask.getProject().getId();
         taskServiceImpl.deleteById(id);
         logger.info("Task with ID {} deleted successfully", id);
-        return "redirect:/tasks/successDeleteTask/"+ projectId;
+        redirectAttributes.addFlashAttribute("taskDeleted", true);
+        redirectAttributes.addFlashAttribute("taskId", existingTask.getId());
+        redirectAttributes.addFlashAttribute("taskName", existingTask.getName());
+        return "redirect:/tasks/allTasks/"+ projectId;
     }
 
     /**
@@ -132,6 +178,7 @@ public class TaskController {
             logger.info("Number of tasks retrieved: {}", tasks.size());
             model.addAttribute("tasks", tasks);
             model.addAttribute("taskId", id);
+            model.addAttribute("statuses", Status.values());
             return "allTasks";
     }
 
@@ -161,6 +208,27 @@ public class TaskController {
         }
     }
 
+    @PostMapping("/updateStatus")
+    public String updateStatus(@RequestParam("taskId") Long taskId,
+                               @RequestParam("status") Status status,
+                               RedirectAttributes redirectAttributes) {
+        Task task = taskServiceImpl.findById(taskId);
+        task.setStatus(status);
+        taskServiceImpl.save(task);
+        redirectAttributes.addFlashAttribute("statusUpdated", true);
+        redirectAttributes.addFlashAttribute("status", status);
+        redirectAttributes.addFlashAttribute("taskName", task.getName());
+        return "redirect:/tasks/allTasks/" + task.getProject().getId();
+    }
+
+    @GetMapping("/showFiles/{taskId}")
+    public String showFiles(@PathVariable("taskId") Long taskId, Model model) {
+        Task task = taskServiceImpl.findById(taskId);
+        model.addAttribute("task", task);
+        model.addAttribute("fileNames", task.getFiles().stream().map(File::getFileName).toList());
+        return "showTaskFiles";
+    }
+
 
     /**
      * Uploads a task description file for a given task ID.
@@ -171,12 +239,34 @@ public class TaskController {
      */
     @PostMapping("/upload/{taskId}")
     public String uploadTaskDescriptionFile(@PathVariable Long taskId,
-                                            @RequestParam("file") MultipartFile[] files,Model model) throws IOException {
-            Long projectId = taskRepository.findById(taskId).orElseThrow(() -> new IllegalArgumentException("Invalid task ID: " + taskId)).getProject().getId();
-            fileStorageService.uploadTaskFile(taskId, files);
-            logger.info("File uploaded successfully");
-            return "redirect:/tasks/successUploadToTask/" + projectId;
+                                            @RequestParam("file") MultipartFile [] files,Model model) throws IOException {
+        Long projectId = taskRepository.findById(taskId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid task ID: " + taskId))
+                .getProject()
+                .getId();
+        //Check file sizes
+        for(MultipartFile file : files) {
+            if(file.isEmpty()) {
+                Task task = taskServiceImpl.findById(taskId);
+                return handleFileError(model, task, "File is empty. Please enter a valid file");
+            }
+            byte[] fileContent = file.getBytes();
+            if(fileContent.length > 5 * 1024 * 1024) { // Check file size in bytes
+                Task task = taskServiceImpl.findById(taskId);
+                return handleFileError(model, task, "File size exceeds maximum allowed size of 5MB");
+            }
+        }
+        fileStorageService.uploadTaskFile(taskId, files);
+        logger.info("File uploaded 0successfully");
+        return "redirect:/tasks/successUploadToTask/" + projectId;
     }
+    private String handleFileError(Model model, Task task, String errorMessage) {
+        model.addAttribute("error", errorMessage);
+        model.addAttribute("task", task);
+        model.addAttribute("fileNames", task.getFiles().stream().map(File::getFileName).collect(Collectors.toList()));
+        return "showTaskFiles";
+    }
+
     /**
      * Retrieves the task description file by task ID and file name.
      *
@@ -187,37 +277,89 @@ public class TaskController {
     @GetMapping("/downloadFile/{taskId}/{fileName}")
     public ResponseEntity<ByteArrayResource> downloadTaskDescriptionFile(@PathVariable Long taskId, @PathVariable String fileName) {
             Task task = taskRepository.findById(taskId).orElseThrow(() -> new IllegalArgumentException("Invalid task ID: " + taskId));
-            byte[] fileContent = task.getFileContentByFileName(fileName);
-            if(fileContent == null) {
-                throw new IllegalArgumentException("Invalid file name: " + fileName);
-            }
-            ByteArrayResource resource = new ByteArrayResource(fileContent);
+            File file = task.getFiles().stream()
+                    .filter(f -> f.getFileName().equals(fileName))
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid file name: " + fileName));
+
+            ByteArrayResource resource = new ByteArrayResource(file.getFileContent());
 
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
                     .body(resource);
     }
 
-    @PostMapping("/deleteFile/{taskId}/{index}")
-    public String deleteFile(@PathVariable Long taskId, @PathVariable int index) {
+    @PostMapping("/deleteFile/{taskId}/{fileId}")
+    public String deleteFile(@PathVariable Long taskId,
+                             @PathVariable Long fileId) {
             Task task = taskRepository.findById(taskId)
                     .orElseThrow(() -> new IllegalArgumentException("Invalid task ID: " + taskId));
             Long projectId = taskRepository.findById(taskId).orElseThrow(() -> new IllegalArgumentException("Invalid task ID: " + taskId)).getProject().getId();
-            // Remove file content and file name at the specified index
-            List<byte[]> fileContents = task.getFileContent();
-            List<String> fileNames = task.getFileNames();
 
-            if (fileContents != null && index >= 0 && index < fileContents.size()) {
-                fileContents.remove(index);
-                fileNames.remove(index);
+            File file = fileRepository.findById(fileId).orElseThrow(() -> new IllegalArgumentException("Invalid file ID: " + fileId));
+
+            if(!task.getFiles().contains(file)) {
+                throw new IllegalArgumentException("Invalid file ID: " + fileId);
             }
-            // Update task with updated lists
-            task.setFileContent(fileContents);
-            task.setFileNames(fileNames);
+
+        Optional<Employee> employeeOpt = task.getEmployees().stream()
+                                        .filter(emp -> emp.getFiles().contains(file))
+                                        .findFirst();
+
+            task.getFiles().remove(file);
             taskRepository.save(task);
+
+
+            if(employeeOpt.isPresent()) {
+                Employee employee = employeeOpt.get();
+                employee.getFiles().remove(file);
+                employeeService.save(employee);
+
+                file.getEmployees().remove(employee);
+            }
+
+           file.getTasks().remove(task);
+
+        // Delete the file if it is not associated with any other projects or employees
+        if (file.getTasks().isEmpty() && file.getEmployees().isEmpty()) {
+            fileRepository.deleteById(fileId);
+        } else {
+            fileRepository.save(file);
+        }
+        //
+
 
             // Redirect back to the task details page or wherever appropriate
             return "redirect:/tasks/successDeleteFile/" + projectId; // Adjust the redirect URL as per your application's navigation
+    }
+
+    @GetMapping("/viewFile/{taskId}/{fileName}")
+    public ResponseEntity<byte[]> viewFile(@PathVariable Long taskId, @PathVariable String fileName, Model model) {
+        Task task = taskRepository.findById(taskId).orElseThrow(() -> new IllegalArgumentException("Invalid task ID: " + taskId));
+        // Find the File entity by fileName
+        File file = task.getFiles().stream()
+                .filter(f -> f.getFileName().equals(fileName))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("File not found for fileName: " + fileName));
+
+
+
+        HttpHeaders headers = new HttpHeaders();
+        if (fileName.endsWith(".pdf")) {
+            headers.add(HttpHeaders.CONTENT_TYPE, "application/pdf");
+        } else if (fileName.endsWith(".txt")) {
+            headers.add(HttpHeaders.CONTENT_TYPE, "text/plain; charset=UTF-8");
+        } else if (fileName.endsWith(".png")) {
+            headers.add(HttpHeaders.CONTENT_TYPE, "image/png");
+        }  else if (fileName.endsWith(".jpg")) {
+            headers.add(HttpHeaders.CONTENT_TYPE, "image/jpg");
+        }else {
+            throw new IllegalArgumentException("Unsupported file type: " + fileName);
+        }
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(file.getFileContent());
+
     }
 
     @GetMapping("/successCreateTask/{id}")

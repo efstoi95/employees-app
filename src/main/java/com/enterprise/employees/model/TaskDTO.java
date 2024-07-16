@@ -32,15 +32,19 @@ public class TaskDTO {
 
     private List<Long> skillsIds;
 
+    private List<Long> resourcesIds;
+
     @Enumerated(EnumType.STRING)
     private Status status;
 
     private String durationInput;
 
-    private List<byte[]> fileContent = new ArrayList<>();
+//    private List<byte[]> fileContent = new ArrayList<>();
+//
+//    @ElementCollection
+//    private List<String> fileNames = new ArrayList<>();
 
-    @ElementCollection
-    private List<String> fileNames = new ArrayList<>();
+    private List<File> files = new ArrayList<>();
 
     private boolean finished;
 }

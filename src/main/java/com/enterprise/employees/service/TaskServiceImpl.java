@@ -2,6 +2,7 @@ package com.enterprise.employees.service;
 
 import com.enterprise.employees.model.*;
 import com.enterprise.employees.repository.ProjectRepository;
+import com.enterprise.employees.repository.ResourceRepository;
 import com.enterprise.employees.repository.SkillRepository;
 import com.enterprise.employees.repository.TaskRepository;
 import lombok.AllArgsConstructor;
@@ -25,12 +26,16 @@ public class TaskServiceImpl implements TaskService  {
 
     ProjectRepository projectRepository;
     SkillRepository skillRepository;
+    ResourceRepository resourceRepository;
 
     TaskRepository taskRepository;
     @Autowired
     EmployeeService employeeService;
     @Autowired
     SkillService skillService;
+
+    @Autowired
+    ResourceService resourceService;
     @Autowired
     private ModelMapper modelMapper;
 
@@ -129,13 +134,13 @@ public class TaskServiceImpl implements TaskService  {
         Task existingTask = findById(id);
         if(existingTask != null){
             // Remove task from project's task list
-            Optional<Project> project = projectRepository.findById(existingTask.getProject().getId());
-            if(project.isPresent()){
-//                boolean allTasksClosed = project.get().getTasks().stream()
-//                        .allMatch(t -> t.getStatus() == Status.CLOSED);
-//                project.get().setFinished(allTasksClosed);
-                project.get().removeTask(existingTask);
-                projectRepository.save(project.get());
+            Project project = existingTask.getProject();
+            if (project != null) {
+                Optional<Project> projectOpt = projectRepository.findById(project.getId());
+                if (projectOpt.isPresent()) {
+                    projectOpt.get().removeTask(existingTask);
+                    projectRepository.save(projectOpt.get());
+                }
             }
             // Remove task from employees' task lists
             Set<Employee> employeesToRemoveFromTask = new HashSet<>(existingTask.getEmployees());
@@ -148,6 +153,13 @@ public class TaskServiceImpl implements TaskService  {
             for (Skill skill : skillsToRemoveFromTask) {
                 skill.getTasks().remove(existingTask);
                 skillService.save(skill);
+            }
+
+            //Remove task from resource's task lists
+            Set<Resource> resourcesToRemoveFromTask = new HashSet<>(existingTask.getResources());
+            for (Resource resource : resourcesToRemoveFromTask) {
+                resource.getTasks().remove(existingTask);
+                resourceService.save(resource);
             }
             //Delete the task
             taskRepository.deleteById(id);
@@ -171,8 +183,6 @@ public class TaskServiceImpl implements TaskService  {
             existingTask.setName(task.getName());
             existingTask.setDescription(task.getDescription());
 
-            existingTask.setStatus(task.getStatus());
-            existingTask.setStatus(task.getStatus());
             // Parse and set duration
             String durationStr = task.getDurationInput();
             Duration duration = parseDuration(durationStr);
@@ -184,6 +194,12 @@ public class TaskServiceImpl implements TaskService  {
                 Employee employee = employeeService.getEmployeeById(employeeId);
                 existingTask.addEmployee(employee);
             }
+           //Clear existing resourses and add new ones
+            existingTask.getResources().clear();
+           for(Long resourceId : taskDTO.getResourcesIds()){
+                Resource resource = resourceService.findById(resourceId);
+                existingTask.addResource(resource);
+           }
             // Save updated task
             taskRepository.save(existingTask);
             // Update project finished status based on task statuses
@@ -202,10 +218,23 @@ public class TaskServiceImpl implements TaskService  {
     @Override
     public TaskDTO findByIdDTO(Long id) {
         Task task = findById(id);
+        String durationStr = convertDurationToString(task.getDuration());
         List<Long> skillIds = task.getSkills().stream().map(Skill::getId).toList();
+        List<Long> employeeIds = task.getEmployees().stream().map(Employee::getId).toList();
+        List<Long> resourceIds = task.getResources().stream().map(Resource::getId).toList();
         TaskDTO taskDTO = modelMapper.map(task, TaskDTO.class);
         taskDTO.setSkillsIds(skillIds);
+        taskDTO.setEmployeeIds(employeeIds);
+        taskDTO.setResourcesIds(resourceIds);
+        taskDTO.setDurationInput(durationStr);
         return taskDTO;
+    }
+
+    private String convertDurationToString(Duration duration) {
+        long days = duration.toDays();
+        long hours = duration.toHoursPart();
+        long minutes = duration.toMinutesPart();
+        return days + "d" + hours + "h" + minutes + "m";
     }
 
 

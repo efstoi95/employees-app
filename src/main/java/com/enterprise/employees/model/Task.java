@@ -45,12 +45,10 @@ public class Task {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    @ElementCollection
-    @Lob
-    private List<byte[]> fileContent = new ArrayList<>();
 
-    @ElementCollection
-    private List<String> fileNames = new ArrayList<>();
+
+    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+    private List<File> files = new ArrayList<>();
 
     @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     @JoinTable(
@@ -58,6 +56,13 @@ public class Task {
             joinColumns = @JoinColumn(name = "tasks_id"),
             inverseJoinColumns = @JoinColumn(name = "employee_id"))
     private List<Employee> employees = new ArrayList<>();
+
+    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+    @JoinTable(
+        name  = "resources_tasks",
+        joinColumns = @JoinColumn(name = "tasks_id"),
+        inverseJoinColumns = @JoinColumn(name = "resource_id"))
+    private List<Resource> resources = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "project_id")
@@ -78,24 +83,20 @@ public class Task {
         employee.getTasks().remove(this);
     }
 
-
-    public void addDescriptionFile(byte[] file) {
-        this.fileContent.add(file);
+    public void addResource(Resource resource) {
+        this.resources.add(resource);
+        resource.getTasks().add(this);
     }
 
-    public byte[] getFileContentByFileName(String fileName) {
-        int index = fileNames.indexOf(fileName);
-        if (index != -1) {
-            return fileContent.get(index);
-        }
-        return null;
+    public void removeResource(Resource resource) {
+        this.resources.remove(resource);
+        resource.getTasks().remove(this);
     }
 
-    public void addFile(MultipartFile file) throws IOException {
-        this.fileContent.add(file.getBytes());
-        this.fileNames.add(file.getOriginalFilename());
+    public void removeProject(Project project) {
+        this.project.getTasks().remove(this);
+        this.project = null;
     }
-
 
 
 

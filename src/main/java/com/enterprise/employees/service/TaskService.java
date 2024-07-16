@@ -21,4 +21,5 @@ public interface TaskService {
     TaskDTO findByIdDTO(Long id);
 
     Long findProjectId();
+
 }
