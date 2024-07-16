@@ -113,6 +113,7 @@ public class TaskController {
                 filter(resource -> taskDTO.getResourcesIds().contains(resource.getId()))
                 .collect(Collectors.toList()));
         model.addAttribute("resourcesIds",resourcesIds);
+        model.addAttribute("resources",resources);
         model.addAttribute("eligibleEmployeesIds",eligibleEmployeesIds);
         model.addAttribute("assignedEmployees", assignedEmployees);
         model.addAttribute(
