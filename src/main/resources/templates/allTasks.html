@@ -14,6 +14,9 @@
             font-size:22px;
              margin-top: 90px;
         }
+        h2{
+            text-align: center;
+        }
         .container {
             max-width: 1600px;
             margin-left: auto;
@@ -105,8 +108,16 @@
             color: #ffffff;
         }
 
+        .bounce-icon {
+            background-color: white;
+            border: none;
+        }
 
-
+        .bounce-icon:hover {
+            animation: bounce 0.5s;
+            animation-direction: alternate;
+            animation-iteration-count: infinite;
+        }
         @keyframes bounce {
 
             0% {
@@ -153,9 +164,16 @@
         .right-buttons {
             margin-left: 73%;
         }
-         .back-to-menu {
-            text-align: right;
+         .back-to-menu .fa-arrow-left {
+            color: #febc01;
+            transition: color 0.3s;
+            text-align: left;
+            margin-top:2%;
+            margin-bottom:2%;
         }
+        .back-to-menu .fa-arrow-left:hover{
+        color: #7e6501;
+
         .create-button-container{
         margin-top:20px;
         text-align: left;
@@ -166,7 +184,9 @@
 <div class="container" style="max-width: 2000px">
     <h2>All Tasks</h2>
     <div class="back-to-menu">
-        <a th:href="@{/projects/allProjects}" class="button" style="width:10%">Return to Projects</a>
+        <a th:href="@{/projects/allProjects}">
+            <i class="fa-solid fa-arrow-left fa-2xl"></i>
+        </a>
     </div>
     <div class="create-button-container">
         <span sec:authorize="hasRole('ADMIN')">
@@ -217,14 +237,16 @@
                             <span sec:authorize="hasRole('ADMIN')">
                                 <a th:href="@{/tasks/deleteTask/{id}(id=${task.id})}">
                                     <button  style="border: none;" class="bounce-icon" >
-                                        <i class="fa-solid fa-trash fa-xl" style="color: #fecb01;"></i>
+                                        <i class="fa-solid fa-trash fa-xl" style="color: #ff6666;"></i>
                                     </button>
                                 </a>
                             </span>
                         </td>
                         <td>
                             <span sec:authorize="hasRole('ADMIN')">
-                                <a href="#" th:href="@{/tasks/showFiles/{id}(id=${task.id})}" class="button files-link">View Files</a>
+                                <a href="#" th:href="@{/tasks/showFiles/{id}(id=${task.id})}" class="bounce-icon files-link">
+                                    <i class="fa-solid fa-folder-open fa-xl" style="color: #fecb01;"></i>
+                                </a>
                             </span>
                         </td>
                     </tr>
@@ -255,8 +277,8 @@
     <div class="popup-content">
         <span class="close" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
         <h2>File uploaded successfully!</h2>
-        <p> Id: <span th:text="${projectId}"></span> , Project Name: <span th:text="${projectName}"></span><br>
-            File Name: <span th:text="${fileName}"></span></p>
+        <p>Task Name: <span th:text="${taskName}"></span></p>
+        <p>File Name: <span th:text="${fileName}"></span></p>
     </div>
 </div>
 
@@ -264,8 +286,7 @@
     <div class="popup-content">
         <span class="close" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
         <h2>File deleted successfully!</h2>
-        <p>Project Id: <span th:text="${projectId}"></span></p>
-        <p>Project Name: <span th:text="${projectName}"></span></p>
+        <p>Task Name: <span th:text="${taskName}"></span></p>
     </div>
 </div>
 
@@ -432,7 +453,7 @@
                 if (!exists) {
                     var option = document.createElement("option");
                     option.value = checkbox.value;
-                    option.text = checkbox.nextElementSibling.textContent;
+                    option.text = checkbox.closest('td').previousElementSibling.textContent;
                     option.selected = true;
                     select.appendChild(option);
                 }

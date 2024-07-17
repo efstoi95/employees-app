@@ -14,6 +14,9 @@
             font-size:22px;
              margin-top: 90px;
         }
+        h2{
+            text-align: center;
+        }
         .container {
             max-width: 1600px;
             margin-left: auto;
@@ -119,19 +122,18 @@
         .right-buttons {
             margin-left: 73%;
         }
-         .back-to-menu {
-            text-align: right;
+        .back-to-menu .fa-arrow-left {
+            color: #febc01;
+            transition: color 0.3s;
+            text-align: left;
+            margin-top:4%;
+            margin-bottom:4%;
         }
-
-           .bounce-icon:hover {
-           color: #7e6501;
-    animation: bounce 0.5s infinite alternate;
-}
-
-        .create-button-container{
-        margin-top:20px;
-        text-align: left;
+        .back-to-menu .fa-arrow-left:hover{
+        color: #7e6501;
     }
+
+
 
          .popup {
             display: none;
@@ -176,7 +178,9 @@
 <div class="container" style="max-width: 1600px">
     <h2>All Tasks</h2>
     <div class="back-to-menu">
-        <a th:href="@{/web/EmployeeProjects/{id}(id=${employeeId})}" class="button" style="width:10%">Return to Projects</a>
+        <a th:href="@{/web/EmployeeProjects/{id}(id=${employeeId})}">
+            <i class="fa-solid fa-arrow-left fa-2xl"></i>
+        </a>
     </div>
 
     <div class="split-view">
@@ -205,7 +209,9 @@
                         <td th:text="${task.finished} ? 'Closed' : 'Open'"></td>
                         <td>
                             <span sec:authorize="hasRole('USER')">
-                                <a href="#" th:href="@{/web/showEmployeeTaskFiles/{id}(id=${task.id}, employeeId=${employeeId})}" class="button files-link">View Files</a>
+                                <a href="#" th:href="@{/web/showEmployeeTaskFiles/{id}(id=${task.id}, employeeId=${employeeId})}" class="files-link">
+                                     <i class="fa-solid fa-folder-open fa-xl" style="color: #fecb01;"></i>
+                                </a>
                             </span>
                         </td>
                     </tr>
