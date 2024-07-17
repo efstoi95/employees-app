@@ -3,12 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://kit.fontawesome.com/5b019c160d.js" crossorigin="anonymous"></script>
     <title>All Employees</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
            font-family: Roboto, sans-serif;
            font-size:22px;
+        }
+        h2 {
+            text-align: center;
         }
         .container {
             max-width: 1600px;
@@ -83,10 +87,39 @@
             display: block !important;
         }
 
-        .return-button-container {
-            text-align: right;
-            margin-bottom: 10px;
+        .side-button .fa-house,
+        .side-button .fa-right-from-bracket{
+            text-align: left;
+            margin-bottom: 4%;
+            margin-top: 4%;
+            color:#fecb01;
+            transition: color 0.3s;
         }
+
+        .side-button .fa-house:hover,
+        .side-button .fa-right-from-bracket:hover{
+            color: #7e6501;
+        }
+         .bounce-icon {
+            background-color: white;
+            border: none;
+        }
+
+        .bounce-icon:hover {
+            animation: bounce 0.5s;
+            animation-direction: alternate;
+            animation-iteration-count: infinite;
+        }
+        @keyframes bounce {
+
+            0% {
+                transform: translateY(0);
+            }
+            100% {
+                transform: translateY(-5px);
+            }
+        }
+
 
                .popup {
             display: none;
@@ -130,9 +163,13 @@
 <body>
 <div class="container" style="max-width: 1780px">
     <h2>All Employees</h2>
-    <div class="return-button-container">
-        <a th:href="@{/web/successLogin}" class="button">Back to Menu</a>
-        <a th:href="@{/login?logout}" class="button">Logout</a>
+    <div class="side-button">
+        <a th:href="@{/web/successLogin}" >
+            <i class="fa-solid fa-house fa-xl" style="margin-right: 2%;"></i>
+        </a>
+        <a th:href="@{/login?logout}">
+            <i class="fa-solid fa-right-from-bracket fa-xl" ></i>
+        </a>
     </div>
     <div class="split-view">
         <div class="tasks-container">
@@ -199,10 +236,16 @@
                             <td th:text="${employee.department.name}"></td>
                             <td>
                                 <span sec:authorize="hasRole('ADMIN')">
-                                    <a th:href="@{/web/admin/delete/{id}(id=${employee.id})}" class="button">Delete</a>
+                                    <a th:href="@{/web/admin/delete/{id}(id=${employee.id})}">
+                                        <button  style="border: none;" class="bounce-icon" >
+                                            <i class="fa-solid fa-trash fa-xl" style="color: #ff6666;"></i>
+                                        </button>
+                                    </a>
                                 </span>
                                 <span sec:authorize="hasRole('ADMIN')">
-                                    <a th:href="@{/web/admin/edit/{id}(id=${employee.id})}" class="button files-link">Edit</a>
+                                    <a th:href="@{/web/admin/edit/{id}(id=${employee.id})}" class="files-link">
+                                         <i class="fa-solid fa-user-pen fa-xl" style="color: #fecb01; margin-left: 10%;"></i>
+                                    </a>
                                 </span>
                             </td>
                         </tr>

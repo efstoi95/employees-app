@@ -13,6 +13,10 @@
             font-size:22px;
 
         }
+        h2{
+            text-align: center;
+
+        }
         .container {
             max-width: 1600px;
             margin-left: auto;
@@ -96,13 +100,29 @@
         .right-buttons {
             text-align: right;
         }
-         .back-to-menu {
-           text-align: right;
+         .back-to-menu .fa-house,
+          .back-to-menu .fa-right-from-bracket{
+           color: #fecb01;
+           transition: color 0.3s;
+           text-align: left;
+           margin-bottom: 4%;
+           margin-top:4%;
         }
-            .create-button-container{
-        margin-top:20px;
-        text-align: left;
-    }
+        .back-to-menu .fa-house:hover,
+         .back-to-menu .fa-right-from-bracket:hover{
+
+            color: #7e6501;
+        }
+        .create-button-container .fa-print{
+            color: #fecb01;
+            transition: color 0.3s;
+            margin-top:20px;
+            text-align: left;
+        }
+
+        .create-button-container .fa-print:hover{
+            color: #7e6501;
+        }
 
          .popup {
             display: none;
@@ -140,6 +160,13 @@
             text-decoration: none;
             cursor: pointer;
         }
+         .bounce-icon {
+            background-color: white;
+            border: none;
+        }
+        .bounce-icon .fa-folder-open:hover{
+            color: #7e6501;
+        }
 
     </style>
 </head>
@@ -147,8 +174,12 @@
 <div class="container" style="max-width: 1860px">
     <h2>All Projects</h2>
     <div class="back-to-menu">
-        <a th:href="@{/web/successLogin}" class="button back-to-menu">Back to Menu</a>
-        <a th:href="@{/login?logout}" class="button">Logout</a>
+        <a th:href="@{/web/successLogin}">
+            <i class="fa-solid fa-house fa-xl" style="margin-right: 2%;"></i>
+        </a>
+        <a th:href="@{/login?logout}" >
+            <i class="fa-solid fa-right-from-bracket fa-xl" ></i>
+        </a>
     </div>
     <div class="create-button-container">
         <span sec:authorize="hasRole('ADMIN')">
@@ -180,23 +211,33 @@
                     <tr th:each="proj : ${projects}">
                         <td th:text="${proj.id}"></td>
                         <td>
-                            <a href="#" th:href="@{/projects/editProject/{id}(id=${proj.id})}" th:text="${proj.name}" class="edit-link" ></a>
+                            <a href="#" th:href="@{/projects/editProject/{id}(id=${proj.id})}" th:text="${proj.name}" class="edit-link"
+                            style="color:black; "></a>
                         </td>
                         <td th:text="${proj.description}"></td>
                         <td th:text="${#temporals.format(proj.start, 'dd/MM/yyyy HH:mm:ss')}"></td>
                         <td th:text="${#temporals.format(proj.end, 'dd/MM/yyyy HH:mm:ss')}"></td>
                         <td th:text="${proj.finished} ? 'Closed' : 'Open'"></td>
                         <td>
+
                             <span sec:authorize="hasRole('ADMIN')">
-                                <a th:href="@{/projects/deleteProject/{id}(id=${proj.id})}" class="button">Delete</a>
+                                <a th:href="@{/projects/deleteProject/{id}(id=${proj.id})}">
+                                    <button  style="border: none;" class="bounce-icon" >
+                                        <i class="fa-solid fa-trash fa-xl" style="color: #ff6666;"></i>
+                                    </button>
+                                </a>
                             </span>
+
                             <span sec:authorize="hasRole('ADMIN')">
-                                <a th:href="@{/tasks/allTasks/{id}(id=${proj.id})}" class="button">View tasks</a>
+                                <a th:href="@{/tasks/allTasks/{id}(id=${proj.id})}" class="button">Tasks</a>
                             </span>
                         </td>
                         <td>
+<!--                          -->
                             <span sec:authorize="hasRole('ADMIN')">
-                                <a href="#" th:href="@{/projects/showFiles/{id}(id=${proj.id})}" class="button files-link">View Files</a>
+                                <a href="#" th:href="@{/projects/showFiles/{id}(id=${proj.id})}" class="bounce-icon files-link">
+                                    <i class="fa-solid fa-folder-open fa-xl" style="color: #fecb01;"></i>
+                                </a>
                             </span>
                         </td>
                     </tr>
@@ -211,9 +252,10 @@
             <!-- Content from showtaskFiles.html will be loaded here -->
         </div>
     </div>
-    <div class="right-buttons">
-
-        <a class="button" href="/reports/employees/pdf">Print Report</a>
+    <div class="create-button-container">
+        <a href="/reports/employees/pdf">
+            <i class="fa-solid fa-print fa-xl"></i>
+        </a>
     </div>
 </div>
 <div th:if="${fileUploaded}" class="popup" th:style="'display:block;'">

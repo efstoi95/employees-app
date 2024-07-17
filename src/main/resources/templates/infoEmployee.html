@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://kit.fontawesome.com/5b019c160d.js" crossorigin="anonymous"></script>
     <title>Employee Form</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
@@ -50,6 +51,7 @@
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: -30px;
         }
 
         .form-control {
@@ -142,11 +144,22 @@
             color: #ffffff;
         }
 
-        .button-right {
-            text-align: right;
-            margin-right: 10%;
-            margin-bottom: 3%;
+        .side-button .fa-house,
+        .side-button .fa-right-from-bracket,
+        .side-button .fa-user-pen{
+            text-align: left;
+            margin-bottom: 4%;
+            margin-top: 4%;
+            color: #fecb01;
+            transition: color 0.3s;
         }
+
+        .side-button .fa-house:hover,
+        .side-button .fa-right-from-bracket:hover,
+        .side-button .fa-user-pen:hover{
+            color: #7e6501;
+        }
+
 
         .button-left {
             text-align: left;
@@ -190,12 +203,6 @@
     font-weight: 500;
     border-radius: 30px;
   }
-
-
-
-
-
-
    .popup {
             display: none;
             position: fixed;
@@ -245,14 +252,20 @@
         <button type="submit"
                 th:data-employee-id="${employeeId}" onclick="closePopup(this.getAttribute('data-employee-id'))" method="post">OK</button>
     </div>
-    <div class="button-right">
-        <a th:href="@{/web/successUserLogin/{id}(id=${employeeId})}" class="button">Back to Menu</a>
-        <a th:href="@{/login?logout}" class="button">Logout</a>
+    <div class="side-button">
+        <a th:href="@{/web/successUserLogin/{id}(id=${employeeId})}">
+            <i class="fa-solid fa-house fa-xl" style="margin-right: 2%;"></i>
+        </a>
+        <a th:href="@{/login?logout}" >
+            <i class="fa-solid fa-right-from-bracket fa-xl" ></i>
+        </a>
     </div>
     <div class="split-view">
         <div class="info-container">
-            <div class="button-left">
-                <a th:href="@{/web/editInfoEmployee/{id}(id=${employeeId})}" class="button files-link">Edit</a>
+            <div class="side-button">
+                <a th:href="@{/web/editInfoEmployee/{id}(id=${employeeId})}" class="files-link" style="margin-left: 21%;" >
+                    <i class="fa-solid fa-user-pen fa-xl"></i>
+                </a>
             </div>
             <div class="form-container">
                 <form th:action="@{/web/editedInfoEmployee}" th:object="${employee}" method="post">

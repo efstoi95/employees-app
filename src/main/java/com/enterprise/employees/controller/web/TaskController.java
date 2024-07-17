@@ -68,7 +68,6 @@ public class TaskController {
         return "createTask";
     }
 
-
     @PostMapping("/createdTask")
     public String createTask(@Validated @ModelAttribute("task") TaskDTO taskDTO,
                              BindingResult bindingResult,
@@ -86,7 +85,6 @@ public class TaskController {
         redirectAttributes.addFlashAttribute("taskName", taskDTO.getName());
         return "redirect:/tasks/allTasks/"+projectId; // A new template to show the task creation success and available employees
     }
-
 
     @GetMapping("/editTask/{id}")
     public String editTask(@PathVariable Long id,Model model) {
@@ -135,8 +133,6 @@ public class TaskController {
             taskDTO.setEmployeeIds(Collections.emptyList());
         }
         taskDTO.setEmployeeIds(eligibleEmployeesIds);
-
-
         if(resourcesIds == null) {
             taskDTO.setResourcesIds(Collections.emptyList());
         }
@@ -161,7 +157,6 @@ public class TaskController {
         redirectAttributes.addFlashAttribute("taskName", existingTask.getName());
         return "redirect:/tasks/allTasks/"+ projectId;
     }
-
     /**
      * A description of the entire Java function.
      *
@@ -182,7 +177,6 @@ public class TaskController {
             model.addAttribute("statuses", Status.values());
             return "allTasks";
     }
-
     public static String format(Duration duration){
         long days = duration.toDays();
         long hours = duration.toHours() % 24;
@@ -208,7 +202,6 @@ public class TaskController {
             return String.format("%dm", minutes);
         }
     }
-
     @PostMapping("/updateStatus")
     public String updateStatus(@RequestParam("taskId") Long taskId,
                                @RequestParam("status") Status status,
@@ -230,7 +223,6 @@ public class TaskController {
         return "showTaskFiles";
     }
 
-
     /**
      * Uploads a task description file for a given task ID.
      *
@@ -240,7 +232,9 @@ public class TaskController {
      */
     @PostMapping("/upload/{taskId}")
     public String uploadTaskDescriptionFile(@PathVariable Long taskId,
-                                            @RequestParam("file") MultipartFile [] files,Model model) throws IOException {
+                                            @RequestParam("file") MultipartFile [] files,
+                                            Model model,
+                                            RedirectAttributes redirectAttributes) throws IOException {
         Long projectId = taskRepository.findById(taskId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid task ID: " + taskId))
                 .getProject()
@@ -259,7 +253,10 @@ public class TaskController {
         }
         fileStorageService.uploadTaskFile(taskId, files);
         logger.info("File uploaded 0successfully");
-        return "redirect:/tasks/successUploadToTask/" + projectId;
+        redirectAttributes.addFlashAttribute("fileUploaded", true);
+        redirectAttributes.addFlashAttribute("taskName", taskRepository.findById(taskId).get().getName());
+        redirectAttributes.addFlashAttribute("fileName", files[0].getOriginalFilename());
+        return "redirect:/tasks/allTasks/" + projectId;
     }
     private String handleFileError(Model model, Task task, String errorMessage) {
         model.addAttribute("error", errorMessage);
@@ -292,25 +289,24 @@ public class TaskController {
 
     @PostMapping("/deleteFile/{taskId}/{fileId}")
     public String deleteFile(@PathVariable Long taskId,
-                             @PathVariable Long fileId) {
+                             @PathVariable Long fileId,
+                             RedirectAttributes redirectAttributes) {
             Task task = taskRepository.findById(taskId)
                     .orElseThrow(() -> new IllegalArgumentException("Invalid task ID: " + taskId));
-            Long projectId = taskRepository.findById(taskId).orElseThrow(() -> new IllegalArgumentException("Invalid task ID: " + taskId)).getProject().getId();
-
-            File file = fileRepository.findById(fileId).orElseThrow(() -> new IllegalArgumentException("Invalid file ID: " + fileId));
-
+            Long projectId = taskRepository.findById(taskId)
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid task ID: " + taskId))
+                    .getProject()
+                    .getId();
+            File file = fileRepository.findById(fileId)
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid file ID: " + fileId));
             if(!task.getFiles().contains(file)) {
                 throw new IllegalArgumentException("Invalid file ID: " + fileId);
             }
-
         Optional<Employee> employeeOpt = task.getEmployees().stream()
                                         .filter(emp -> emp.getFiles().contains(file))
                                         .findFirst();
-
             task.getFiles().remove(file);
             taskRepository.save(task);
-
-
             if(employeeOpt.isPresent()) {
                 Employee employee = employeeOpt.get();
                 employee.getFiles().remove(file);
@@ -318,20 +314,18 @@ public class TaskController {
 
                 file.getEmployees().remove(employee);
             }
-
            file.getTasks().remove(task);
-
         // Delete the file if it is not associated with any other projects or employees
         if (file.getTasks().isEmpty() && file.getEmployees().isEmpty()) {
             fileRepository.deleteById(fileId);
         } else {
             fileRepository.save(file);
         }
-        //
-
-
+        redirectAttributes.addFlashAttribute("fileDeleted", true);
+        redirectAttributes.addFlashAttribute("fileName", file.getFileName());
+        redirectAttributes.addFlashAttribute("taskName", task.getName());
             // Redirect back to the task details page or wherever appropriate
-            return "redirect:/tasks/successDeleteFile/" + projectId; // Adjust the redirect URL as per your application's navigation
+        return "redirect:/tasks/allTasks/" + projectId; // Adjust the redirect URL as per your application's navigation
     }
 
     @GetMapping("/viewFile/{taskId}/{fileName}")
@@ -342,9 +336,6 @@ public class TaskController {
                 .filter(f -> f.getFileName().equals(fileName))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("File not found for fileName: " + fileName));
-
-
-
         HttpHeaders headers = new HttpHeaders();
         if (fileName.endsWith(".pdf")) {
             headers.add(HttpHeaders.CONTENT_TYPE, "application/pdf");
@@ -363,40 +354,4 @@ public class TaskController {
 
     }
 
-    @GetMapping("/successCreateTask/{id}")
-    public String successCreateTask(@PathVariable Long id, Model model) {
-        model.addAttribute("message", "The information of the task created");
-        model.addAttribute("projectId", id);
-        logger.info("The information of the task created.");
-        return "successTask";
-
-    }
-    @GetMapping("/successEditTask/{id}")
-    public String successAddEmployeeToTask(@PathVariable Long id, Model model){
-        model.addAttribute("message", "The information of the task changed");
-        model.addAttribute("projectId", id);
-        return "successTask";
-    }
-    @GetMapping("/successDeleteTask/{id}")
-    public String successDeleteTask(@PathVariable Long id, Model model){
-        model.addAttribute("message", "The information of the task deleted");
-        model.addAttribute("projectId", id);
-        return "successTask";
-    }
-
-    @GetMapping("/successDeleteFile/{projectId}")
-    public String successDeleteFile(@PathVariable Long projectId, Model model) {
-        model.addAttribute("message", "File deleted successfully");
-        model.addAttribute("projectId", projectId);
-        return "successTask";
-    }
-
-
-    @GetMapping("/successUploadToTask/{projectId}")
-    public String successUploadToTask(@PathVariable Long projectId, Model model) {
-        model.addAttribute("message", "File uploaded successfully");
-        model.addAttribute("projectId", projectId);
-
-        return "successTask";
-    }
 }
