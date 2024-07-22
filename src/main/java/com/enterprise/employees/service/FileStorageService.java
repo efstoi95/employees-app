@@ -12,6 +12,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -28,6 +32,58 @@ public class FileStorageService {
 
     @Autowired
     private ProjectRepository projectRepository;
+
+    private final String uploadDir = "uploads/";
+
+    public String saveFile(MultipartFile file) throws IOException {
+        if (file.isEmpty()) {
+            throw new IOException("Failed to store empty file");
+        }
+
+        // Check if the file is an image
+        String contentType = file.getContentType();
+        if (contentType == null || !contentType.startsWith("image/")) {
+            throw new IOException("The uploaded file is not an image");
+        }
+
+        Path uploadPath = Paths.get(uploadDir);
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
+        }
+
+        String fileName = file.getOriginalFilename();
+        assert fileName != null;
+        Path filePath = uploadPath.resolve(fileName);
+
+        // Check if the file already exists
+        if (Files.exists(filePath)) {
+            filePath = getUniqueFilePath(uploadPath, fileName);
+        }
+
+        Files.copy(file.getInputStream(), filePath);
+
+        // Return the file URL (adjust this to match your deployment setup)
+        return "/uploads/" + filePath.getFileName().toString();
+    }
+
+    private Path getUniqueFilePath(Path uploadPath, String fileName) {
+        String name = fileName;
+        String extension = "";
+        int dotIndex = fileName.lastIndexOf('.');
+        if (dotIndex > 0) {
+            name = fileName.substring(0, dotIndex);
+            extension = fileName.substring(dotIndex);
+        }
+
+        Path filePath = uploadPath.resolve(fileName);
+        int counter = 1;
+        while (Files.exists(filePath)) {
+            fileName = name + "_" + counter + extension;
+            filePath = uploadPath.resolve(fileName);
+            counter++;
+        }
+        return filePath;
+    }
 
     public void uploadTaskFile(Long taskId, MultipartFile[] files) throws IOException {
         Task task = taskRepository.findById(taskId).orElseThrow(() -> new IllegalArgumentException("Invalid task ID: " + taskId));

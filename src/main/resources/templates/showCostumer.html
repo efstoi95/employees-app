@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="">
+<head>
+    <script src="https://kit.fontawesome.com/5b019c160d.js" crossorigin="anonymous"></script>
+    <title>Customer Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        .back .fa-arrow-left {
+           color: #febc01;
+           transition: color 0.3s;
+           text-align: left;
+           margin-top:2%;
+           margin-bottom:2%;
+       }
+       .back .fa-arrow-left:hover{
+       color: #7e6501;
+
+    </style>
+</head>
+<body>
+<div class="back">
+    <a th:href="@{/customer/allCustomers}">
+        <i class="fa-solid fa-arrow-left fa-2xl"></i>
+    </a>
+</div>
+<div id="map" style="height: 800px; width: 100%;"></div>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    var customerLocation = /*[[${customerLocation}]]*/ null;
+    /*]]>*/
+
+    var map = L.map('map').setView([51.3357, 7.0421], 14); // Default view to company location
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    var companyLocation = {
+        name: "eccos pro GmbH",
+        address: "Nevigeser Str. 100",
+        city: "Velbert",
+        postalCode: "42553",
+        lat: 51.3357, // Latitude for the fixed company address
+        lon: 7.0421   // Longitude for the fixed company address
+    };
+
+    var companyMarker = L.marker([companyLocation.lat, companyLocation.lon]).addTo(map)
+        .bindTooltip(companyLocation.name, {permanent: true, direction: 'top'}).openTooltip();
+
+    var bounds = L.latLngBounds([companyLocation.lat, companyLocation.lon]);
+
+    if (customerLocation && customerLocation.address) {
+        var address = customerLocation.address + ", " + customerLocation.city + ", " + customerLocation.postalCode;
+        var marker = L.marker([0, 0]).addTo(map); // Placeholder marker
+
+        // Use Nominatim API to fetch coordinates based on address
+        var url = "https://nominatim.openstreetmap.org/search?format=json&q=" + encodeURIComponent(address);
+        fetch(url)
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                if (data.length > 0) {
+                    var latlng = [data[0].lat, data[0].lon];
+                    marker.setLatLng(latlng).bindTooltip(customerLocation.name, {permanent: true, direction: 'top'}).openTooltip();
+                    var popupContent = "<b>Project Name:</b> " + customerLocation.projectName + "<br>" +
+                                       "<b>Address:</b> " + customerLocation.address + "<br>" +
+                                       "<b>City:</b> " + customerLocation.city + "<br>" +
+                                       "<b>Postal Code:</b> " + customerLocation.postalCode;
+                    marker.bindPopup(popupContent);
+
+                    // Use OSRM to fetch the route and distance
+                    var osrmUrl = `http://router.project-osrm.org/route/v1/driving/${companyLocation.lon},${companyLocation.lat};${data[0].lon},${data[0].lat}?overview=full&geometries=geojson`;
+
+                    fetch(osrmUrl)
+                        .then(function(response) {
+                            return response.json();
+                        })
+                        .then(function(routeData) {
+                            if (routeData.routes && routeData.routes.length > 0) {
+                                var coordinates = routeData.routes[0].geometry.coordinates;
+                                var routeLine = coordinates.map(function(coord) {
+                                    return [coord[1], coord[0]]; // Convert to [lat, lon]
+                                });
+
+                                // Draw the route line on the map
+                                var polyline = L.polyline(routeLine, {color: 'blue'}).addTo(map);
+
+                               // Calculate the distance
+                                var distance = routeData.routes[0].distance; // Distance in meters
+                                var distanceInKm = distance / 1000; // Convert distance to kilometers
+                                var distanceText = distanceInKm.toFixed(2) + " km";
+
+                                // Calculate the total fuel required
+                                var fuelPer100Km = 6; // liters
+                                var costPerLiter = 1.80; // euros
+                                var fuelRequired = (distanceInKm / 100) * fuelPer100Km; // Total fuel required in liters
+
+                                // Calculate the total cost
+                                var totalCost = fuelRequired * costPerLiter; // Total cost in euros
+
+                                // Format the cost
+                                var costText = "Cost: " + totalCost.toFixed(2) + " €";
+
+                                // Add a tooltip to the line
+                                polyline.bindTooltip("Distance: " + distanceText + "<br>" + costText, {permanent: true, direction: 'center', className: 'distance-tooltip'}).openTooltip();
+
+                                bounds.extend(latlng);
+                                map.fitBounds(bounds);
+                            }
+                        })
+                        .catch(function(error) {
+                            console.log("Error fetching route:", error);
+                        });
+                }
+            })
+            .catch(function(error) {
+                console.log("Error fetching coordinates:", error);
+            });
+    } else {
+        // If no customer, set view to company location
+        map.setView([companyLocation.lat, companyLocation.lon], 14);
+    }
+</script>
+</body>
+</html>

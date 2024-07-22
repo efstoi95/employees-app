@@ -1,6 +1,7 @@
 package com.enterprise.employees.controller.web;
 
 import com.enterprise.employees.model.Customer;
+import com.enterprise.employees.model.CustomerProjectDTO;
 import com.enterprise.employees.service.CustomerServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -55,7 +57,10 @@ public class CostumerController {
      * @return          description of return value
      */
     @PostMapping("/createdCustomer")
-    public String createCustomer(@ModelAttribute("customer") Customer customer, BindingResult result, Model model) {
+    public String createCustomer(@ModelAttribute("customer") Customer customer,
+                                 BindingResult result,
+                                 Model model,
+                                 RedirectAttributes redirectAttributes) {
             logger.info("Entering (POST)createCustomer method");
             logger.debug("Customer data: {}", customer);
             customerService.create(customer, result);
@@ -63,7 +68,9 @@ public class CostumerController {
                 return "createCustomer";
             }
             logger.info("Customer created successfully");
-            return "redirect:/customer/successCreateCustomer";
+            redirectAttributes.addFlashAttribute("customerCreated", true);
+            redirectAttributes.addFlashAttribute("customerName", customer.getFullName());
+            return "redirect:/customer/allCustomers";
     }
 
 
@@ -89,7 +96,10 @@ public class CostumerController {
      * @return          the name of the view to render
      */
     @PostMapping("/updatedCustomer")
-    public String editedCustomer(@ModelAttribute("customer") Customer customer, BindingResult result, Model model) {
+    public String editedCustomer(@ModelAttribute("customer") Customer customer,
+                                 BindingResult result,
+                                 Model model,
+                                 RedirectAttributes redirectAttributes) {
             logger.info("Entering (POST)updateCustomer method");
             logger.debug("Customer data: {}", customer);
             customerService.update(customer, result);
@@ -97,7 +107,10 @@ public class CostumerController {
                 return "updateCustomer";
             }
             logger.info("Customer edited successfully");
-            return "redirect:/customer/successUpdateCustomer";
+            redirectAttributes.addFlashAttribute("customerUpdated", true);
+            redirectAttributes.addFlashAttribute("customerName", customer.getFullName());
+            redirectAttributes.addFlashAttribute("customerId", customer.getId());
+            return "redirect:/customer/allCustomers";
 
     }
 
@@ -109,30 +122,24 @@ public class CostumerController {
      * @return     a redirection to the successDeleteCustomer page
      */
     @GetMapping("/deleteCustomer/{id}")
-    public String deleteCustomer(@PathVariable("id") Long id,Model model) {
+    public String deleteCustomer(@PathVariable("id") Long id,
+                                 Model model,
+                                 RedirectAttributes redirectAttributes) {
         logger.info("Deleting customer with id: {}", id);
+        String fullName = customerService.findById(id).getFullName();
         customerService.deleteById(id);
         logger.info("Customer deleted successfully");
-        return "redirect:/customer/successDeleteCustomer";
+        redirectAttributes.addFlashAttribute("customerDeleted", true);
+        redirectAttributes.addFlashAttribute("customerName", fullName);
+        redirectAttributes.addFlashAttribute("customerId", id);
+        return "redirect:/customer/allCustomers";
 
     }
 
-    @GetMapping("/successCreateCustomer")
-    public String successCreateCustomer(Model model) {
-        model.addAttribute("message", "Customer created successfully");
-
-        return "successCustomer";
-    }
-
-    @GetMapping("/successUpdateCustomer")
-    public String successUpdateCustomer(Model model) {
-        model.addAttribute("message", "Customer edited successfully");
-        return "successCustomer";
-    }
-
-    @GetMapping("/successDeleteCustomer")
-    public String successDeleteCustomer(Model model) {
-        model.addAttribute("message", "Customer deleted successfully");
-        return "successCustomer";
+    @GetMapping("/showCustomer/{id}")
+    public String showCustomer(@PathVariable("id") Long id, Model model) {
+        CustomerProjectDTO customerProjectDTO = customerService.findCustomerWithProjectDTOById(id);
+        model.addAttribute("customerLocation", customerProjectDTO);
+        return "showCostumer";
     }
 }

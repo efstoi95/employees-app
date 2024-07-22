@@ -68,6 +68,9 @@ public class Task {
     @JoinColumn(name = "project_id")
     private Project project;
 
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Post> posts = new ArrayList<>();
+
 
     @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     private List<Skill> skills = new ArrayList<>();

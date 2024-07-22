@@ -76,6 +76,7 @@ public class WebSecurityConfig  {
                 authorizeHttpRequests(authz -> authz
                         // Allow all requests to URLs under "/web/**"
                         .requestMatchers("/web/**").permitAll()
+                        .requestMatchers("/posts/uploadImage").permitAll()
                         // All other requests must be authenticated
                         .anyRequest().authenticated()
         )// Configure form login
@@ -90,7 +91,10 @@ public class WebSecurityConfig  {
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                 // Redirect to the login page with a logout parameter upon successful logout
                 .logoutSuccessUrl("/login?logout")
-        );
+            )
+                .csrf(csrf -> csrf
+                        .ignoringRequestMatchers("/posts/uploadImage")
+                );
 
 
         return http.build();

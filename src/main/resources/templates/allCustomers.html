@@ -105,6 +105,44 @@
                 transform: translateY(-5px);
             }
         }
+
+
+         .popup {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.4);
+        }
+
+  .popup-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 35%;
+            text-align: center;
+            border-radius: 10px;
+        }
+
+
+   .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -115,7 +153,13 @@
             <i class="fa-solid fa-house fa-xl" style="margin-right: 2%;"></i>
         </a>
         <a th:href="@{/login?logout}">
-            <i class="fa-solid fa-right-from-bracket fa-xl" ></i>
+            <i class="fa-solid fa-right-from-bracket fa-xl" style="margin-right: 2%;" ></i>
+        </a>
+        <a th:href="@{/map/allCustomers}" >
+            <i class="fa-solid fa-map-location-dot fa-xl" style="margin-right: 2%;"></i>
+        </a>
+        <a href="/reports/employees/pdf">
+            <i class="fa-solid fa-print fa-xl"></i>
         </a>
     </div>
     <div class="left-side-button">
@@ -159,8 +203,8 @@
                 <td>
                     <span sec:authorize="hasRole('ADMIN')">
                         <a th:href="@{/customer/deleteCustomer/{id}(id=${customer.id})}">
-                            <button  style="border: none;" class="bounce-icon" >
-                                        <i class="fa-solid fa-trash fa-xl" style="color: #ff6666;"></i>
+                            <button style="border: none;" class="bounce-icon">
+                                <i class="fa-solid fa-trash fa-xl" style="color: #ff6666;"></i>
                             </button>
                         </a>
                     </span>
@@ -169,18 +213,42 @@
                             <i class="fa-solid fa-user-pen fa-xl" style="color: #fecb01; margin-left: 4%;"></i>
                         </a>
                     </span>
+                    <!-- Conditionally show the map icon if the customer has projects -->
+                    <span sec:authorize="hasRole('ADMIN')">
+                        <a th:href="@{/customer/showCustomer/{id}(id=${customer.id})}" th:if="${!#lists.isEmpty(customer.projects)}">
+                            <i class="fa-solid fa-map-location-dot fa-xl" style="color: #fecb01; margin-left: 4%;"></i>
+                        </a>
+                    </span>
                 </td>
             </tr>
             </tbody>
         </table>
     </div>
-    <div class="side-button">
-        <a th:href="@{/map/allCustomers}" >
-            <i class="fa-solid fa-map-location-dot fa-xl" style="margin-right: 2%;"></i>
-        </a>
-        <a href="/reports/employees/pdf">
-            <i class="fa-solid fa-print fa-xl"></i>
-        </a>
+</div>
+
+<div th:if="${customerDeleted}" class="popup" th:style="'display:block;'">
+    <div class="popup-content">
+        <span class="close" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
+        <h2>Customer deleted successfully!</h2>
+        <p>Customer Id: <span th:text="${customerId}"></span></p>
+        <p>Customer Name: <span th:text="${customerName}"></span></p>
+    </div>
+</div>
+
+<div th:if="${customerCreated}" class="popup" th:style="'display:block;'">
+    <div class="popup-content">
+        <span class="close" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
+        <h2>New Customer created successfully!</h2>
+        <p>Customer Name: <span th:text="${customerName}"></span></p>
+    </div>
+</div>
+
+<div th:if="${customerUpdated}" class="popup" th:style="'display:block;'">
+    <div class="popup-content">
+        <span class="close" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
+        <h2>Customer updated successfully!</h2>
+        <p>Customer Id: <span th:text="${customerId}"></span></p>
+        <p>Customer Name: <span th:text="${customerName}"></span></p>
     </div>
 </div>
 
@@ -192,17 +260,14 @@
 <script>
     function showTooltip(element) {
         var tooltip = element.querySelector('.tooltip');
-        console.log(tooltip);
         tooltip.classList.add('show');
         var rect = element.getBoundingClientRect();
-        console.log(rect);
         tooltip.style.top = rect.top + window.scrollY + element.offsetHeight + 'px';
         tooltip.style.left = rect.left + window.scrollX + 'px';
     }
 
     function hideTooltip(element) {
         var tooltip = element.querySelector('.tooltip');
-        console.log(tooltip);
         tooltip.classList.remove('show');
     }
 </script>
