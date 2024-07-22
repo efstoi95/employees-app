@@ -8,7 +8,7 @@ public interface CrudService <T>{
 
     T save(T t);
 
-    void create(T t, BindingResult bindingResult);
+    void create(T t);
 
 
 
@@ -18,9 +18,8 @@ public interface CrudService <T>{
 
     Iterable<T> findAll();
 
-    void update(T t, BindingResult bindingResult);
+    void update(T t);
 
 
-    void addEmployeeToTask(Task task, BindingResult bindingResult);
 
 }

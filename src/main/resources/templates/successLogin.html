@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <script src="https://kit.fontawesome.com/5b019c160d.js" crossorigin="anonymous"></script>
     <title>User Information Form</title>
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
@@ -28,9 +29,28 @@
             color: white;
             background-color: #7e6501;
         }
+
+          .log-out .fa-right-from-bracket{
+           color: #fecb01;
+           transition: color 0.3s;
+           text-align: left;
+           margin-bottom: 4%;
+           margin-top:4%;
+           margin-left: 10%;
+        }
+
+         .log-out .fa-right-from-bracket:hover{
+            color: #7e6501;
+        }
     </style>
 </head>
 <body>
+<div class="log-out">
+    <a th:href="@{/login?logout}" >
+        <i class="fa-solid fa-right-from-bracket fa-2xl" ></i>
+    </a>
+
+</div>
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">

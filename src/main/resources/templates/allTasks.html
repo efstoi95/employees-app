@@ -63,7 +63,7 @@
         .split-view {
             display: flex;
             gap: 15px;
-            width: 1600px;
+            width: 1800px;
         }
         .tasks-container {
             flex: 70%;
@@ -239,6 +239,12 @@
                                     <button  style="border: none;" class="bounce-icon" >
                                         <i class="fa-solid fa-trash fa-xl" style="color: #ff6666;"></i>
                                     </button>
+                                </a>
+                            </span>
+
+                            <span sec:authorize="hasRole('ADMIN')">
+                                <a th:href="@{/posts/allTasksPosts/{id}(id=${task.id})}" class="bounce-icon">
+                                    <i class="fa-regular fa-comment fa-xl" style="color: #fecb01; margin-left: 5%;"></i>
                                 </a>
                             </span>
                         </td>

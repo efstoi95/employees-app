@@ -56,6 +56,9 @@ public class Project {
 
     private boolean finished;
 
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Post> posts = new ArrayList<>();
+
     public void addEmployee(Employee employee) {
         this.employees.add(employee);
         employee.getProjects().add(this);

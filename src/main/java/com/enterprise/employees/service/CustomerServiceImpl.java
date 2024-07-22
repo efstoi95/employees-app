@@ -12,6 +12,7 @@ import org.springframework.validation.BindingResult;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -124,4 +125,31 @@ public class CustomerServiceImpl implements CustomerService {
         }
     }
 
+    public CustomerProjectDTO findCustomerWithProjectDTOById(Long id) {
+        Optional<Customer> optionalCustomer = customerRepository.findById(id);
+        if (optionalCustomer.isEmpty()) {
+            return null;
+        }
+
+        Customer customer = optionalCustomer.get();
+        Project project = projectRepository.findByCustomerId(customer.getId());
+
+
+        CustomerProjectDTO dto = new CustomerProjectDTO();
+
+        dto.setId(customer.getId());
+        dto.setName(customer.getFullName());
+        dto.setAddress(customer.getAddress());
+        dto.setCity(customer.getCity());
+        dto.setPostalCode(customer.getPostalCode());
+        // Check if project is null before accessing its properties
+        if (project != null) {
+            dto.setProjectName(project.getName());
+        } else {
+            dto.setProjectName("None");
+        }
+
+
+        return dto;
+    }
 }

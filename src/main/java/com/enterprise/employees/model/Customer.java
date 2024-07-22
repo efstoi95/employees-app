@@ -1,5 +1,6 @@
 package com.enterprise.employees.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -47,6 +48,7 @@ public class Customer {
     private String postalCode;
 
     @OneToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+
     private List<Project> projects= new ArrayList<>();
 
     public void addProject(Project  project) {
