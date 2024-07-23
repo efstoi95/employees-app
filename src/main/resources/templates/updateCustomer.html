@@ -12,20 +12,15 @@
             font-size:22px;
         }
 
-        h2 {
-            font-family: cursive, sans-serif;
-            text-align: center;
-            color: #333;
-            padding: 20px;
-        }
+
 
         .form-container {
-            width: 50%;
+            width: 100%;
             margin: 0 auto;
             background-color: #fff;
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 5.1);
+
         }
 
         .form-control {
@@ -52,7 +47,6 @@
     </style>
 </head>
 <body>
-<h2>Customer Information</h2>
 <div class="form-container">
     <form th:action="@{/customer/updatedCustomer}" th:object="${customer}" method="post">
         <input type="hidden" th:field="*{id}">

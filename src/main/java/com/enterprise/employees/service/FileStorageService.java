@@ -1,12 +1,7 @@
 package com.enterprise.employees.service;
 
-import com.enterprise.employees.model.Employee;
-import com.enterprise.employees.model.File;
-import com.enterprise.employees.model.Project;
-import com.enterprise.employees.model.Task;
-import com.enterprise.employees.repository.EmployeesRepository;
-import com.enterprise.employees.repository.ProjectRepository;
-import com.enterprise.employees.repository.TaskRepository;
+import com.enterprise.employees.model.*;
+import com.enterprise.employees.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,6 +27,9 @@ public class FileStorageService {
 
     @Autowired
     private ProjectRepository projectRepository;
+
+    @Autowired
+    private ResourceRepository resourceRepository;
 
     private final String uploadDir = "uploads/";
 
@@ -184,4 +182,22 @@ public class FileStorageService {
     }
 
 
+    public void uploadResourceFile(Long resourceId, MultipartFile[] files) throws IOException {
+
+        Resource resource = resourceRepository.findById(resourceId).orElseThrow(() -> new IllegalArgumentException("Invalid resource ID: " + resourceId));
+        List<File> existingFiles = resource.getFiles();
+
+        if(existingFiles == null) {
+            existingFiles = new ArrayList<>();
+        }
+        for (MultipartFile file : files) {
+            File newFile = new File();
+            newFile.setFileName(file.getOriginalFilename());
+            newFile.setFileContent(file.getBytes());
+            existingFiles.add(newFile);
+        }
+        resource.setFiles(existingFiles);
+
+        resourceRepository.save(resource);
+    }
 }

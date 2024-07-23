@@ -10,20 +10,6 @@
             font-size:22px;
         }
 
-        h2 {
-            text-align: center;
-            color: #333;
-        }
-
-        form {
-            width: 50%;
-            margin: 0 auto;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
         label {
             font-weight: bold;
             display: block;
@@ -43,8 +29,8 @@
         }
 
         input[type="submit"] {
-            background-color: #9fc5e8;
-            color: white;
+            background-color: #fecb01;
+            color: black;
             padding: 14px 20px;
             margin: 8px 0;
             border: none;
@@ -54,12 +40,12 @@
         }
 
         input[type="submit"]:hover {
-            background-color: #7bb5eb;
+            color: white;
+            background-color: #7e6501;
         }
     </style>
 </head>
 <body>
-<h2>Employee Information</h2>
 <form th:action="@{/resources/editedResource}" th:object="${resource}" method="post">
     <input type="hidden" th:field="*{id}">
 

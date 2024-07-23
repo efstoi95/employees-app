@@ -5,162 +5,396 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://kit.fontawesome.com/5b019c160d.js" crossorigin="anonymous"></script>
     <title>All Projects</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-             font-family: Roboto, sans-serif;
-             font-size:22px;
-         }
-       .container {
-           max-width: 800px;
-           margin-left: 250px;
-           padding: 20px;
-       }
-       table {
-           width: 190%;
-           border-collapse: collapse;
-           margin-bottom: 20px;
-       }
-       th, td {
-           border: 3px black solid;
-           padding: 8px;
-           text-align: center;
-       }
-       th {
-           background-color: #d3d3d3;
-       }
-       td{
-           background-color: #f2f2f2;
-       }
-       .button  {
-           display: inline-block;
-           padding: 8px 16px;
-           background-color: #9fc5e8; /* light blue */
-           color: black;
-           text-align: center;
-           text-decoration: none;
-           border: 1px black solid;
-           border-radius: 8px;
-           cursor: pointer;
-           font-size: 14px;
-           margin-bottom: 10px;
-           margin-right: 10px;
-       }
-       .button:hover {
-           background-color: #7bb5eb;
-           color: #ffffff;
-       }
-        .upload-form {
-           margin-top: 10px;
-           padding: 15px;
-           border-radius: 5px;
-           background-color: #f2f2f2;
-       }
+            font-family: Roboto, sans-serif;
+            font-size:22px;
 
-       .upload-form input[type=file] {
-           margin-bottom: 10px;
-       }
+        }
+        h2{
+            text-align: center;
 
-       .upload-form button[type=submit] {
-          display: inline-block;
-           padding: 8px 16px;
-           background-color: #9fc5e8; /* light blue */
-           color: white;
-           text-align: center;
-           text-decoration: none;
-           border: 1px black ;
-           border-radius: 8px;
-           cursor: pointer;
-           font-size: 14px;
-           margin-bottom: 10px;
-           margin-right: 10px;
-       }
+        }
+        .container {
+            max-width: 1600px;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 20px;
 
-       .upload-form button[type=submit]:hover {
-           background-color: #7bb5eb;
-           color: #ffffff;
-       }
+        }
+         .split-view {
+            display: flex;
+            gap: 15px;
+            width: 1900px;
+        }
+
+           .tasks-container {
+            flex: 70%;
+        }
+        .edit-container {
+            flex: 30%;
+            display: none;
+            height: auto;
+            border: 1px solid #dee2e6;
+            padding-left:1%;
+        }
+        .files-container {
+            flex: 36%;
+            display: none;
+            height: 100%;
+            border: 1px solid #dee2e6;
+
+
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+
+        }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .table th, .table td {
+            text-align: center;
+            border: 1px solid #dee2e6;
+            padding: 8px;
+        }
+        .table th {
+            background-color: #f2f2f2;
+        }
+        .table td {
+            background-color: #ffffff;
+        }
+        .button {
+            display: inline-block;
+            padding: 8px 16px;
+            background-color: #fecb01;
+            color: black;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+            margin-bottom: 10px;
+            margin-right: 10px;
+        }
+        .button:hover {
+            background-color: #7e6501;
+            color: #ffffff;
+        }
         .bounce-icon:hover {
-    animation: bounce 0.5s infinite alternate;
-}
+            animation: bounce 0.5s infinite alternate;
+        }
+        @keyframes bounce {
+            0% {
+                transform: translateY(0);
+            }
+            100% {
+                transform: translateY(-5px);
+            }
+        }
 
-@keyframes bounce {
-    0% {
-        transform: translateY(0);
-    }
-    100% {
-        transform: translateY(-5px);
-    }
-}
+        .right-buttons {
+            text-align: right;
+        }
+         .back-to-menu .fa-house,
+          .back-to-menu .fa-right-from-bracket,
+          .back-to-menu .fa-print{
+           color: #fecb01;
+           transition: color 0.3s;
+           text-align: left;
+           margin-bottom: 4%;
+           margin-top:4%;
+        }
+        .back-to-menu .fa-house:hover,
+         .back-to-menu .fa-right-from-bracket:hover,
+         .back-to-menu .fa-print:hover{
+
+            color: #7e6501;
+        }
+        .create-button-container{
+            color: #fecb01;
+            transition: color 0.3s;
+            margin-top:20px;
+            text-align: left;
+        }
+
+        .create-button-container .fa-print:hover{
+            color: #7e6501;
+        }
+
+         .popup {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.4);
+        }
+
+  .popup-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 35%;
+            text-align: center;
+            border-radius: 10px;
+        }
+
+
+   .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+         .bounce-icon {
+            background-color: white;
+            border: none;
+        }
+        .bounce-icon .fa-folder-open:hover{
+            color: #7e6501;
+        }
+
     </style>
 </head>
 <body>
-<div class="container">
+<div class="container" style="max-width: 1900px">
     <h2>All Resources</h2>
-    <table>
-        <thead>
-        <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Action</th>
-            <th>Files</th>
-        </tr>
-        </thead>
-        <tbody>
-        <!-- Check if projects list is empty -->
-        <tr th:if="${#lists.isEmpty(resources)}">
-            <td colspan="4">No Resources found.</td>
-        </tr>
-        <!-- Iterate over projects -->
-        <tr th:each="resource : ${resources}">
-            <td th:text="${resource.id}"></td>
-            <td th:text="${resource.name}"></td>
-            <td th:text="${resource.description}"></td>
-            <td> <!-- Moved the action column here -->
-                <span sec:authorize="hasRole('ADMIN')">
-                    <a th:href="@{/resources/deleteResource/{id}(id=${resource.id})}" class="button">Delete</a>
-                </span>
-                <span sec:authorize="hasRole('ADMIN')">
-                    <a th:href="@{/resources/editResource/{id}(id=${resource.id})}" class="button">Edit</a>
-                </span>
-            </td>
-            <td>
-                <span sec:authorize="hasRole('ADMIN')">
-                    <div class="upload-form">
-                        <form method="post" th:action="@{/projects/upload/{projectId}(projectId=${resource.id})}" enctype="multipart/form-data">
-                            <input type="file" name="file" />
-                            <button type="submit">Upload</button>
-                        </form>
-                        <!-- Display uploaded file names if available -->
-                        <div th:if="${not #lists.isEmpty(resource.fileNames)}">
-                            <p>Uploaded Files:</p>
-                            <ul>
-                                <li th:each="fileName, index : ${resource.fileNames}" style="margin-bottom: 10px;">
-                                    <span th:text="${fileName}"></span>
-                                    <a th:href="@{/projects/downloadFile/{projectId}/{fileName}(projectId=${resource.id}, fileName=${fileName})}" style="margin-left: 15px;" >
-                                         <i class="fa-solid fa-download fa-xl" style="color: #74C0FC;"></i>
-                                    </a>
-                                    <!-- Form to delete file -->
-                                     <form method="post" th:action="@{/projects/deleteFile/{projectId}/{index}(projectId=${resource.id}, index=${index.index})}" style="display:inline;">
-                                        <button  style="border: none;" class="bounce-icon" >
-                                             <i class="fa-solid fa-trash fa-xl" style="color: #ed0202;"></i>
-                                        </button>
-                                    </form>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </span>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-    <a th:href="@{/login?logout}" class="button">Logout</a>
-    <a th:href="@{/web/successLogin}" class="button">Back to Menu</a>
-    <a th:href="@{/resources/createResource}" class="button">Create a Resource</a>
-
-
-
+    <div class="back-to-menu">
+        <a th:href="@{/web/successLogin}">
+            <i class="fa-solid fa-house fa-xl" style="margin-right: 2%;"></i>
+        </a>
+        <a th:href="@{/login?logout}" >
+            <i class="fa-solid fa-right-from-bracket fa-xl" style="margin-right: 2%;" ></i>
+        </a>
+        <a href="/reports/employees/pdf">
+            <i class="fa-solid fa-print fa-xl"></i>
+        </a>
+    </div>
+    <div class="create-button-container">
+        <span sec:authorize="hasRole('ADMIN')">
+            <a th:href="@{/resources/createResource}" class="button">Create a Resource</a>
+        </span>
+    </div>
+    <div class="split-view">
+        <div class="tasks-container">
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Action</th>
+                        <th>Files</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <!-- Check if projects list is empty -->
+                    <tr th:if="${#lists.isEmpty(resources)}">
+                        <td colspan="4">No Resources found.</td>
+                    </tr>
+                    <!-- Iterate over projects -->
+                    <tr th:each="resource : ${resources}">
+                        <td th:text="${resource.id}"></td>
+                        <td>
+                            <a href="#" th:href="@{/resources/editResource/{id}(id=${resource.id})}" th:text="${resource.name}" class="edit-link"
+                               style="color: black;"></a>
+                        </td>
+                        <td th:text="${resource.description}"></td>
+                        <td> <!-- Moved the action column here -->
+                            <span sec:authorize="hasRole('ADMIN')">
+                                <a th:href="@{/resources/deleteResource/{id}(id=${resource.id})}">
+                                    <button  style="border: none;" class="bounce-icon" >
+                                        <i class="fa-solid fa-trash fa-xl" style="color: #ff6666;"></i>
+                                    </button>
+                                </a>
+                            </span>
+                        </td>
+                        <td>
+                              <span sec:authorize="hasRole('ADMIN')">
+                                <a href="#" th:href="@{/resources/showResourceFiles/{id}(id=${resource.id})}" class="bounce-icon files-link">
+                                    <i class="fa-solid fa-folder-open fa-xl" style="color: #fecb01;"></i>
+                                </a>
+                            </span>
+<!--                            <span sec:authorize="hasRole('ADMIN')">-->
+<!--                                <div class="upload-form">-->
+<!--                                    <form method="post" th:action="@{/projects/upload/{projectId}(projectId=${resource.id})}" enctype="multipart/form-data">-->
+<!--                                        <input type="file" name="file" />-->
+<!--                                        <button type="submit">Upload</button>-->
+<!--                                    </form>-->
+<!--                                    &lt;!&ndash; Display uploaded file names if available &ndash;&gt;-->
+<!--                                    <div th:if="${not #lists.isEmpty(resource.fileNames)}">-->
+<!--                                        <p>Uploaded Files:</p>-->
+<!--                                        <ul>-->
+<!--                                            <li th:each="fileName, index : ${resource.fileNames}" style="margin-bottom: 10px;">-->
+<!--                                                <span th:text="${fileName}"></span>-->
+<!--                                                <a th:href="@{/projects/downloadFile/{projectId}/{fileName}(projectId=${resource.id}, fileName=${fileName})}" style="margin-left: 15px;" >-->
+<!--                                                     <i class="fa-solid fa-download fa-xl" style="color: #74C0FC;"></i>-->
+<!--                                                </a>-->
+<!--                                                &lt;!&ndash; Form to delete file &ndash;&gt;-->
+<!--                                                 <form method="post" th:action="@{/projects/deleteFile/{projectId}/{index}(projectId=${resource.id}, index=${index.index})}" style="display:inline;">-->
+<!--                                                    <button  style="border: none;" class="bounce-icon" >-->
+<!--                                                         <i class="fa-solid fa-trash fa-xl" style="color: #ed0202;"></i>-->
+<!--                                                    </button>-->
+<!--                                                </form>-->
+<!--                                            </li>-->
+<!--                                        </ul>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </span>-->
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="edit-container" id="editContainer">
+            <!-- Content from editTask.html will be loaded here -->
+        </div>
+        <div class="files-container" id="filesContainer">
+            <!-- Content from showtaskFiles.html will be loaded here -->
+        </div>
+    </div>
 </div>
+<div th:if="${fileUploaded}" class="popup" th:style="'display:block;'">
+    <div class="popup-content">
+        <span class="close" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
+        <h2>Resource uploaded successfully!</h2>
+        <p> Id: <span th:text="${resourceId}"></span> ,  Name: <span th:text="${resourceName}"></span><br>
+            File Name: <span th:text="${fileName}"></span></p>
+    </div>
+</div>
+
+<div th:if="${fileDeleted}" class="popup" th:style="'display:block;'">
+    <div class="popup-content">
+        <span class="close" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
+        <h2>File deleted successfully!</h2>
+        <p>Resource Id: <span th:text="${resourceId}"></span></p>
+        <p>Resource Name: <span th:text="${resourceName}"></span></p>
+    </div>
+</div>
+
+<div th:if="${resourceDeleted}" class="popup" th:style="'display:block;'">
+    <div class="popup-content">
+        <span class="close" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
+        <h2>Resource deleted successfully!</h2>
+        <p>Resource Id: <span th:text="${resourceId}"></span></p>
+        <p>Resource Name: <span th:text="${resourceName}"></span></p>
+    </div>
+</div>
+
+<div th:if="${resourceCreated}" class="popup" th:style="'display:block;'">
+    <div class="popup-content">
+        <span class="close" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
+        <h2>New Resource created successfully!</h2>
+        <p>Resource Name: <span th:text="${resourceName}"></span></p>
+    </div>
+</div>
+
+<div th:if="${resourceUpdated}" class="popup" th:style="'display:block;'">
+    <div class="popup-content">
+        <span class="close" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
+        <h2>Resource updated successfully!</h2>
+        <p>Resource Id: <span th:text="${resourceId}"></span></p>
+        <p>Resource Name: <span th:text="${resourceName}"></span></p>
+    </div>
+</div>
+
+<!-- Bootstrap JS and dependencies -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+        function initializeEditTaskScripts() {
+            // Attach event listeners for the plus buttons to open the respective popups
+            document.querySelectorAll('.plus-button').forEach(button => {
+                button.addEventListener('click', function() {
+                    const type = this.getAttribute('data-type');
+                    if (type === 'employee') {
+                        openAddPopup();
+                    } else if (type === 'resource') {
+                        openResourcePopup();
+                    }
+                });
+            });
+
+            // Attach event listeners for the close buttons inside the popups
+            document.querySelectorAll('.close-popup').forEach(button => {
+                button.addEventListener('click', function() {
+                    const popupId = this.getAttribute('data-popup-id');
+                    document.getElementById(popupId).style.display = 'none';
+                });
+            });
+
+            // Attach event listeners for the add buttons inside the popups
+            document.querySelectorAll('.add-button').forEach(button => {
+                button.addEventListener('click', function() {
+                    const popupId = this.getAttribute('data-popup-id');
+                    addDataFromPopup(popupId);
+                });
+            });
+
+            // Attach event listeners for the remove buttons
+            document.querySelectorAll('.remove-button').forEach(button => {
+                button.addEventListener('click', function() {
+                    const entryId = this.getAttribute('data-entry-id');
+                    removeEntry(entryId);
+                });
+            });
+        }
+
+        document.querySelectorAll('.edit-link').forEach(link => {
+            link.addEventListener('click', function(event) {
+                event.preventDefault();
+                fetch(link.href)
+                    .then(response => response.text())
+                    .then(html => {
+                        document.getElementById('editContainer').innerHTML = html;
+                        document.getElementById('editContainer').style.display = 'block';
+                        document.getElementById('filesContainer').style.display = 'none';
+                        initializeEditTaskScripts();
+                    })
+                    .catch(error => console.warn('Error fetching edit task content:', error));
+            });
+        });
+
+        document.querySelectorAll('.files-link').forEach(link => {
+            link.addEventListener('click', function(event) {
+                event.preventDefault();
+                fetch(link.href)
+                    .then(response => response.text())
+                    .then(html => {
+                        document.getElementById('filesContainer').innerHTML = html;
+                        document.getElementById('filesContainer').style.display = 'block';
+                        document.getElementById('editContainer').style.display = 'none';
+                    })
+                    .catch(error => console.warn('Error fetching files content:', error));
+            });
+        });
+
+
+    // Initial call to setup any existing content
+    initializeEditTaskScripts();
+});
+</script>
+
 </body>
 </html>

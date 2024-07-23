@@ -52,7 +52,6 @@
         }
 
          .upload-form {
-           margin-top: 10px;
            padding: 15px;
            border-radius: 5px;
            width: 100%
@@ -96,7 +95,7 @@
     </style>
 </head>
 <body>
-<h2>Files for Project: <span th:text="${project.name}"></span></h2>
+<h2>Files for Resource: <span th:text="${resource.name}"></span></h2>
 
 <div class="error-message" th:if="${not #strings.isEmpty(error)}">
     <p th:text="${error}" style="background: #EFC3CA; width: 29%;"></p>
@@ -104,7 +103,7 @@
 
 <!-- Display uploaded files -->
 <div class="upload-form">
-    <form method="post" th:action="@{/projects/upload/{projectId}(projectId=${project.id})}" enctype="multipart/form-data" style="padding: 2%;">
+    <form method="post" th:action="@{/resources/upload/{resourceId}(resourceId=${resource.id})}" enctype="multipart/form-data">
         <input type="file" name="file" />
         <button type="submit">Upload</button>
     </form>
@@ -112,16 +111,16 @@
     <div th:if="${not #lists.isEmpty(fileNames)}">
         <p>Uploaded Files:</p>
         <ul>
-            <li th:each="file : ${project.files}" style="margin-bottom: 10px;">
+            <li th:each="file : ${resource.files}" style="margin-bottom: 10px;">
                 <span th:text="${file.fileName}"></span>
-                <a th:href="@{/projects/downloadFile/{projectId}/{fileName}(projectId=${project.id}, fileName=${file.fileName})}" style="margin-left: 15px;" >
+                <a th:href="@{/resources/downloadFile/{resourceId}/{fileName}(resourceId=${resource.id}, fileName=${file.fileName})}" style="margin-left: 15px;" >
                     <i class="fa-solid fa-download fa-xl, bounce-icon" style="color: #74C0FC;"></i>
                 </a>
-                <a th:href="@{/projects/viewFile/{projectId}/{fileName}(projectId=${project.id}, fileName=${file.fileName})}" style="margin-left: 15px;" target="_blank">
+                <a th:href="@{/resources/viewFile/{resourceId}/{fileName}(resourceId=${resource.id}, fileName=${file.fileName})}" style="margin-left: 15px;" target="_blank">
                     <i class="fa-solid fa-eye fa-xl, bounce-icon" style="color: #28a745;"></i>
                 </a>
                 <!-- Form to delete file -->
-                <form method="post" th:action="@{/projects/deleteFile/{projectId}/{fileId}(projectId=${project.id}, fileId=${file.id})}" style="display:inline;">
+                <form method="post" th:action="@{/resources/deleteFile/{resourceId}/{fileId}(resourceId=${resource.id}, fileId=${file.id})}" style="display:inline;">
                     <button  style="border: none;" class="bounce-icon" >
                         <i class="fa-solid fa-trash fa-xl" style="color: #ed0202;"></i>
                     </button>

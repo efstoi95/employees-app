@@ -222,7 +222,6 @@ public class EmployeeController {
                 logger.warn("Employee with ID {} not found",id);
             }
 
-
         return "infoEmployee";
     }
 
@@ -319,32 +318,6 @@ public class EmployeeController {
         logger.info("The information of the employee added.");
         return "success";
     }
-
-    /**
-     * Retrieves the success message and adds it to the model.
-     *
-     * @param  model  the model to hold the success message
-     * @return        the view name to display the success message
-     */
-    @GetMapping("/successEdit")
-    public String successEdit(Model model) {
-        model.addAttribute("message", "The information of the user edited");
-        logger.info("The information of the employee edited.");
-        return "successEmployee";
-    }
-    /**
-     * Retrieves the success message for deleting an user's information and adds it to the model.
-     *
-     * @param  model  the model to hold the success message
-     * @return        the view name to display the success message
-     */
-    @GetMapping("/successDelete")
-    public String successDelete(Model model) {
-        model.addAttribute("message", "The information of the user deleted");
-        logger.info("The information of the employee deleted.");
-        return "successEmployee";
-    }
-
 
     @GetMapping("/error")
     public String error(Model model) {
