@@ -36,6 +36,9 @@ public class File {
     @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     private List<Project> projects = new ArrayList<>();
 
+    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+    private List<Resource> resources = new ArrayList<>();
+
 
 
 }

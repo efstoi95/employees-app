@@ -11,21 +11,6 @@
             font-size:22px;
         }
 
-        h2 {
-            text-align: left;
-            color: #333;
-            margin-top: 20px;
-        }
-
-        form {
-            width: 100%;
-            margin: 0 auto;
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-        }
-
         label {
             font-family: cursive, sans-serif;
             font-weight: bold;
@@ -164,8 +149,7 @@
     </style>
 </head>
 <body>
-<h2>Project Information</h2>
-<form th:action="@{/projects/editedProject}" th:object="${proj}" method="post">
+<form th:action="@{/projects/editedProject}" th:object="${proj}" method="post" style="padding: 2%;">
     <input type="hidden" th:field="*{id}">
     <div class="form-group">
         <label for="name">Project:</label>

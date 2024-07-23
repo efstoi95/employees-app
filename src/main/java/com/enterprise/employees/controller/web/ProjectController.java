@@ -334,35 +334,4 @@ public class ProjectController {
 
     }
 
-    @GetMapping("/successCreateProject")
-    public String successCreateProject(Model model) {
-        model.addAttribute("message", "The information of the project created");
-        logger.info("The information of the project created.");
-        return "successProject";
-    }
-
-    @GetMapping("/successEditProject")
-    public String successEditProject(Model model) {
-        model.addAttribute("message", "The information of the project edited");
-        logger.info("The information of the project edited.");
-        return "successProject";
-    }
-
-    @GetMapping("/successDeleteProject")
-    public String successDeleteProject(Model model){
-        model.addAttribute("message", "The information of the project deleted");
-        return "successProject";
-    }
-
-    @GetMapping("/successDeleteProjectFile")
-    public String successDeleteFile( Model model) {
-        model.addAttribute("message", "File deleted successfully");
-        return "successProject";
-    }
-
-    @GetMapping("/successUploadToProject")
-    public String successUploadToProject(Model model) {
-        model.addAttribute("message", "File uploaded successfully");
-        return "successProject";
-    }
 }

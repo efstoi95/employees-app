@@ -34,11 +34,6 @@ public class Resource {
     @ManyToMany(mappedBy ="resources", cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     private List<Task> tasks = new ArrayList<>();
 
-    @ElementCollection
-    @Lob
-    @Column(columnDefinition = "LONGBLOB")
-    private List<byte[]> fileContent = new ArrayList<>();
-
-    @ElementCollection
-    private List<String> fileNames = new ArrayList<>();
+    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+    private List<File> files = new ArrayList<>();
 }

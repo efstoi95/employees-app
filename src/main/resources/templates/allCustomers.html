@@ -24,6 +24,30 @@
         .table-responsive {
             overflow-x: auto;
         }
+
+
+         .split-view {
+            display: flex;
+            gap: 15px;
+            width: 1740px;
+        }
+        .tasks-container {
+            flex: 70%;
+        }
+        .edit-container {
+            flex: 30%;
+            display: none;
+            height: auto;
+            border: 1px solid #dee2e6;
+        }
+
+        .files-container {
+            flex: 37%;
+            display: none;
+            height: 100%;
+            border: 1px solid #dee2e6;
+
+        }
         .table {
             width: 100%;
             border-collapse: collapse;
@@ -146,7 +170,7 @@
     </style>
 </head>
 <body>
-<div class="container">
+<div class="container" style="max-width: 1780px">
     <h2>All Customers</h2>
     <div class="side-button">
         <a th:href="@{/web/successLogin}" >
@@ -165,64 +189,71 @@
     <div class="left-side-button">
         <a th:href="@{/customer/createCustomer}" class="button" style="width: auto">Create Customer</a>
     </div>
-    <div class="table-responsive mt-3">
-        <table class="table table-bordered">
-            <thead>
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Description</th>
-                <th>Action</th>
-            </tr>
-            </thead>
-            <tbody>
-            <!-- Check if customers list is empty -->
-            <tr th:if="${#lists.isEmpty(customers)}">
-                <td colspan="4">No Customers found.</td>
-            </tr>
-            <!-- Iterate over customers -->
-            <tr th:each="customer : ${customers}">
-                <td th:text="${customer.id}"></td>
-                <td onmouseover="showTooltip(this)" onmouseout="hideTooltip(this)">
-                    <span th:text="${customer.fullName}"></span>
-                    <div class="tooltip">
-                        <span th:text="'Email: ' + ${customer.email}"></span><br>
-                        <span th:text="'Address: ' + ${customer.address}"></span><br>
-                        <span th:text="'City: ' + ${customer.city}"></span><br>
-                        <span th:text="'Postal Code: ' + ${customer.postalCode}"></span><br>
-                        <span>Projects:</span>
-                        <th:block th:if="${#lists.isEmpty(customer.projects)}">
-                            <span>None</span><br>
-                        </th:block>
-                        <ol th:if="${!#lists.isEmpty(customer.projects)}">
-                            <li th:each="project : ${customer.projects}" th:text="${project.name}"></li>
-                        </ol>
-                    </div>
-                </td>
-                <td th:text="${customer.description}"></td>
-                <td>
-                    <span sec:authorize="hasRole('ADMIN')">
-                        <a th:href="@{/customer/deleteCustomer/{id}(id=${customer.id})}">
-                            <button style="border: none;" class="bounce-icon">
-                                <i class="fa-solid fa-trash fa-xl" style="color: #ff6666;"></i>
-                            </button>
-                        </a>
-                    </span>
-                    <span sec:authorize="hasRole('ADMIN')">
-                        <a th:href="@{/customer/updateCustomer/{id}(id=${customer.id})}">
-                            <i class="fa-solid fa-user-pen fa-xl" style="color: #fecb01; margin-left: 4%;"></i>
-                        </a>
-                    </span>
-                    <!-- Conditionally show the map icon if the customer has projects -->
-                    <span sec:authorize="hasRole('ADMIN')">
-                        <a th:href="@{/customer/showCustomer/{id}(id=${customer.id})}" th:if="${!#lists.isEmpty(customer.projects)}">
-                            <i class="fa-solid fa-map-location-dot fa-xl" style="color: #fecb01; margin-left: 4%;"></i>
-                        </a>
-                    </span>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+    <div class="split-view">
+        <div class="tasks-container">
+            <div class="table-responsive mt-3">
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <!-- Check if customers list is empty -->
+                    <tr th:if="${#lists.isEmpty(customers)}">
+                        <td colspan="4">No Customers found.</td>
+                    </tr>
+                    <!-- Iterate over customers -->
+                    <tr th:each="customer : ${customers}">
+                        <td th:text="${customer.id}"></td>
+                        <td onmouseover="showTooltip(this)" onmouseout="hideTooltip(this)">
+                            <span th:text="${customer.fullName}"></span>
+                            <div class="tooltip">
+                                <span th:text="'Email: ' + ${customer.email}"></span><br>
+                                <span th:text="'Address: ' + ${customer.address}"></span><br>
+                                <span th:text="'City: ' + ${customer.city}"></span><br>
+                                <span th:text="'Postal Code: ' + ${customer.postalCode}"></span><br>
+                                <span>Projects:</span>
+                                <th:block th:if="${#lists.isEmpty(customer.projects)}">
+                                    <span>None</span><br>
+                                </th:block>
+                                <ol th:if="${!#lists.isEmpty(customer.projects)}">
+                                    <li th:each="project : ${customer.projects}" th:text="${project.name}"></li>
+                                </ol>
+                            </div>
+                        </td>
+                        <td th:text="${customer.description}"></td>
+                        <td>
+                            <span sec:authorize="hasRole('ADMIN')">
+                                <a th:href="@{/customer/deleteCustomer/{id}(id=${customer.id})}">
+                                    <button style="border: none;" class="bounce-icon">
+                                        <i class="fa-solid fa-trash fa-xl" style="color: #ff6666;"></i>
+                                    </button>
+                                </a>
+                            </span>
+                            <span sec:authorize="hasRole('ADMIN')">
+                                <a th:href="@{/customer/updateCustomer/{id}(id=${customer.id})}" class="files-link">
+                                    <i class="fa-solid fa-user-pen fa-xl" style="color: #fecb01; margin-left: 4%;"></i>
+                                </a>
+                            </span>
+                            <!-- Conditionally show the map icon if the customer has projects -->
+                            <span sec:authorize="hasRole('ADMIN')">
+                                <a th:href="@{/customer/showCustomer/{id}(id=${customer.id})}" th:if="${!#lists.isEmpty(customer.projects)}">
+                                    <i class="fa-solid fa-map-location-dot fa-xl" style="color: #fecb01; margin-left: 4%;"></i>
+                                </a>
+                            </span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="files-container" id="filesContainer">
+
+        </div>
     </div>
 </div>
 
@@ -270,6 +301,23 @@
         var tooltip = element.querySelector('.tooltip');
         tooltip.classList.remove('show');
     }
+
+
+    document.addEventListener('DOMContentLoaded', (event) => {
+         document.querySelectorAll('.files-link').forEach(link => {
+            link.addEventListener('click', function(event) {
+                event.preventDefault();
+                fetch(link.href)
+                    .then(response => response.text())
+                    .then(html => {
+                        document.getElementById('filesContainer').innerHTML = html;
+                        document.getElementById('filesContainer').style.display = 'block';
+                        document.getElementById('editContainer').style.display = 'none';
+                    })
+                    .catch(error => console.warn('Error fetching files content:', error));
+            });
+        });
+    });
 </script>
 
 </body>
