@@ -2,24 +2,11 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
-    <title>Spring Boot Thymeleaf Application - Bootstrap Rich Text Editor</title>
+    <title>Post Form</title>
 
     <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-bs4.min.css" rel="stylesheet">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        .submit-button{
-            background: #fecb01;
-            color: black;
-            border: none;
-            border-radius: 12px;
-        }
-
-        .submit-button:hover{
-            background: #7e6501;
-            color: white;
-        }
-
-    </style>
+    <link rel="stylesheet" th:href="@{/css/createFormPost.css}">
 </head>
 <body>
 

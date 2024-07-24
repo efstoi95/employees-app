@@ -4,97 +4,78 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Form</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-              width: 100%;
-              font-family: Roboto, sans-serif;
-              font-size:22px;
-
-
-          }
-       .login-container {
-           max-width: 600px;
-           margin: 100px auto;
-           background-color: #fff;
-           padding: 20px;
-           border-radius: 8px;
-           box-shadow: 0px 0px 10px 0px rgba(0,0,0,5.1);
-       }
-       .login-container h2 {
-
-           text-align: center;
-           margin-bottom: 20px;
-           font-size: 30px;
-       }
-       .login-container input[type="text"],
-       .login-container input[type="password"] {
-           font-family: cursive, sans-serif;
-           width: 100%;
-           padding: 10px;
-           margin-bottom: 15px;
-           border: 1px solid #ccc;
-           border-radius: 5px;
-           box-sizing: border-box;
-       }
-       .login-container button {
-           width: 100%;
-           padding: 10px;
-           background-color: #fecb01;
-           border: none;
-           border-radius: 5px;
-           color: black;
-           cursor: pointer;
-       }
-       .login-container button:hover {
-           background-color: #7e6501;
-           color: white;
-       }
-       .create-account {
-           text-align: center;
-           margin-top: 15px;
-       }
-       .create-account a {
-           color: #7e6501;
-           text-decoration: none;
-       }
-
-       .create-account a:hover{
-           color: #fecb01;
-       }
-
-       .button {
-       display: inline-block;
-       padding: 10px 20px;
-       background-color: #4CAF50; /* Green */
-       color: white;
-       text-align: center;
-       text-decoration: none;
-       border: none;
-       border-radius: 8px;
-       cursor: pointer;
-       font-size: 16px;
-       }
-       .error-message {
-           color: #ff0000;
-           background-color: #ffe6e6;
-           border: 1px solid #ff0000;
-           padding: 10px;
-           border-radius: 5px;
-           text-align: center;
-           margin-bottom: 15px;
-       }
-
-       .logout-message {
-           color: #006600;
-           background-color: #e6ffe6;
-           border: 1px solid #006600;
-           padding: 10px;
-           border-radius: 5px;
-           text-align: center;
-           margin-bottom: 15px;
-       }
-
-
+            width: 100%;
+            font-family: Roboto, sans-serif;
+            font-size: 22px;
+            background-color: #f8f9fa;
+        }
+        .login-container {
+            max-width: 600px;
+            margin: 100px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
+        }
+        .login-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 30px;
+        }
+        .login-container .form-control {
+            font-family: cursive, sans-serif;
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        .login-container button {
+            width: 100%;
+            padding: 10px;
+            background-color: #fecb01;
+            border: none;
+            border-radius: 5px;
+            color: black;
+            cursor: pointer;
+        }
+        .login-container button:hover {
+            background-color: #7e6501;
+            color: white;
+        }
+        .create-account {
+            text-align: center;
+            margin-top: 15px;
+        }
+        .create-account a {
+            color: #7e6501;
+            text-decoration: none;
+        }
+        .create-account a:hover {
+            color: #fecb01;
+        }
+        .error-message {
+            color: #ff0000;
+            background-color: #ffe6e6;
+            border: 1px solid #ff0000;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .logout-message {
+            color: #006600;
+            background-color: #e6ffe6;
+            border: 1px solid #006600;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            margin-bottom: 15px;
+        }
     </style>
 </head>
 <body>
@@ -106,16 +87,23 @@
     <div th:if="${param.logout}" class="logout-message">
         You have been logged out.</div>
     <form th:action="@{/login}" method="post">
-        <label for="username"></label>
-        <input type="text" id="username" name="username" placeholder="Username" required>
-        <label for="password"></label>
-        <input type="password" id="password" name="password" placeholder="Password" required>
-        <button type="submit" class="button">Login</button>
+        <div class="form-group">
+            <label for="username">Username:</label>
+            <input type="text" class="form-control form-control-lg" id="username" name="username" placeholder="Username" required minlength="4" pattern="[a-zA-Z\s]+" title="Username should contain only letters and spaces" th:classappend="${param.error} ? 'is-invalid' : ''">
+        </div>
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" class="form-control form-control-lg" id="password" name="password" placeholder="Password" required minlength="4" pattern="[a-zA-Z0-9]+" title="Password should contain only letters and numbers" th:classappend="${param.error} ? 'is-invalid' : ''">
+        </div>
+        <button type="submit" class="btn btn-custom btn-block">Login</button>
     </form>
     <div class="create-account">
         <a href="/web/employees">New user? Create new account</a>
     </div>
 </div>
 
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

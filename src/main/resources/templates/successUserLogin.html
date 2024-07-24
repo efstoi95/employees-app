@@ -3,34 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <script src="https://kit.fontawesome.com/5b019c160d.js" crossorigin="anonymous"></script>
   <title>User Information Form</title>
   <!-- Bootstrap CSS -->
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-  <style>
-    .panel {
-        margin-top: 50px;
-        padding: 20px;
-        border: 2px solid #ccc;
-        border-radius: 5px;
-        background-color: white;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
-
-.btn-custom {
-        background-color: #fecb01;
-        color: black;
-        font-size: 1.25rem;
-        height: calc(2.875rem + 10px); /* Match height with form-control-lg */
-        margin: 5px;
-    }
-
-    .btn-custom:hover {
-        color: white;
-        background-color: #7e6501;
-    }
-  </style>
+  <link rel="stylesheet" th:href="@{/css/successLogin.css}">
 </head>
 <body>
+<div class="log-out">
+  <a th:href="@{/login?logout}" >
+    <i class="fa-solid fa-right-from-bracket fa-2xl" ></i>
+  </a>
 <div class="container">
   <div class="row justify-content-center">
     <div class="col-md-8">

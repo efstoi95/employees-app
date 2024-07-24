@@ -4,51 +4,7 @@
     <meta charset="UTF-8">
     <script src="https://kit.fontawesome.com/5b019c160d.js" crossorigin="anonymous"></script>
     <title>View Post</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            margin: 20px;
-            padding: 20px;
-        }
-        h1 {
-            color: #333;
-            text-align: center;
-        }
-        .post-content {
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            margin-top: 20px;
-            width:10%;
-            display: table-cell;
-            border: 1px solid beige;
-        }
-        .post-content img {
-            max-width: 100%;
-            height: auto;
-            display: block;
-            margin: 10px auto;
-            border-radius: 4px;
-        }
-        .post-content figure.image {
-            margin: 0;
-            text-align: center;
-        }
-        .post-content figure.image img {
-            margin: 0 auto;
-        }
-        .back-to-menu .fa-arrow-left {
-            color: #febc01;
-            transition: color 0.3s;
-            text-align: left;
-            margin-top: 2%;
-            margin-bottom: 2%;
-        }
-        .back-to-menu .fa-arrow-left:hover {
-            color: #7e6501;
-        }
-    </style>
+    <link rel="stylesheet" href="/css/viewPost.css">
 </head>
 <body>
 <h1 th:text="${post.title}">Post Title</h1>

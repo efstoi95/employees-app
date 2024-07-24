@@ -1,0 +1,233 @@
+       body {
+            font-family: Roboto, sans-serif;
+            font-size: 22px;
+            background-color: #f5f5f5;
+        }
+
+         .container {
+            max-width: 1600px;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 20px;
+
+        }
+
+         .split-view {
+            display: flex;
+            gap: 15px;
+            width: 1365px;
+        }
+
+           .info-container {
+            flex: 70%;
+        }
+
+        .edit-container {
+            flex: 30%;
+            display: none;
+            height: auto;
+            border: 1px solid #dee2e6;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+            padding: 20px;
+        }
+
+        .form-container {
+            width: 60%;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: -30px;
+        }
+
+        .form-control {
+            height: calc(2.25rem + 10px); /* Increase the height */
+            font-size: 1.25rem; /* Increase the font size */
+        }
+
+        .form-control-lg {
+            height: calc(2.875rem + 10px); /* Even larger height for large inputs */
+            font-size: 1.5rem; /* Larger font size for large inputs */
+        }
+
+        .btn-custom {
+            background-color: #fecb01;
+            color: black;
+            font-size: 1.25rem;
+            height: calc(2.875rem + 10px); /* Match height with form-control-lg */
+        }
+
+        .btn-custom:hover {
+            color: white;
+            background-color: #7e6501;
+        }
+
+        /* Skills label */
+        label[for="skills"] {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        /* Skills list */
+        #skills {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            background-color: #fff;
+            width: 100%;
+            font-size: 25px;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        #skills li {
+            list-style-type: none;
+            margin-bottom: 5px;
+        }
+
+        #skills li::before {
+            content: "• ";
+            font-weight: bold;
+            color: #333; /* Match the label color */
+        }
+
+        .text-danger {
+            color: #dc3545;
+        }
+
+        .is-invalid {
+            border-color: #dc3545;
+        }
+
+        button-edit {
+            background-color: #fecb01;
+            color: black;
+            font-size: 1.25rem;
+            height: calc(2.875rem + 10px);
+            width: 100%;
+            text-align: right;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 8px 16px;
+            background-color: #fecb01;
+            color: black;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+            margin-bottom: 10px;
+            margin-right: 10px;
+            width: 150px;
+        }
+
+        .button:hover {
+            background-color: #7e6501;
+            color: #ffffff;
+        }
+
+        .side-button .fa-house,
+        .side-button .fa-right-from-bracket,
+        .side-button .fa-user-pen{
+            text-align: left;
+            margin-bottom: 4%;
+            margin-top: 4%;
+            color: #fecb01;
+            transition: color 0.3s;
+        }
+
+        .side-button .fa-house:hover,
+        .side-button .fa-right-from-bracket:hover,
+        .side-button .fa-user-pen:hover{
+            color: #7e6501;
+        }
+
+
+        .button-left {
+            text-align: left;
+            margin-left: 20%;
+        }
+
+        .project {
+            border: 1px solid #ccc; /* Add border to each project */
+            padding: 15px; /* Add padding to each project */
+            margin-bottom: 20px; /* Add margin bottom to each project */
+            border-radius: 4px; /* Add border radius to match the container */
+            background-color: #f9f9f9; /* Slight background color for project section */
+        }
+
+        .project ul {
+            padding-left: 20px; /* Add padding to nested list */
+        }
+
+        .project strong {
+            display: block; /* Make project name a block element */
+            margin-bottom: 5px; /* Add some margin below the project name */
+        }
+
+        .numbered-list {
+            counter-reset: list-counter;
+        }
+
+        .numbered-list > li {
+            list-style: none;
+            position: relative;
+
+        }
+
+        .btn{
+    padding: 10px 60px;
+    background: #fff;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    font-size:22px;
+    font-weight: 500;
+    border-radius: 30px;
+  }
+   .popup {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.4);
+        }
+
+  .popup-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 35%;
+            height: 12%;
+            text-align: center;
+            border-radius: 10px;
+        }
+
+
+   .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }

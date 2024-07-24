@@ -5,174 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://kit.fontawesome.com/5b019c160d.js" crossorigin="anonymous"></script>
     <title>All Tasks</title>
-    <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            width: 100%;
-            font-family: Roboto, sans-serif;
-            font-size:22px;
-             margin-top: 90px;
-        }
-        h2{
-            text-align: center;
-        }
-        .container {
-            max-width: 1600px;
-            margin-left: auto;
-            padding: 20px;
-        }
-        .table-responsive {
-            overflow-x: auto;
-        }
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-        }
-        .table th, .table td {
-            text-align: center;
-            border: 1px solid #dee2e6;
-            padding: 8px;
-        }
-        .table th {
-            background-color: #f2f2f2;
-        }
-        .table td {
-            background-color: #ffffff;
-        }
-        .button {
-            display: inline-block;
-            padding: 8px 16px;
-            background-color: #fecb01;
-            color: black;
-            text-align: center;
-            text-decoration: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 15px;
-            margin-bottom: 10px;
-            margin-right: 10px;
-            width:150px;
-        }
-        .button:hover {
-            background-color: #7e6501;
-            color: #ffffff;
-        }
-        .split-view {
-            display: flex;
-            gap: 15px;
-            width: 1365px;
-        }
-        .tasks-container {
-            flex: 70%;
-        }
-        .edit-container {
-            flex: 30%;
-            display: none;
-            height: auto;
-            border: 1px solid #dee2e6;
-        }
-        .files-container {
-            flex: 37%;
-            display: none;
-            height: 100%;
-            border: 1px solid #dee2e6;
-
-        }
-        .upload-form {
-            margin-top: 10px;
-            padding: 15px;
-            border-radius: 5px;
-        }
-        .upload-form input[type=file] {
-            margin-bottom: 10px;
-        }
-        .upload-form button[type=submit] {
-            display: inline-block;
-            padding: 8px 16px;
-            background-color: #9fc5e8;
-            color: white;
-            text-align: center;
-            text-decoration: none;
-            border: 1px black;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            margin-bottom: 10px;
-            margin-right: 10px;
-        }
-        .upload-form button[type=submit]:hover {
-            background-color: #7bb5eb;
-            color: #ffffff;
-        }
-        .bounce-icon:hover {
-            animation: bounce 0.5s infinite alternate;
-        }
-        @keyframes bounce {
-            0% {
-                transform: translateY(0);
-            }
-            100% {
-                transform: translateY(-5px);
-            }
-        }
-
-
-        .right-buttons {
-            margin-left: 73%;
-        }
-        .back-to-menu .fa-arrow-left {
-            color: #febc01;
-            transition: color 0.3s;
-            text-align: left;
-            margin-top:4%;
-            margin-bottom:4%;
-        }
-        .back-to-menu .fa-arrow-left:hover{
-        color: #7e6501;
-    }
-
-
-
-         .popup {
-            display: none;
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgb(0,0,0);
-            background-color: rgba(0,0,0,0.4);
-        }
-
-  .popup-content {
-            background-color: #fefefe;
-            margin: 15% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 35%;
-            height: 12%;
-            text-align: center;
-            border-radius: 10px;
-        }
-
-
-   .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-    </style>
+    <link rel="stylesheet" href="/css/employeeProjects-Tasks.css">
 </head>
 <body>
 <div class="container" style="max-width: 1600px">
@@ -221,7 +55,7 @@
         </div>
 
         <div class="files-container" id="filesContainer">
-            <!-- Content from showtaskFiles.html will be loaded here -->
+
         </div>
     </div>
 
@@ -246,24 +80,7 @@
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
-<script>
-    document.addEventListener('DOMContentLoaded', (event) => {
-         document.querySelectorAll('.files-link').forEach(link => {
-            link.addEventListener('click', function(event) {
-                event.preventDefault();
-                fetch(link.href)
-                    .then(response => response.text())
-                    .then(html => {
-                        document.getElementById('filesContainer').innerHTML = html;
-                        document.getElementById('filesContainer').style.display = 'block';
-                        document.getElementById('editContainer').style.display = 'none';
-                    })
-                    .catch(error => console.warn('Error fetching files content:', error));
-            });
-        });
-    });
-</script>
+<script src="/javascript/employeeFile-split-view.js"></script>
 
 </body>
 </html>

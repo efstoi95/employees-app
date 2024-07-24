@@ -7,178 +7,7 @@
     <title>All Comments</title>
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            width: 100%;
-            font-family: Roboto, sans-serif;
-            font-size:22px;
-             margin-top: 90px;
-        }
-        h2{
-            text-align: center;
-        }
-        .container {
-            max-width: 1600px;
-            margin-left: auto;
-<!--            margin-right: 34%;-->
-            padding: 20px;
-        }
-        .table-responsive {
-            overflow-x: auto;
-        }
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-        }
-        .table th, .table td {
-            text-align: center;
-            border: 1px solid #dee2e6;
-            padding: 8px;
-        }
-        .table th {
-            background-color: #f2f2f2;
-        }
-        .table td {
-            background-color: #ffffff;
-        }
-        .button {
-            display: inline-block;
-            padding: 8px 16px;
-            background-color: #fecb01;
-            color: black;
-            text-align: center;
-            text-decoration: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 15px;
-            margin-bottom: 10px;
-            margin-right: 10px;
-            width:150px;
-        }
-        .button:hover {
-            background-color: #7e6501;
-            color: #ffffff;
-        }
-        .split-view {
-            display: flex;
-            gap: 15px;
-            width: 1600px;
-        }
-        .tasks-container {
-            flex: 70%;
-        }
-        .edit-container {
-            flex: 30%;
-            display: none;
-            height: auto;
-            border: 1px solid #dee2e6;
-        }
-        .files-container {
-            flex: 36%;
-            display: none;
-            height: 100%;
-            border: 1px solid #dee2e6;
-
-        }
-        .upload-form {
-            margin-top: 10px;
-            padding: 15px;
-            border-radius: 5px;
-        }
-        .upload-form input[type=file] {
-            margin-bottom: 10px;
-        }
-        .upload-form button[type=submit] {
-            display: inline-block;
-            padding: 8px 16px;
-            background-color: #9fc5e8;
-            color: white;
-            text-align: center;
-            text-decoration: none;
-            border: 1px black;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            margin-bottom: 10px;
-            margin-right: 10px;
-        }
-        .upload-form button[type=submit]:hover {
-            background-color: #7bb5eb;
-            color: #ffffff;
-        }
-
-        .bounce-icon {
-            background-color: white;
-            border: none;
-        }
-
-        .bounce-icon:hover {
-            animation: bounce 0.5s;
-            animation-direction: alternate;
-            animation-iteration-count: infinite;
-        }
-        @keyframes bounce {
-
-            0% {
-                transform: translateY(0);
-            }
-            100% {
-                transform: translateY(-5px);
-            }
-        }
-        .popup {
-            display: none;
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgb(0,0,0);
-            background-color: rgba(0,0,0,0.4);
-        }
-        .popup-content {
-            background-color: #fefefe;
-            margin: 15% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 35%;
-            text-align: center;
-            border-radius: 10px;
-        }
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-        .right-buttons {
-            margin-left: 73%;
-        }
-         .back-to-menu .fa-arrow-left {
-            color: #febc01;
-            transition: color 0.3s;
-            text-align: left;
-            margin-top:2%;
-            margin-bottom:2%;
-        }
-        .back-to-menu .fa-arrow-left:hover{
-        color: #7e6501;
-
-        .create-button-container{
-        margin-top:20px;
-        text-align: left;
-    }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/allPosts.css}">
 </head>
 <body>
 <div class="container" style="max-width: 2000px">
@@ -193,59 +22,48 @@
             <a th:href="@{/posts/createTaskPost/{projectId}/{taskId}(projectId=${projectId}, taskId=${taskId})}" class="button">Create Comment</a>
         </span>
     </div>
-    <div class="split-view">
-        <div class="tasks-container">
-            <div class="table-responsive">
-                <table class="table table-bordered">
-                    <thead class="thread-light">
-                    <tr>
-                        <th>ID</th>
-                        <th>Title</th>
-                        <th>Author</th>
-                        <th>Published</th>
-                        <th>Action</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:if="${#lists.isEmpty(posts)}">
-                        <td colspan="7">No Comments found.</td>
-                    </tr>
-                    <tr th:each="post : ${posts}">
-                        <td th:text="${post.id}"></td>
-                        <td>
-                            <a th:text="${post.title}"></a>
-                        </td>
-                        <td th:text="${post.author.fullName}"></td>
-                        <td th:text="${#temporals.format(post.createdAt, 'dd/MM/yyyy HH:mm:ss')}"></td>
-                        <td>
-                            <span sec:authorize="hasRole('ADMIN')">
-                                <a th:href="@{/posts/deleteTaskPost/{id}(id=${post.id})}">
-                                    <button  style="border: none;" class="bounce-icon" >
-                                        <i class="fa-solid fa-trash fa-xl, bounce-icon" style="color: #ff6666;"></i>
-                                    </button>
-                                </a>
-                            </span>
-                            <span sec:authorize="hasRole('ADMIN')">
-                                <a th:href="@{/posts/viewTaskPost/{postId}(postId=${post.id})}">
-                                    <button  style="border: none;" class="bounce-icon" >
-                                         <i class="fa-solid fa-eye fa-xl, bounce-icon" style="color: #28a745;" ></i>
-                                    </button>
-                                </a>
-                            </span>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <div class="edit-container" id="editContainer">
-            <!-- Content from editTask.html will be loaded here -->
-        </div>
-        <div class="files-container" id="filesContainer">
-            <!-- Content from showtaskFiles.html will be loaded here -->
-        </div>
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead class="thread-light">
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Published</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${#lists.isEmpty(posts)}">
+                <td colspan="7">No Comments found.</td>
+            </tr>
+            <tr th:each="post : ${posts}">
+                <td th:text="${post.id}"></td>
+                <td>
+                    <a th:text="${post.title}"></a>
+                </td>
+                <td th:text="${post.author.fullName}"></td>
+                <td th:text="${#temporals.format(post.createdAt, 'dd/MM/yyyy HH:mm:ss')}"></td>
+                <td>
+                    <span sec:authorize="hasRole('ADMIN')">
+                        <a th:href="@{/posts/deleteTaskPost/{id}(id=${post.id})}">
+                            <button  style="border: none;" class="bounce-icon" >
+                                <i class="fa-solid fa-trash fa-xl, bounce-icon" style="color: #ff6666;"></i>
+                            </button>
+                        </a>
+                    </span>
+                    <span sec:authorize="hasRole('ADMIN')">
+                        <a th:href="@{/posts/viewTaskPost/{postId}(postId=${post.id})}">
+                            <button  style="border: none;" class="bounce-icon" >
+                                <i class="fa-solid fa-eye fa-xl, bounce-icon" style="color: #28a745;" ></i>
+                            </button>
+                        </a>
+                    </span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
     </div>
-
 </div>
 
 <div th:if="${postDeleted}" class="popup" th:style="'display:block;'">
@@ -266,150 +84,10 @@
     </div>
 </div>
 
-<!-- Bootstrap JS and dependencies -->
+
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-<script>
-    document.addEventListener('DOMContentLoaded', (event) => {
-
-        function initializeEditTaskScripts() {
-
-            document.querySelectorAll('.plus-button').forEach(button => {
-                button.addEventListener('click', function() {
-                    const type = this.getAttribute('data-type');
-                    if (type === 'employee') {
-                        openAddPopup();
-                    } else if (type === 'resource') {
-                        openResourcePopup();
-                    }
-                });
-            });
-
-            // Attach event listeners for the close buttons inside the popups
-            document.querySelectorAll('.close-popup').forEach(button => {
-                button.addEventListener('click', function() {
-                    const popupId = this.getAttribute('data-popup-id');
-                    document.getElementById(popupId).style.display = 'none';
-                });
-            });
-
-            // Attach event listeners for the add buttons inside the popups
-            document.querySelectorAll('.add-button').forEach(button => {
-                button.addEventListener('click', function() {
-                    const popupId = this.getAttribute('data-popup-id');
-                    addDataFromPopup(popupId);
-                });
-            });
-
-            // Attach event listeners for the remove buttons
-            document.querySelectorAll('.remove-button').forEach(button => {
-                button.addEventListener('click', function() {
-                    const entryId = this.getAttribute('data-entry-id');
-                    removeEntry(entryId);
-                });
-            });
-        }
-
-        document.querySelectorAll('.edit-link').forEach(link => {
-            link.addEventListener('click', function(event) {
-                event.preventDefault();
-                fetch(link.href)
-                    .then(response => response.text())
-                    .then(html => {
-                        document.getElementById('editContainer').innerHTML = html;
-                        document.getElementById('editContainer').style.display = 'block';
-                        document.getElementById('filesContainer').style.display = 'none';
-                        initializeEditTaskScripts();
-                    })
-                    .catch(error => console.warn('Error fetching edit task content:', error));
-            });
-        });
-
-        document.querySelectorAll('.files-link').forEach(link => {
-            link.addEventListener('click', function(event) {
-                event.preventDefault();
-                fetch(link.href)
-                    .then(response => response.text())
-                    .then(html => {
-                        document.getElementById('filesContainer').innerHTML = html;
-                        document.getElementById('filesContainer').style.display = 'block';
-                        document.getElementById('editContainer').style.display = 'none';
-                    })
-                    .catch(error => console.warn('Error fetching files content:', error));
-            });
-        });
-
-    const closeButton = document.querySelector('.close');
-    if (closeButton) {
-        closeButton.onclick = function() {
-            const popup = document.querySelector('.popup');
-            if (popup) {
-                popup.style.display = 'none';
-            }
-        }
-    }
-
-    // Initial call to setup any existing content
-    initializeEditTaskScripts();
-});
-
-// Function definitions for popups and adding employees/resources
-  function openAddPopup() {
-        document.getElementById("addEmployeePopup").style.display = "block";
-    }
-
-    function closeAddPopup() {
-        document.getElementById("addEmployeePopup").style.display = "none";
-    }
-
-    function openResourcePopup() {
-        document.getElementById("addResourcePopup").style.display = "block";
-    }
-
-    function closeResourcePopup() {
-        document.getElementById("addResourcePopup").style.display = "none";
-    }
-
-    function addSelectedEmployees() {
-        var checkboxes = document.querySelectorAll('#addEmployeePopup input[type="checkbox"]');
-        var select = document.getElementById("eligibleEmployees");
-
-        checkboxes.forEach(function(checkbox) {
-            if (checkbox.checked) {
-                var exists = Array.from(select.options).some(option => option.value === checkbox.value);
-                if (!exists) {
-                    var option = document.createElement("option");
-                    option.value = checkbox.value;
-                    option.text = checkbox.closest('td').previousElementSibling.textContent;
-                    option.selected = true;
-                    select.appendChild(option);
-                }
-            }
-        });
-        closeAddPopup();
-    }
-
-    function addSelectedResources() {
-        var checkboxes = document.querySelectorAll('#addResourcePopup input[type="checkbox"]');
-        var select = document.getElementById("resources");
-
-        checkboxes.forEach(function(checkbox) {
-            if (checkbox.checked) {
-                var exists = Array.from(select.options).some(option => option.value === checkbox.value);
-                if (!exists) {
-                    var option = document.createElement("option");
-                    option.value = checkbox.value;
-                    option.text = checkbox.closest('td').previousElementSibling.textContent;
-                    option.selected = true;
-                    select.appendChild(option);
-                }
-            }
-        });
-        closeResourcePopup();
-    }
-
-</script>
 </body>
 </html>
