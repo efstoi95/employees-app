@@ -77,6 +77,7 @@ public class WebSecurityConfig  {
                         // Allow all requests to URLs under "/web/**"
                         .requestMatchers("/web/**").permitAll()
                         .requestMatchers("/posts/uploadImage").permitAll()
+                        .requestMatchers("/css/**").permitAll()
                         // All other requests must be authenticated
                         .anyRequest().authenticated()
         )// Configure form login

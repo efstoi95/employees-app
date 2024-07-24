@@ -5,55 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Change Username and Password</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            width: 100%;
-            font-family: Roboto, sans-serif;
-            font-size:22px;
-        }
-
-        h2 {
-            font-family: cursive, sans-serif;
-            text-align: center;
-            color: #333;
-            padding: 20px;
-        }
-
-        .form-container {
-            width: 60%;
-            margin: 0 auto;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 5.1);
-        }
-
-        .form-control {
-            height: calc(2.25rem + 10px); /* Increase the height */
-            font-size: 1.25rem; /* Increase the font size */
-        }
-
-        .form-control-lg {
-            height: calc(2.875rem + 10px); /* Even larger height for large inputs */
-            font-size: 1.5rem; /* Larger font size for large inputs */
-        }
-
-        .btn-custom {
-            background-color: #fecb01;
-            color: black;
-            font-size: 1.25rem;
-            height: calc(2.875rem + 10px); /* Match height with form-control-lg */
-        }
-
-        .btn-custom:hover {
-            color: white;
-            background-color: #7e6501;
-        }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/editEmployee.css}">
 </head>
 <body>
-<h2>Change Username and Password</h2>
-<div class="form-container" style="width: 110%;">
+<div class="form-container" style="width: 150%; margin-top:22%">
     <form th:action="@{/web/editedInfoEmployee}" th:object="${employee}" method="post">
         <input type="hidden" th:field="*{id}">
         <input type="hidden" th:field="*{fullName}">

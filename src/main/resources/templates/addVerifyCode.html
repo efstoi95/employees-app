@@ -4,53 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Verify Your Code</title>
-    <style>
-        body {
-            font-family: Roboto, sans-serif;
-            font-size:22px;
-            background-color: #f4f4f4;
-            color: #333;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-        .verify-container {
-            background-color: #fff;
-            padding: 27px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        .verify-container h1 {
-            margin: 0 0 20px;
-            font-size: 24px;
-        }
-        .verify-container label {
-            display: block;
-            margin: 0 0 10px;
-        }
-        .verify-container input[type="text"],
-        .verify-container input[type="submit"] {
-            width: 100%;
-            padding: 10px;
-            margin: 0 0 10px;
-        }
-        .verify-container input[type="submit"] {
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            cursor: pointer;
-        }
-        .verify-container input[type="submit"]:hover {
-            background-color: #0056b3;
-        }
-    </style>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/verifyCode-lockedAcc.css">
 </head>
 <body>
-<div class="verify-container">
+<div class="form-container">
     <h1>Verify Your Code</h1>
     <form th:action="@{/web/verified}" th:object="${employee}" method="post">
         <input type="hidden" th:field="*{id}">
@@ -60,10 +18,14 @@
         <input type="hidden" th:field="*{username}">
         <input type="hidden" th:field="*{role}">
         <label for="verifiedCode">Enter the 4-digit code sent to your email:</label>
-        <div class="error" th:if="${#fields.hasErrors('verifiedCode')}" th:errors="*{verifiedCode}"></div>
-        <input type="text" id="verifiedCode" field="*{verifiedCode}" name="verifiedCode"  th:style="${#fields.hasErrors('verifiedCode')} ? 'background-color: #FF7F7F;' : ''" required>
-        <input type="submit" value="Verify">
+        <div class="text-danger" th:if="${#fields.hasErrors('verifiedCode')}" th:errors="*{verifiedCode}"></div>
+        <input type="text" id="verifiedCode" class="form-control form-control-lg" field="*{verifiedCode}" name="verifiedCode" th:classappend="${#fields.hasErrors('verifiedCode')} ? 'is-invalid' : ''" required>
+        <input type="submit" class="btn btn-custom btn-block" value="Verify">
     </form>
 </div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
