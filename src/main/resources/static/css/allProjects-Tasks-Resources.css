@@ -87,20 +87,20 @@
         .right-buttons {
             text-align: right;
         }
-         .back-to-menu .fa-house,
-          .back-to-menu .fa-right-from-bracket,
-          .back-to-menu .fa-arrow-left,
-          .back-to-menu .fa-print{
+         .side-button .fa-house,
+          .side-button .fa-right-from-bracket,
+          .side-button .fa-arrow-left,
+          .side-button .fa-print{
            color: #fecb01;
            transition: color 0.3s;
            text-align: left;
            margin-bottom: 4%;
            margin-top:4%;
         }
-        .back-to-menu .fa-house:hover,
-         .back-to-menu .fa-right-from-bracket:hover,
-         .back-to-menu .fa-arrow-left:hover,
-         .back-to-menu .fa-print:hover{
+        .side-button .fa-house:hover,
+         .side-button .fa-right-from-bracket:hover,
+         .side-button .fa-arrow-left:hover,
+         .side-button .fa-print:hover{
 
             color: #7e6501;
         }

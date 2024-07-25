@@ -3,17 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <script src="https://kit.fontawesome.com/5b019c160d.js" crossorigin="anonymous"></script>
   <title>User Information Form</title>
   <!-- Bootstrap CSS -->
-  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <div th:replace="~{fragments/fragment1 :: link}"></div>
   <link rel="stylesheet" th:href="@{/css/successLogin.css}">
 </head>
 <body>
-<div class="log-out">
-  <a th:href="@{/login?logout}" >
-    <i class="fa-solid fa-right-from-bracket fa-2xl" ></i>
-  </a>
+<div th:replace="~{fragments/fragment1 :: header1}"></div>
 <div class="container">
   <div class="row justify-content-center">
     <div class="col-md-8">
@@ -21,14 +17,10 @@
         <h2 th:text="${message}"></h2>
         <a class="btn btn-custom btn-block" th:href="@{/web/infoEmployee/{id}(id=${employeeId})}">Register Information</a>
         <a class="btn btn-custom btn-block" th:href="@{/web/EmployeeProjects/{id}(id=${employeeId})}">Assigned Projects</a>
-
       </div>
     </div>
   </div>
 </div>
-<!-- Bootstrap JS and dependencies -->
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<div th:replace="~{fragments/fragment1 :: footer}"></div>
 </body>
 </html>
