@@ -33,6 +33,7 @@ public class CostumerController {
     public String allCustomers(Model model) {
             logger.info("Retrieving all customers");
             List<Customer> customers = (List<Customer>) customerService.findAll();
+            model.addAttribute("isAllCustomerPage", true);
             model.addAttribute("customers", customers);
             logger.info("Number of projects retrieved: {}", customers.size());
             return "allCustomers";

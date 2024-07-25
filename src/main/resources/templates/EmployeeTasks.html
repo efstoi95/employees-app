@@ -3,15 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://kit.fontawesome.com/5b019c160d.js" crossorigin="anonymous"></script>
     <title>All Tasks</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <div th:replace="~{fragments/fragment1 :: link}"></div>
     <link rel="stylesheet" href="/css/employeeProjects-Tasks.css">
 </head>
 <body>
 <div class="container" style="max-width: 1600px">
     <h2>All Tasks</h2>
-    <div class="back-to-menu">
+    <div class="side-button">
         <a th:href="@{/web/EmployeeProjects/{id}(id=${employeeId})}">
             <i class="fa-solid fa-arrow-left fa-2xl"></i>
         </a>
@@ -75,12 +74,8 @@
     </div>
 </div>
 
-
-<!-- Bootstrap JS and dependencies -->
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-<script src="/javascript/employeeFile-split-view.js"></script>
+<div th:replace="~{fragments/fragment1 :: footer}"></div>
+<div th:replace="~{fragments/fragment2 :: split-view3}"></div>
 
 </body>
 </html>
