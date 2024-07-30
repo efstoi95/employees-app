@@ -14,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +28,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -44,15 +47,27 @@ public class EmployeeProjectController {
     EmployeesRepository employeesRepository;
     @Autowired
     FileRepository fileRepository;
+    @Autowired
+    MessageSource messageSource;
 
     @Secured("ROLE_USER")
     @GetMapping("/EmployeeProjects/{id}")
-    public String EmployeeProjects(@PathVariable("id") Long employeeId, Model model) {
+    public String EmployeeProjects(@PathVariable("id") Long employeeId,
+                                   @RequestParam(name="locale", required = false) String localeParam,
+                                   Model model) {
         logger.info("Employee ID: {}", employeeId);
+        Locale locale = Locale.getDefault();
+        if(localeParam != null) {
+            locale = Locale.forLanguageTag(localeParam);
+        }
+        LocaleContextHolder.setLocale(locale);
+        String message = messageSource.getMessage("message.projectsEmployee", null, locale);
+        model.addAttribute("message", message);
         Employee existingEmployee = employeeService.getEmployeeById(employeeId);
         List<Project> projects = existingEmployee.getProjects().stream().toList();
         model.addAttribute("projects", projects);
         model.addAttribute("employeeId", employeeId);
+        model.addAttribute("isEmployeeProjectsPage",true);
         return "EmployeeProjects";
     }
 
@@ -165,7 +180,15 @@ public class EmployeeProjectController {
     @GetMapping("/showEmployeeProjectFiles/{projectId}")
     public String showFiles(@PathVariable("projectId") Long projectId,
                             @RequestParam("employeeId") Long employeeId,
+                            @RequestParam(value = "locale", required = false) String localeParam,
                             Model model) {
+        Locale locale = Locale.getDefault();
+        if(localeParam != null) {
+            locale = Locale.forLanguageTag(localeParam);
+        }
+        LocaleContextHolder.setLocale(locale);
+        String message = messageSource.getMessage("message.EmployeeProjectFiles", null, locale);
+        model.addAttribute("message", message);
         Employee employee = employeeService.getEmployeeById(employeeId);
         Project project = projectService.findById(projectId);
         List<File> employeeProjectFiles = employee.getFiles();

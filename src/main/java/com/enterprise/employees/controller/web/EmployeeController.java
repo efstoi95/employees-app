@@ -9,6 +9,8 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +29,7 @@ import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 import static com.enterprise.employees.controller.web.TaskController.format;
@@ -45,6 +48,8 @@ public class EmployeeController {
     private final ProjectService projectService;
     @Autowired
     private TaskRepository taskRepository;
+    @Autowired
+    private MessageSource messageSource;
 
     /**
      * Creates a new Employee object and adds it to the model for display in the "emp" view.
@@ -53,11 +58,20 @@ public class EmployeeController {
      * @return the view name to display the employee form
      */
     @GetMapping("/employees")
-    public String createEmployee(Model model) {
+    public String createEmployee(@RequestParam(name = "locale", required = false) String localeParam,
+                                 Model model) {
             logger.info("Creating employee");
+        Locale locale = Locale.getDefault();
+        if (localeParam != null) {
+            locale=Locale.forLanguageTag(localeParam);
+        }
+        LocaleContextHolder.setLocale(locale);
+        String message = messageSource.getMessage("createEmployee.title", null, locale);
+        model.addAttribute("message", message);
             model.addAttribute("employee", new EmployeeDTO());
             model.addAttribute("skills", employeeService.getAllSkills());
             model.addAttribute("departments", employeeService.getAllDepartments());
+        model.addAttribute("isCreateEmployeePage", true);
             return "createEmployee";
 
     }
@@ -114,10 +128,20 @@ public class EmployeeController {
      */
     @GetMapping("/allEmployees")
     @Secured("ROLE_ADMIN")
-    public String showAllEmployees(Model model) {
-            List<Employee> employees = employeeService.getAllEmployees();
-            model.addAttribute("employees", employees);
-            return "allEmployees";
+    public String showAllEmployees(@RequestParam(name = "locale", required = false) String localeParam,
+                                   Model model) {
+        logger.info("Retrieving all employees");
+        Locale locale = Locale.getDefault();
+        if (localeParam != null) {
+            locale=Locale.forLanguageTag(localeParam);
+        }
+        LocaleContextHolder.setLocale(locale);
+        String message = messageSource.getMessage("allEmployees.title", null, locale);
+        model.addAttribute("message", message);
+        List<Employee> employees = employeeService.getAllEmployees();
+        model.addAttribute("employees", employees);
+        model.addAttribute("isAllEmployeesPage", true);
+        return "allEmployees";
     }
 
     /**
@@ -147,8 +171,17 @@ public class EmployeeController {
      */
     @Secured("ROLE_ADMIN")
     @GetMapping("/admin/edit/{id}")
-    public String editEmployee(@PathVariable("id") Long id, Model model) {
+    public String editEmployee(@PathVariable("id") Long id,@RequestParam(name = "locale", required = false) String localeParam,
+                               Model model) {
         logger.info("Editing employee with ID: {}", id);
+        Locale locale = Locale.getDefault();
+        if (localeParam != null) {
+            locale=Locale.forLanguageTag(localeParam);
+        }
+        LocaleContextHolder.setLocale(locale);
+        String message = messageSource.getMessage("editEmployee.title", null, locale);
+        model.addAttribute("message", message);
+
         Employee existingEmployee = employeeService.getEmployeeById(id);
 
         if(existingEmployee != null){
@@ -194,8 +227,18 @@ public class EmployeeController {
 
     @Secured("ROLE_USER")
     @GetMapping("successUserLogin/{id}")
-    public String successUserLogin(@PathVariable("id") Long id, Model model) {
+    public String successUserLogin(@PathVariable("id") Long id,
+                                   @RequestParam(name = "locale", required = false) String localeParam,
+                                   Model model) {
+        Locale locale = Locale.getDefault();
+        if (localeParam != null) {
+            locale=Locale.forLanguageTag(localeParam);
+        }
+        LocaleContextHolder.setLocale(locale);
+        String message = messageSource.getMessage("message.userInfoForm", null, locale);
+        model.addAttribute("message", message);
         model.addAttribute("employeeId", id);
+        model.addAttribute("isSuccessLoginUserPage", true);
         return "successUserLogin";
     }
 
@@ -208,20 +251,29 @@ public class EmployeeController {
      */
     @GetMapping("/infoEmployee/{id}")
     @Secured("ROLE_USER")
-    public String infoEmployee(@PathVariable("id") Long id,Model model) {
+    public String infoEmployee(@PathVariable("id") Long id,@RequestParam(name = "locale", required = false) String localeParam,
+                               Model model) {
         logger.info("Entering infoEmployee method with ID: {}", id);
-            Employee existingEmployee = employeeService.getEmployeeById(id);
-            if(existingEmployee!= null){
-                List<Department> departments = employeeService.getAllDepartments();
-                model.addAttribute("skills",employeeService.getAllSkills());
-                model.addAttribute("departments", departments);
-                model.addAttribute("employee", existingEmployee);
-                model.addAttribute("employeeId", id);
-                logger.info("Employee retrieved: {}", existingEmployee);
-            }else{
-                logger.warn("Employee with ID {} not found",id);
-            }
+        Locale locale = Locale.getDefault();
+        if (localeParam != null) {
+            locale=Locale.forLanguageTag(localeParam);
+        }
+        LocaleContextHolder.setLocale(locale);
+        String message = messageSource.getMessage("editInfoEmployee.title", null, locale);
+        model.addAttribute("message", message);
 
+        Employee existingEmployee = employeeService.getEmployeeById(id);
+        if(existingEmployee!= null){
+            List<Department> departments = employeeService.getAllDepartments();
+            model.addAttribute("skills",employeeService.getAllSkills());
+            model.addAttribute("departments", departments);
+            model.addAttribute("employee", existingEmployee);
+            model.addAttribute("employeeId", id);
+            logger.info("Employee retrieved: {}", existingEmployee);
+        }else{
+            logger.warn("Employee with ID {} not found",id);
+        }
+        model.addAttribute("isInfoEmployeePage", true);
         return "infoEmployee";
     }
 

@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Edit Task</title>
+    <meta charset="UTF-8">
+    <title th:text ="#{editTask.title}">Edit Task</title>
     <!-- Bootstrap CSS -->
-    <div th:replace="~{fragments/fragment1 :: lnk}"></div>
+    <div th:replace="~{fragments/fragment1 :: link}"></div>
     <link rel="stylesheet" th:href="@{/css/editTask.css}">
 </head>
 <body>
@@ -14,30 +15,30 @@
         <input type="hidden" th:field="*{projectId}">
 
         <div class="form-group">
-            <label for="name">Name:</label>
+            <label for="name" th:text ="#{message.name}">Name:</label>
             <div class="error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
             <input type="text" class="form-control form-control-lg" id="name" th:field="*{name}"  required minlength="4" th:style="${#fields.hasErrors('name')} ? 'background-color: #FF7F7F;' : ''" >
         </div>
 
         <div class="form-group">
-            <label>Project:</label>
+            <label th:text ="#{message.projectName}">Project:</label>
             <span class="form-control form-control-lg" th:text="${projectName}"></span>
         </div>
 
         <div class="form-group">
-            <label for="description">Description:</label>
+            <label for="description" th:text ="#{message.description}">Description:</label>
             <div class="error" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
             <input type="text" id="description" th:field="*{description}" class="form-control form-control-lg" required minlength="4" th:style="${#fields.hasErrors('description')} ? 'background-color: #FF7F7F;' : ''">
         </div>
 
         <div class="form-group">
-            <label for="durationInput">Duration:</label>
+            <label for="durationInput" th:text ="#{allTasks.duration}">Duration:</label>
             <div class="error" th:if="${#fields.hasErrors('durationInput')}" th:errors="*{durationInput}"></div>
             <input type="text" id="durationInput" th:field="*{durationInput}" class="form-control form-control-lg" required minlength="1" title="Duration cannot be empty">
         </div>
 
         <div class="form-group">
-            <label for="resources">Resources:</label>
+            <label for="resources" th:text ="#{message.resources}">Resources:</label>
             <button type="button" onclick="openResourcePopup()">+</button>
             <select id="resources" name="resources" multiple="multiple" size="5" class="form-control">
                 <option th:each="resource : ${assignedResources}"
@@ -49,7 +50,7 @@
         </div>
 
         <div class="form-group">
-            <label for="eligibleEmployees">Eligible Employees:</label>
+            <label for="eligibleEmployees" th:text ="#{message.eligEmployees}">Eligible Employees:</label>
             <button type="button" onclick="openAddPopup()">+</button>
             <select id="eligibleEmployees" name="eligibleEmployees" multiple="multiple" size="5" class="form-control">
                 <option th:each="employee : ${assignedEmployees}"
@@ -67,17 +68,17 @@
     <div id="addEmployeePopup" class="popup">
         <div class="popup-content">
             <span class="close" onclick="closeAddPopup()">&times;</span>
-            <h2>Select Eligible Employees</h2>
+            <h2 th:text ="#{message.selectEligEmployees}">Select Eligible Employees</h2>
             <table class="table-content">
                 <thead>
                 <tr>
-                    <th>Name</th>
-                    <th>Checked</th>
+                    <th th:text ="#{message.name}">Name</th>
+                    <th th:text ="#{message.check}">Checked</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:if="${#lists.isEmpty(employees)}">
-                    <td colspan="2">No Employees found.</td>
+                    <td colspan="2" th:text ="#{allEmployees.noEmployeesFound}">No Employees found.</td>
                 </tr>
                 <tr th:each="employee : ${employees}">
                     <td th:text="${employee.fullName}"></td>
@@ -92,7 +93,7 @@
                 </tbody>
             </table>
             <div>
-                <button type="button" onclick="addSelectedEmployees()" class="popup-button">Add Selected Employees</button>
+                <button type="button" onclick="addSelectedEmployees()" class="popup-button" th:text ="#{message.selectedEmployees}">Add Selected Employees</button>
             </div>
         </div>
     </div>
@@ -104,13 +105,13 @@
             <table class="table-content">
                 <thead>
                 <tr>
-                    <th>Name</th>
-                    <th>Checked</th>
+                    <th th:text ="#{message.name}">Name</th>
+                    <th th:text ="#{message.check}">Checked</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:if="${#lists.isEmpty(resources)}">
-                    <td colspan="2">No Resources found.</td>
+                    <td colspan="2" th:text ="#{message.noResourceFound}">No Resources found.</td>
                 </tr>
                 <tr th:each="resource : ${resources}">
                     <td th:text="${resource.name}"></td>
@@ -125,11 +126,12 @@
                 </tbody>
             </table>
             <div>
-                <button type="button" onclick="addSelectedResources()" class="popup-button">Add Selected Resources</button>
+                <button type="button" onclick="addSelectedResources()" class="popup-button" th:text ="#{message.selectedResources}">Add Selected Resources</button>
             </div>
         </div>
     </div>
     <div th:replace="~{fragments/fragment1 :: scripts}"></div>
+
 
 </body>
 </html>

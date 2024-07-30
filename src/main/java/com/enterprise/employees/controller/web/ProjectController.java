@@ -13,6 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.Banner;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +29,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -40,6 +43,8 @@ public class ProjectController {
     private ProjectRepository projectRepository;
     @Autowired
     private FileRepository fileRepository;
+    @Autowired
+    private MessageSource messageSource;
     private final FileStorageService fileStorageService;
     private static final Logger logger = LoggerFactory.getLogger(ProjectController.class);
     private final ProjectServiceImpl projectServiceImpl;
@@ -55,9 +60,18 @@ public class ProjectController {
      */
     @Secured("ROLE_ADMIN")
     @GetMapping("/createProject")
-    public String createProject(Model model) {
+    public String createProject(@RequestParam(name = "locale", required = false) String localeParam,
+                                Model model) {
         logger.info("Creating project");
+        Locale locale = Locale.getDefault();
+        if (localeParam != null) {
+            locale = Locale.forLanguageTag(localeParam);
+        }
+        LocaleContextHolder.setLocale(locale);
+        String message = messageSource.getMessage("createProject.title", null, locale);
+        model.addAttribute("message", message);
         model.addAttribute("proj", new ProjectDTO());
+        model.addAttribute("isCreateProjectPage", true);
         return "createProject";
 
     }
@@ -96,12 +110,23 @@ public class ProjectController {
      */
     @GetMapping("/allProjects")
     @Secured("ROLE_ADMIN")
-    public String showAllProjects(Model model) {
-            logger.info("Retrieving all projects");
-            List<ProjectDTO> projects = projectServiceImpl.findAllProjects();
-            logger.info("Number of projects retrieved: {}", projects.size());
-            model.addAttribute("projects", projects);
-            return "allProjects";
+    public String showAllProjects(@RequestParam(name = "locale", required = false) String localeParam,
+                                  Model model) {
+        Locale locale = Locale.getDefault();
+        if (localeParam != null) {
+            locale = Locale.forLanguageTag(localeParam);
+        }
+        LocaleContextHolder.setLocale(locale);
+        String message = messageSource.getMessage("allProjects.title", null, locale);
+        model.addAttribute("message", message);
+
+
+        logger.info("Retrieving all projects");
+        List<ProjectDTO> projects = projectServiceImpl.findAllProjects();
+        logger.info("Number of projects retrieved: {}", projects.size());
+        model.addAttribute("isAllProjectsPage", true);
+        model.addAttribute("projects", projects);
+        return "allProjects";
     }
 
     /**
@@ -114,8 +139,17 @@ public class ProjectController {
      */
     @Secured("ROLE_ADMIN")
     @GetMapping("/editProject/{id}")
-    public String editProject(@PathVariable("id") Long id, Model model) {
+    public String editProject(@PathVariable("id") Long id,
+                              @RequestParam(name = "locale", required = false) String localeParam,
+                              Model model) {
         logger.info("Editing project with ID: {}", id);
+        Locale locale = Locale.getDefault();
+        if (localeParam != null) {
+            locale = Locale.forLanguageTag(localeParam);
+        }
+        LocaleContextHolder.setLocale(locale);
+        String message = messageSource.getMessage("editProject.title", null, locale);
+        model.addAttribute("message", message);
         Project project = projectServiceImpl.findById(id);
         ProjectDTO projectDTO = modelMapper.map(project, ProjectDTO.class);
         List<EmployeeDTO> employees = employeeService.findEmployeesWithUserRoleDTO();
@@ -300,7 +334,16 @@ public class ProjectController {
 
 
     @GetMapping("/showFiles/{projectId}")
-    public String showFiles(@PathVariable("projectId") Long projectId, Model model) {
+    public String showFiles(@PathVariable("projectId") Long projectId,
+                            @RequestParam(name = "locale", required = false) String localeParam,
+                            Model model) {
+        Locale locale = Locale.getDefault();
+        if (localeParam != null) {
+            locale = Locale.forLanguageTag(localeParam);
+        }
+        LocaleContextHolder.setLocale(locale);
+        String message=messageSource.getMessage("message.ProjectFiles", null, locale);
+        model.addAttribute("message", message);
         Project project = projectServiceImpl.findById(projectId);
         model.addAttribute("project", project);
         model.addAttribute("fileNames", project.getFiles().stream().map(File::getFileName).collect(Collectors.toList()));

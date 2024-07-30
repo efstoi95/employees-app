@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Change Username and Password</title>
+    <title th:text="#{editInfoEmployee.title}">Edit Information</title>
     <div th:replace="~{fragments/fragment1 :: link}"></div>
     <link rel="stylesheet" th:href="@{/css/editEmployee.css}">
 </head>
@@ -17,13 +17,13 @@
         <input type="hidden" th:field="*{role}">
 
         <div class="form-group">
-            <label for="username">Username:</label>
+            <label for="username" th:text="#{create.username}">Username:</label>
             <div class="text-danger" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></div>
             <input type="text" class="form-control form-control-lg" id="username" th:field="*{username}" required minlength="4" pattern="[a-zA-Z\s]+" th:classappend="${#fields.hasErrors('username')} ? 'is-invalid' : ''" title="Username should contain only letters and spaces">
         </div>
 
         <div class="form-group">
-            <label for="password">Password:</label>
+            <label for="password" th:text="#{create.password}">Password:</label>
             <div class="text-danger" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
             <input type="password" class="form-control form-control-lg" id="password" th:field="*{password}" required minlength="4" pattern="[a-zA-Z0-9]+" th:classappend="${#fields.hasErrors('password')} ? 'is-invalid' : ''" title="Password should contain only letters and numbers">
         </div>

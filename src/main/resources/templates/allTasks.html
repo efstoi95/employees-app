@@ -3,21 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>All Tasks</title>
+    <title th:text="#{allTasks.title}">All Tasks</title>
     <div th:replace="~{fragments/fragment1::link}"></div>
     <link rel="stylesheet" th:href="@{/css/allProjects-Tasks-Resources.css}">
 </head>
 <body>
 <div class="container" style="max-width: 2000px">
-    <h2>All Tasks</h2>
-    <div class="side-button">
-        <a th:href="@{/projects/allProjects}">
-            <i class="fa-solid fa-arrow-left fa-2xl"></i>
-        </a>
+    <input type="hidden" th:field="${projectId}">
+    <h2 th:text="#{allTasks.title}">All Tasks</h2>
+    <div th:replace="~{fragments/fragment1::header2}"></div>
     </div>
     <div class="create-button-container">
         <span sec:authorize="hasRole('ADMIN')">
-            <a th:href="@{/tasks/createTask/{id}(id=${taskId})}" class="button">Create Task</a>
+            <a th:href="@{/tasks/createTask/{id}(id=${projectId})}" class="button" th:text="#{allTasks.create}">Create Task</a>
         </span>
     </div>
     <div class="split-view">
@@ -26,18 +24,18 @@
                 <table class="table table-bordered">
                     <thead class="thread-light">
                     <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Description</th>
-                        <th>Duration</th>
-                        <th>Status</th>
-                        <th>Action</th>
-                        <th>Files</th>
+                        <th th:text="#{message.id}">ID</th>
+                        <th th:text="#{message.name}">Name</th>
+                        <th th:text="#{message.description}">Description</th>
+                        <th th:text="#{allTasks.duration}">Duration</th>
+                        <th th:text="#{message.status}">Status</th>
+                        <th th:text="#{message.action}">Action</th>
+                        <th th:text="#{message.files}">Files</th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr th:if="${#lists.isEmpty(tasks)}">
-                        <td colspan="7">No Tasks found.</td>
+                        <td colspan="7" th:text="#{allTasks.noTasksFound}">No Tasks found.</td>
                     </tr>
                     <tr th:each="task : ${tasks}">
                         <td th:text="${task.id}"></td>
@@ -100,53 +98,53 @@
 <div th:if="${statusUpdated}" class="popup" th:style="'display:block;'">
     <div class="popup-content">
         <span class="close" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
-        <h2>Status updated successfully!</h2>
-        <p>Task Name: <span th:text="${taskName}"></span></p>
-        <p>Status: <span th:text="${status}"></span></p>
+        <h2 th:text="#{message.statusUpdated}">Status updated successfully!</h2>
+        <p th:text="#{allTasks.taskName}">Task Name: <span th:text="${taskName}"></span></p>
+        <p th:text="#{message.status}">Status: <span th:text="${status}"></span></p>
     </div>
 </div>
 
 <div th:if="${fileUploaded}" class="popup" th:style="'display:block;'">
     <div class="popup-content">
         <span class="close" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
-        <h2>File uploaded successfully!</h2>
-        <p>Task Name: <span th:text="${taskName}"></span></p>
-        <p>File Name: <span th:text="${fileName}"></span></p>
+        <h2 th:text="#{message.fileUploaded}">File uploaded successfully!</h2>
+        <p th:text="#{allTasks.taskName}">Task Name: <span th:text="${taskName}"></span></p>
+        <p th:text="#{message.fileName}">File Name: <span th:text="${fileName}"></span></p>
     </div>
 </div>
 
 <div th:if="${fileDeleted}" class="popup" th:style="'display:block;'">
     <div class="popup-content">
         <span class="close" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
-        <h2>File deleted successfully!</h2>
-        <p>Task Name: <span th:text="${taskName}"></span></p>
+        <h2 th:text="#{message.fileDeleted}">File deleted successfully!</h2>
+        <p th:text="#{allTasks.taskName}">Task Name: <span th:text="${taskName}"></span></p>
     </div>
 </div>
 
 <div th:if="${taskDeleted}" class="popup" th:style="'display:block;'">
     <div class="popup-content">
         <span class="close" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
-        <h2>Task deleted successfully!</h2>
+        <h2 th:text="#{allTasks.taskDeleted}">Task deleted successfully!</h2>
         <!--<p>Task Id: <span th:text="${taskId}"></span></p>-->
-        <p>Task Name: <span th:text="${taskName}"></span></p>
+        <p th:text="#{allTasks.taskName}">Task Name: <span th:text="${taskName}"></span></p>
     </div>
 </div>
 
 <div th:if="${taskCreated}" class="popup" th:style="'display:block;'">
     <div class="popup-content">
         <span class="close" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
-        <h2>New Task created successfully!</h2>
+        <h2 th:text="#{allTasks.taskCreated}">New Task created successfully!</h2>
         <!-- <p>Task Id: <span th:text="${taskId}"></span></p>-->
-        <p>Task Name: <span th:text="${taskName}"></span></p>
+        <p th:text="#{allTasks.taskName}">Task Name: <span th:text="${taskName}"></span></p>
     </div>
 </div>
 
 <div th:if="${taskUpdated}" class="popup" th:style="'display:block;'">
     <div class="popup-content">
         <span class="close" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
-        <h2>Task updated successfully!</h2>
+        <h2 th:text="#{allTasks.taskUpdated}">Task updated successfully!</h2>
 <!--        <p>Task Id: <span th:text="${taskId}"></span></p>-->
-        <p>Task Name: <span th:text="${taskName}"></span></p>
+        <p th:text="#{allTasks.taskName}">Task Name: <span th:text="${taskName}"></span></p>
     </div>
 </div>
 <script src="/javascript/popup-employee-resource.js"></script>

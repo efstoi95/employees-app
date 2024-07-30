@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -33,21 +36,42 @@ public class ResourceController {
     private static final Logger logger = LoggerFactory.getLogger(TaskController.class);
     @Autowired
     private FileRepository fileRepository;
+    @Autowired
+    private MessageSource messageSource;
 
 
 
     @GetMapping("/allResources")
-    public String getAllResources(Model model) {
+    public String getAllResources(@RequestParam(name = "locale", required = false) String localeParam,
+                                  Model model) {
         logger.info("Getting all resources");
+        Locale locale = Locale.getDefault();
+        if (localeParam != null) {
+            locale=Locale.forLanguageTag(localeParam);
+        }
+        LocaleContextHolder.setLocale(locale);
+        String message = messageSource.getMessage("allResources.title", null, locale);
+
+        model.addAttribute("message", message);
         List<ResourceDTO> resources = resourceService.findAllDTO();
+        model.addAttribute("isAllResourcesPage", true);
         model.addAttribute("resources", resources);
         return "allResources";
     }
 
     @GetMapping("/createResource")
-    public String createResource(Model model) {
+    public String createResource(@RequestParam(name = "locale", required = false) String localeParam,
+                                 Model model) {
         logger.info("Creating new resource");
+        Locale locale = Locale.getDefault();
+        if (localeParam != null) {
+            locale = Locale.forLanguageTag(localeParam);
+        }
+        LocaleContextHolder.setLocale(locale);
+        String message = messageSource.getMessage("createResource.title", null, locale);
+        model.addAttribute("message", message);
         model.addAttribute("resource", new ResourceDTO());
+        model.addAttribute("isCreateResourcePage", true);
         return "createResource";
     }
 
@@ -70,8 +94,17 @@ public class ResourceController {
     }
 
     @GetMapping("/editResource/{id}")
-    public String editResource(@PathVariable("id") Long id, Model model) {
+    public String editResource(@PathVariable("id") Long id,
+                               @RequestParam(name = "locale", required = false) String localeParam,
+                               Model model) {
         logger.info("Editing resource");
+        Locale locale = Locale.getDefault();
+        if (localeParam != null) {
+            locale = Locale.forLanguageTag(localeParam);
+        }
+        LocaleContextHolder.setLocale(locale);
+        String message = messageSource.getMessage("editResource.title", null, locale);
+        model.addAttribute("message", message);
         ResourceDTO resource = resourceService.findByIdDTO(id);
         model.addAttribute("resource", resource);
         return "editResource";
@@ -110,7 +143,16 @@ public class ResourceController {
     }
 
     @GetMapping("/showResourceFiles/{resourceId}")
-    public String showFiles(@PathVariable("resourceId") Long resourceId, Model model) {
+    public String showFiles(@PathVariable("resourceId") Long resourceId,
+                            @RequestParam(name = "locale", required = false) String localeParam,
+                            Model model) {
+        Locale locale = Locale.getDefault();
+        if (localeParam != null) {
+            locale = Locale.forLanguageTag(localeParam);
+        }
+        LocaleContextHolder.setLocale(locale);
+        String message=messageSource.getMessage("message.ResourceFiles", null, locale);
+        model.addAttribute("message", message);
         Resource resource = resourceService.findById(resourceId);
         model.addAttribute("resource", resource);
         model.addAttribute("fileNames", resource.getFiles().stream().map(File::getFileName).collect(Collectors.toList()));

@@ -3,48 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>All Employees</title>
+    <title th:text="#{allEmployees.title}">All Employees</title>
     <div th:replace="~{fragments/fragment1::link}"></div>
     <link rel="stylesheet" th:href="@{/css/allEmployees-Customers.css}">
 </head>
 <body>
 <div class="container" style="max-width: 1780px">
-    <h2>All Employees</h2>
+    <h2 th:text="#{allEmployees.title}">All Employees</h2>
     <div th:replace="~{fragments/fragment1::header}"></div>
     <div class="split-view">
         <div class="tasks-container">
             <div class="table-responsive">
                 <!-- Filtering options -->
                 <form action="/web/search/department" method="get">
-                    <label for="department">Filter by Department:</label>
+                    <label for="department" th:text="#{allEmployees.filterByDepartment}">Filter by Department:</label>
                     <select id="department" name="department" class="form-control d-inline-block w-auto">
-                        <option value="">All Departments</option>
-                        <option value="Finance">Finance</option>
-                        <option value="Hr">Hr</option>
-                        <option value="Software">Software</option>
+                        <option value="" th:text="#{allEmployees.allDepartments}">All Departments</option>
+                        <option value="Finance" th:text="#{allEmployees.finance}">Finance</option>
+                        <option value="Hr" th:text="#{allEmployees.hr}">Hr</option>
+                        <option value="Software" th:text="#{allEmployees.software}">Software</option>
                     </select>
-                    <button type="submit" class="button">Apply Filter</button>
+                    <button type="submit" class="button" th:text="#{allEmployees.applyFilter}">Apply Filter</button>
                 </form>
                 <form action="/web/search/name" method="get" class="mt-2">
-                    <input type="text" name="name" placeholder="Enter name to search" class="form-control d-inline-block w-auto">
-                    <button type="submit" class="button">Search</button>
+                    <input type="text" name="name" placeholder="Enter name to search" class="form-control d-inline-block w-auto" th:placeholder="#{allEmployees.enterNameToSearch}">
+                    <button type="submit" class="button" th:text="#{allEmployees.search}">Search</button>
                 </form>
 
                 <div class="table-responsive mt-3">
                     <table class="table table-bordered">
                         <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Department</th>
-                            <th>Action</th>
+                            <th th:text="#{message.id}">ID</th>
+                            <th th:text="#{message.name}">Name</th>
+                            <th th:text="#{allEmployees.email}">Email</th>
+                            <th th:text="#{allEmployees.department}">Department</th>
+                            <th th:text="#{message.action}">Action</th>
                         </tr>
                         </thead>
                         <tbody>
                         <!-- Check if employees list is empty -->
                         <tr th:if="${#lists.isEmpty(employees)}">
-                            <td colspan="5">No employees found.</td>
+                            <td colspan="5"  th:text="#{allEmployees.noEmployeesFound}">No employees found.</td>
                         </tr>
                         <!-- Iterate over employees -->
                         <tr th:each="employee : ${employees}">
@@ -56,16 +56,16 @@
                                     <span th:text="'Department: ' + (${employee.department} != null ? ${employee.department.name} : 'N/A')"></span><br>
                                     <span th:text="'Role: ' + ${employee.role}"></span><br>
                                     <span th:text="'Verified: ' + (${employee.verified} ? 'Yes' : 'No')"></span><br>
-                                    <span>Projects:</span>
+                                    <span  th:text="#{allEmployees.projects}">Projects:</span>
                                     <th:block th:if="${#lists.isEmpty(employee.projects)}">
-                                        <span>None</span><br>
+                                        <span th:text="#{allEmployees.none}">None</span><br>
                                     </th:block>
                                     <ol th:if="${!#lists.isEmpty(employee.projects)}">
                                         <li th:each="project : ${employee.projects}" th:text="${project.name}"></li>
                                     </ol>
-                                    <span>Tasks:</span>
+                                    <span th:text="#{allEmployees.tasks}">Tasks:</span>
                                     <th:block th:if="${#lists.isEmpty(employee.tasks)}">
-                                        <span>None</span>
+                                        <span th:text="#{allEmployees.none}">None</span>
                                     </th:block>
                                     <ol th:if="${!#lists.isEmpty(employee.tasks)}">
                                         <li th:each="task : ${employee.tasks}" th:text="${task.name}"></li>
@@ -102,7 +102,7 @@
 <div th:if="${employeeEdited}" class="popup" th:style="'display:block;'">
     <div class="popup-content">
         <span class="close" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
-        <p> Employee edited successfully!<br>
+        <p th:text="#{allEmployees.employeeEditedSuccess}"> Employee edited successfully!<br>
             Id: <span th:text="${employeeId}"></span> , Name: <span th:text="${employeeName}"></span></p>
     </div>
 </div>
@@ -110,7 +110,7 @@
 <div th:if="${employeeDeleted}" class="popup" th:style="'display:block;'">
     <div class="popup-content">
         <span class="close" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
-        <p> Employee deleted successfully!<br>
+        <p th:text="#{allEmployees.employeeDeletedSuccess}"> Employee deleted successfully!<br>
             Id: <span th:text="${employeeId}"></span> , Name: <span th:text="${employeeName}"></span></p>
     </div>
 </div>

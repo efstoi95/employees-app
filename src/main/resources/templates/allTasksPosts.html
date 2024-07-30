@@ -3,37 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>All Comments</title>
+    <title th:text="#{allComments.title}">All Comments</title>
     <div th:replace="~{fragments/fragment1::link}"></div>
     <link rel="stylesheet" th:href="@{/css/allPosts.css}">
 </head>
 <body>
 <div class="container" style="max-width: 2000px">
-    <h2>All Comments</h2>
-    <div class="back-to-menu">
-        <a th:href="@{/tasks/allTasks/{id}(id=${projectId})}">
-            <i class="fa-solid fa-arrow-left fa-2xl"></i>
-        </a>
-    </div>
+    <h2 th:text="#{allComments.title}">All Comments</h2>
+    <div th:replace="~{fragments/fragment1::header3}"></div>
     <div class="create-button-container">
         <span sec:authorize="hasRole('ADMIN')">
-            <a th:href="@{/posts/createTaskPost/{projectId}/{taskId}(projectId=${projectId}, taskId=${taskId})}" class="button">Create Comment</a>
+            <a th:href="@{/posts/createTaskPost/{projectId}/{taskId}(projectId=${projectId}, taskId=${taskId})}" class="button" th:text="#{allComments.create}">Create Comment</a>
         </span>
     </div>
     <div class="table-responsive">
         <table class="table table-bordered">
             <thead class="thread-light">
             <tr>
-                <th>ID</th>
-                <th>Title</th>
-                <th>Author</th>
-                <th>Published</th>
-                <th>Action</th>
+                <th th:text="#{message.id}">ID</th>
+                <th th:text="#{allComments.title}">Title</th>
+                <th th:text="#{allComments.author}">Author</th>
+                <th th:text="#{allComments.published}">Published</th>
+                <th th:text="#{message.action}">Action</th>
             </tr>
             </thead>
             <tbody>
             <tr th:if="${#lists.isEmpty(posts)}">
-                <td colspan="7">No Comments found.</td>
+                <td colspan="5" th:text="#{allComments.noPostsFound}">No Comments found.</td>
             </tr>
             <tr th:each="post : ${posts}">
                 <td th:text="${post.id}"></td>
@@ -67,18 +63,18 @@
 <div th:if="${postDeleted}" class="popup" th:style="'display:block;'">
     <div class="popup-content">
         <span class="close" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
-        <h2>Post deleted successfully!</h2>
-        <p>Id: <span th:text="${postId}"></span></p>
-        <p>Post Name: <span th:text="${postTitle}"></span></p>
+        <h2 th:text="#{allComments.postDeleted}">Post deleted successfully!</h2>
+        <p th:text="#{allComments.id}">Id: <span th:text="${postId}"></span></p>
+        <p th:text="#{allComments.postTitle}">Post Name: <span th:text="${postTitle}"></span></p>
     </div>
 </div>
 
 <div th:if="${postCreated}" class="popup" th:style="'display:block;'">
     <div class="popup-content">
         <span class="close" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
-        <h2>New Post created successfully!</h2>
-        <p>Id: <span th:text="${postId}"></span></p>
-        <p>Post Name: <span th:text="${postTitle}"></span></p>
+        <h2 th:text="#{allComments.postCreated}">New Post created successfully!</h2>
+        <p th:text="#{allComments.id}">Id: <span th:text="${postId}"></span></p>
+        <p th:text="#{allComments.postTitle}">Post Name: <span th:text="${postTitle}"></span></p>
     </div>
 </div>
 <div th:replace="~{fragments/fragment1 :: footer}"></div>

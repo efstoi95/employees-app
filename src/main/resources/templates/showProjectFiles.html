@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <div th:replace="~{fragments/fragment2::fontIcon}"></div>
-    <title>Show Files</title>
+    <title  th:text="#{message.ProjectFiles}">Files Projects</title>
     <link rel="stylesheet" href="/css/showFiles.css">
 </head>
 <body>
-<h2>Files for Project: <span th:text="${project.name}"></span></h2>
+<h2 th:text="#{message.ProjectFiles}">Files Project: <span th:text="${project.name}"></span></h2>
 
 <div class="error-message" th:if="${not #strings.isEmpty(error)}">
     <p th:text="${error}" style="background: #EFC3CA; width: 29%;"></p>
@@ -21,7 +21,7 @@
     </form>
     <!-- Display uploaded file names if available -->
     <div th:if="${not #lists.isEmpty(fileNames)}">
-        <p>Uploaded Files:</p>
+        <p th:text="#{message.UploadedFiles}">Uploaded Files:</p>
         <ul>
             <li th:each="file : ${project.files}" style="margin-bottom: 10px;">
                 <span th:text="${file.fileName}"></span>

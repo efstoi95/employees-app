@@ -6,7 +6,10 @@ import com.enterprise.employees.service.CustomerServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.Banner;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -14,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
+import java.util.Locale;
 
 @RequiredArgsConstructor
 @RequestMapping("/customer")
@@ -22,6 +26,8 @@ public class CostumerController {
 
     private static final Logger logger = LoggerFactory.getLogger(CostumerController.class);
     private final CustomerServiceImpl customerService;
+    @Autowired
+    private MessageSource messageSource;
 
     /**
      * Retrieves all customers and adds them to the model.
@@ -30,13 +36,21 @@ public class CostumerController {
      * @return        the name of the view to render
      */
     @GetMapping("/allCustomers")
-    public String allCustomers(Model model) {
+    public String allCustomers(@RequestParam(name = "locale", required = false) String localeParam,
+                               Model model) {
             logger.info("Retrieving all customers");
-            List<Customer> customers = (List<Customer>) customerService.findAll();
-            model.addAttribute("isAllCustomerPage", true);
-            model.addAttribute("customers", customers);
-            logger.info("Number of projects retrieved: {}", customers.size());
-            return "allCustomers";
+        Locale locale = Locale.getDefault();
+        if (localeParam != null) {
+            locale=Locale.forLanguageTag(localeParam);
+        }
+        LocaleContextHolder.setLocale(locale);
+        String message = messageSource.getMessage("allResources.title", null, locale);
+        model.addAttribute("message", message);
+        List<Customer> customers = (List<Customer>) customerService.findAll();
+        model.addAttribute("isAllCustomerPage", true);
+        model.addAttribute("customers", customers);
+        logger.info("Number of projects retrieved: {}", customers.size());
+        return "allCustomers";
     }
     /**
      * Creates a new customer and adds it to the model.
@@ -45,9 +59,18 @@ public class CostumerController {
      * @return        the name of the view to render
      */
     @GetMapping("/createCustomer")
-    public String createCustomer(Model model) {
+    public String createCustomer(@RequestParam(name = "locale", required = false) String localeParam,
+                                 Model model) {
         logger.info("Creating new customer");
+        Locale locale = Locale.getDefault();
+        if (localeParam != null) {
+            locale=Locale.forLanguageTag(localeParam);
+        }
+        LocaleContextHolder.setLocale(locale);
+        String message = messageSource.getMessage("createCustomer.title", null, locale);
+        model.addAttribute("message", message);
         model.addAttribute("customer", new Customer());
+        model.addAttribute("isCreateCustomerPage", true);
         return "createCustomer";
     }
     /**
@@ -83,8 +106,17 @@ public class CostumerController {
      * @return        the name of the view to render
      */
     @GetMapping("/updateCustomer/{id}")
-    public String updateCustomer(@PathVariable("id") Long id, Model model) {
+    public String updateCustomer(@PathVariable("id") Long id,
+                                 @RequestParam(name = "locale", required = false) String localeParam,
+                                 Model model) {
         logger.info("Updating customer with id: {}", id);
+        Locale locale = Locale.getDefault();
+        if (localeParam != null) {
+            locale=Locale.forLanguageTag(localeParam);
+        }
+        LocaleContextHolder.setLocale(locale);
+        String message = messageSource.getMessage("message.customerForm", null, locale);
+        model.addAttribute("message", message);
         Customer existingCustomer = customerService.findById(id);
         model.addAttribute("customer",existingCustomer );
         return "updateCustomer";

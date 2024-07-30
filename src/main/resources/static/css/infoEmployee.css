@@ -137,6 +137,7 @@
 
         .side-button .fa-house,
         .side-button .fa-right-from-bracket,
+        .side-button .fa-language,
         .side-button .fa-user-pen{
             text-align: left;
             margin-bottom: 4%;
@@ -147,6 +148,7 @@
 
         .side-button .fa-house:hover,
         .side-button .fa-right-from-bracket:hover,
+        .side-button .fa-language:hover,
         .side-button .fa-user-pen:hover{
             color: #7e6501;
         }

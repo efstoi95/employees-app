@@ -10,10 +10,10 @@
 </head>
 <body>
 <div class="container" style="max-width: 1780px">
-    <h2>All Customers</h2>
+    <h2 th:text="#{allCustomers.title}">All Customers</h2>
     <div th:replace="~{fragments/fragment1::header}"></div>
     <div class="left-side-button">
-        <a th:href="@{/customer/createCustomer}" class="button" style="width: auto">Create Customer</a>
+        <a th:href="@{/customer/createCustomer}" class="button" style="width: auto" th:text="#{allCustomers.create}">Create Customer</a>
     </div>
     <div class="split-view">
         <div class="tasks-container">
@@ -21,10 +21,10 @@
                 <table class="table table-bordered">
                     <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Description</th>
-                        <th>Action</th>
+                        <th th:text="#{message.id}">ID</th>
+                        <th th:text="#{message.name}">Name</th>
+                        <th th:text="#{message.description}">Description</th>
+                        <th th:text="#{message.action}">Action</th>
                     </tr>
                     </thead>
                     <tbody>

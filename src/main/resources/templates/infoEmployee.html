@@ -4,27 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Employee Form</title>
+    <title th:text="#{infoEmployee.title}">Employee Form</title>
     <div th:replace="~{fragments/fragment1 :: link}"></div>
     <link rel="stylesheet" th:href="@{/css/infoEmployee.css}">
 </head>
 <body>
 <div class="container" style="max-width: 1600px">
-    <h2>Employee Information</h2>
+    <h2 th:text="#{infoEmployee.title}">Employee Information</h2>
     <div class="popup" id="popup">
         <h2>File list Updated!</h2>
         <p> Your file deleted successfully.! </p>
         <button type="submit"
                 th:data-employee-id="${employeeId}" onclick="closePopup(this.getAttribute('data-employee-id'))" method="post">OK</button>
     </div>
-    <div class="side-button">
-        <a th:href="@{/web/successUserLogin/{id}(id=${employeeId})}">
-            <i class="fa-solid fa-house fa-xl" style="margin-right: 2%;"></i>
-        </a>
-        <a th:href="@{/login?logout}" >
-            <i class="fa-solid fa-right-from-bracket fa-xl" ></i>
-        </a>
-    </div>
+    <div th:replace="~{fragments/fragment1 :: headerUser}"></div>
     <div class="split-view">
         <div class="info-container">
             <div class="side-button">
@@ -41,29 +34,29 @@
                     <input type="hidden" th:field="*{role}">
 
                     <div class="form-group">
-                        <label for="fullName">Full Name:</label>
+                        <label for="fullName" th:text="#{create.fullName}">Full Name:</label>
                         <input type="text" class="form-control form-control-lg" id="fullName" th:field="*{fullName}" required minlength="4" pattern="[a-zA-Z\s]+" title="Full Name should contain only letters and spaces" disabled>
                     </div>
 
                     <div class="form-group">
-                        <label for="email">Email:</label>
+                        <label for="email" th:text="#{create.email}">Email:</label>
                         <input type="email" class="form-control form-control-lg" id="email" th:field="*{email}" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" disabled>
                     </div>
 
                     <!-- Display selected department -->
                     <div class="form-group">
-                        <label for="department">Department:</label>
+                        <label for="department" th:text="#{create.department}">Department:</label>
                         <input type="text" class="form-control form-control-lg" id="department" th:value="${employee.department != null ? employee.department.name : 'N/A'}" disabled>
                     </div>
 
                     <!-- Display selected role -->
                     <div class="form-group">
-                        <label for="role">Role:</label>
+                        <label for="role" th:text="#{create.role}">Role:</label>
                         <input type="text" class="form-control form-control-lg" id="role" th:value="${employee.role}" disabled>
                     </div>
 
                     <div class="form-group">
-                        <label for="skills">Skills:</label>
+                        <label for="skills" th:text="#{create.skills}">Skills:</label>
                         <ul id="skills">
                             <li th:each="skill : ${employee.skills}" th:text="${skill.name}"></li>
                         </ul>
@@ -71,14 +64,14 @@
 
                     <!-- Display projects and tasks -->
                     <div class="form-group">
-                        <label for="projects">Projects:</label>
+                        <label for="projects" th:text="#{allEmployees.projects}">Projects:</label>
                         <div id="projects">
                             <ul class="numbered-list">
                                 <li th:each="project, projectStat : ${employee.projects}" class="project">
                                     <strong th:text="${projectStat.index + 1} + '. ' + ${project.name}"></strong>
                                     <ul class="numbered-list" style="margin-left: 10px;">
                                         <li th:each="task, taskStat : ${project.tasks}" th:text=" ${taskStat.index + 1} + '. ' + ${task.name}" th:unless="${#lists.isEmpty(project.tasks)}"></li>
-                                        <li th:if="${#lists.isEmpty(project.tasks)}">None</li>
+                                        <li th:if="${#lists.isEmpty(project.tasks)}" th:text="#{allEmployees.none}">None</li>
                                     </ul>
                                 </li>
                             </ul>
@@ -96,7 +89,7 @@
 <div th:if="${employeeUpdated}" class="popup" th:style="'display:block;'">
     <div class="popup-content">
         <span class="close" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
-        <p>Employee updated successfully!</p>
+        <p th:text="${allEmployees.employeeEditedSuccess}">Employee updated successfully!</p>
     </div>
 </div>
 

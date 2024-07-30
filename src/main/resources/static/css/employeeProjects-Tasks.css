@@ -84,6 +84,8 @@
         }
          .side-button .fa-house,
           .side-button .fa-right-from-bracket,
+          .side-button .fa-arrow-left,
+          .side-button .fa-language,
           .side-button .fa-print {
                color: #fecb01;
                transition: color 0.3s;
@@ -92,6 +94,8 @@
                margin-top:4%;
         }
         .side-button .fa-house:hover,
+        .side-button .fa-language:hover,
+        .side-button .fa-arrow-left:hover,
          .side-button .fa-right-from-bracket:hover,
          .side-button .fa-print:hover {
             color: #7e6501;
