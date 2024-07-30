@@ -12,7 +12,6 @@
     <input type="hidden" th:field="${projectId}">
     <h2 th:text="#{allTasks.title}">All Tasks</h2>
     <div th:replace="~{fragments/fragment1::header2}"></div>
-    </div>
     <div class="create-button-container">
         <span sec:authorize="hasRole('ADMIN')">
             <a th:href="@{/tasks/createTask/{id}(id=${projectId})}" class="button" th:text="#{allTasks.create}">Create Task</a>
