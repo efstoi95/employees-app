@@ -9,11 +9,11 @@
 </head>
 <body>
 <div class="container" style="max-width: 1900px">
-    <h2>All Resources</h2>
+    <h2 th:text="#{allResources.title}">All Resources</h2>
     <div th:replace="~{fragments/fragment1::header}"></div>
     <div class="create-button-container">
         <span sec:authorize="hasRole('ADMIN')">
-            <a th:href="@{/resources/createResource}" class="button" style="width:10%">Create a Resource</a>
+            <a th:href="@{/resources/createResource}" class="button" style="width:10%" th:text="#{allResources.create}">Create Resource</a>
         </span>
     </div>
     <div class="split-view">
@@ -22,11 +22,11 @@
                 <table class="table table-bordered">
                     <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Description</th>
-                        <th>Action</th>
-                        <th>Files</th>
+                        <th th:text="#{message.id}">ID</th>
+                        <th th:text="#{message.name}">Name</th>
+                        <th th:text="#{message.description}">Description</th>
+                        <th th:text="#{message.action}">Action</th>
+                        <th th:text="#{message.files}">Files</th>
                     </tr>
                     </thead>
                     <tbody>

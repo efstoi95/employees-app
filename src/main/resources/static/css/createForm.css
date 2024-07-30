@@ -30,13 +30,36 @@
         }
 
         .btn-custom {
-            background-color: #fecb01;
-            color: black;
-            font-size: 1.25rem;
-            height: calc(2.875rem + 10px); /* Match height with form-control-lg */
+           display: inline-block;
+           padding: 8px 16px;
+           background-color: #fecb01;
+           color: black;
+           text-align: center;
+           text-decoration: none;
+           border-radius: 8px;
+           cursor: pointer;
+           font-size: 15px;
+           margin-bottom: 10px;
+           margin-right: 10px;
+           width:150px;
         }
 
         .btn-custom:hover {
             color: white;
             background-color: #7e6501;
         }
+
+          .side-button .fa-arrow-left,
+          .side-button .fa-right-from-bracket,
+          .side-button .fa-language{
+                    color: #febc01;
+                    transition: color 0.3s;
+                    text-align: left;
+                    margin-top:4%;
+                    margin-bottom:4%;
+                    margin-left:2%;
+                }
+                .side-button .fa-arrow-left:hover,
+                .side-button .fa-right-from-bracket:hover,
+                .side-button .fa-language:hover{
+                    color: #7e6501;

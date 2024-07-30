@@ -6,6 +6,9 @@ import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,6 +17,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.Locale;
 
 @RequiredArgsConstructor
 @RequestMapping("/web")
@@ -22,6 +26,8 @@ public class VerificationController {
 
     private static final Logger logger = LoggerFactory.getLogger(VerificationController.class);
     private final EmployeeService employeeService;
+    @Autowired
+    private MessageSource messageSource;
     /**
      * Show the verification page.
      *
@@ -99,8 +105,18 @@ public class VerificationController {
      */
     @Secured("ROLE_ADMIN")
     @GetMapping("/successLogin")
-    public String successLogin(Model model) {
+    public String successLogin(@RequestParam(name = "locale", required = false) String localeParam,
+                               Model model) {
+
+        Locale locale = Locale.getDefault();
+        if (localeParam != null) {
+            locale=Locale.forLanguageTag(localeParam);
+        }
+        LocaleContextHolder.setLocale(locale);
+        String message = messageSource.getMessage("message.menuEmployee", null, locale);
+        model.addAttribute("message", message);
         model.addAttribute("message", "You logged in");
+        model.addAttribute("isSuccessLoginPage", true);
         logger.info("The employee logged in.");
         return "successLogin";
     }

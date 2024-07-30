@@ -66,7 +66,7 @@
             font-size: 15px;
             margin-bottom: 10px;
             margin-right: 10px;
-            width:125px;
+            width:150px;
         }
         .button:hover {
             background-color: #7e6501;
@@ -88,6 +88,7 @@
             text-align: right;
         }
          .side-button .fa-house,
+         .side-button .fa-language,
           .side-button .fa-right-from-bracket,
           .side-button .fa-arrow-left,
           .side-button .fa-print{
@@ -98,6 +99,7 @@
            margin-top:4%;
         }
         .side-button .fa-house:hover,
+        .side-button .fa-language:hover,
          .side-button .fa-right-from-bracket:hover,
          .side-button .fa-arrow-left:hover,
          .side-button .fa-print:hover{

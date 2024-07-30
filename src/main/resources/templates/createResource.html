@@ -3,31 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Employee Form</title>
+    <title th:text="#{createResource.title}">Resource Information</title>
     <div th:replace="~{fragments/fragment1 :: link}"></div>
     <link rel="stylesheet" th:href="@{/css/createForm.css}">
 </head>
 <body>
-<h2>Resource Information</h2>
+<h2 th:text="#{createResource.title}">Resource Information</h2>
+<div th:replace="~{fragments/fragment1 :: header5}"></div>
 <div class="form-container">
     <form th:action="@{/resources/createdResource}" th:object="${resource}" method="post">
         <div class="form-group">
-            <label for="name">Full Name:</label>
+            <label for="name" th:text="#{create.name}">Full Name:</label>
             <div class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
             <input type="text" class="form-control form-control-lg" id="name" th:field="*{name}" required minlength="4" pattern="[a-zA-Z\s]+" th:classappend="${#fields.hasErrors('name')} ? 'is-invalid' : ''" title="Full Name should contain only letters and spaces">
         </div>
         <div class="form-group">
-            <label for="description">Description:</label>
+            <label for="description" th:text="#{message.description}">Description:</label>
             <div class="text-danger" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
             <input type="text" class="form-control form-control-lg" id="description" th:field="*{description}" th:classappend="${#fields.hasErrors('description')} ? 'is-invalid' : ''">
         </div>
         <div class="form-group">
-            <label for="qrCode">QR-Code:</label>
+            <label for="qrCode" th:text="#{createResource.qrCode}">QR-Code:</label>
             <div class="text-danger" th:if="${#fields.hasErrors('qrCode')}" th:errors="*{qrCode}"></div>
             <input type="text" class="form-control form-control-lg" id="qrCode" th:field="*{qrCode}" th:classappend="${#fields.hasErrors('qrCode')} ? 'is-invalid' : ''">
         </div>
 
-        <button type="submit" class="btn btn-custom btn-block">Submit</button>
+        <button type="submit" class="btn btn-custom btn-block" style ="width: 100%; padding: 3%;">Submit</button>
     </form>
 </div>
 <div th:replace="~{fragments/fragment1 :: footer}"></div>

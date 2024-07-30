@@ -13,12 +13,12 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="panel text-center">
-                <h2 th:text="${message}">New user created</h2>
-                <a class="btn btn-custom btn-block" href="/web/allEmployees">View the List of Employees</a>
-                <a class="btn btn-custom btn-block" href="/projects/allProjects">View the List of Projects</a>
-                <a class="btn btn-custom btn-block" href="/customer/allCustomers">View the List of Customers</a>
-                <a class="btn btn-custom btn-block" href="/reports/employees/pdf">Print Report</a>
-                <a class="btn btn-custom btn-block" href="/resources/allResources">View the List of Resources</a>
+                <h2 th:text="${message}">You logged in</h2>
+                <a class="btn btn-custom btn-block" href="/web/allEmployees" th:text="#{message.menuEmployee}">View the List of Employees</a>
+                <a class="btn btn-custom btn-block" href="/projects/allProjects" th:text="#{message.menuProjects}">View the List of Projects</a>
+                <a class="btn btn-custom btn-block" href="/customer/allCustomers" th:text="#{message.menuCustomers}">View the List of Customers</a>
+                <a class="btn btn-custom btn-block" href="/reports/employees/pdf" th:text="#{message.menuPrint}">Print Report</a>
+                <a class="btn btn-custom btn-block" href="/resources/allResources" th:text="#{message.menuResources}">View the List of Resources</a>
             </div>
         </div>
     </div>

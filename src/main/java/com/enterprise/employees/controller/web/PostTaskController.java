@@ -8,6 +8,9 @@ import com.enterprise.employees.service.PostServiceImpl;
 import com.enterprise.employees.service.ProjectService;
 import com.enterprise.employees.service.TaskService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -25,15 +29,27 @@ public class PostTaskController {
     private final ProjectService projectService;
     private final TaskService taskService;
     private final PostServiceImpl postService;
+    @Autowired
+    private MessageSource messageSource;
 
     @GetMapping("/allTasksPosts/{taskId}")
-    public String allPosts(@PathVariable("taskId") Long taskId, Model model) {
+    public String allPosts(@PathVariable("taskId") Long taskId, @RequestParam(name = "locale", required = false) String localeParam,
+                           Model model) {
+
+        Locale locale = Locale.getDefault();
+        if (localeParam != null) {
+            locale=Locale.forLanguageTag(localeParam);
+        }
+        LocaleContextHolder.setLocale(locale);
+        String message = messageSource.getMessage("allComments.title", null, locale);
+        model.addAttribute("message", message);
         Task task = taskService.findById(taskId);
         Long projectId = task.getProject().getId();
         List<Post> posts = task.getPosts();
         model.addAttribute("posts", posts);
         model.addAttribute("projectId", projectId);
         model.addAttribute("taskId", taskId);
+        model.addAttribute("isAllTasksPostsPage", true);
         return "allTasksPosts";
     }
 

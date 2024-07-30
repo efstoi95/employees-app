@@ -3,42 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Employee Form</title>
+    <title th:text="#{createEmployee.title}">Employee Form</title>
     <div th:replace="~{fragments/fragment1 :: link}"></div>
     <link rel="stylesheet" th:href="@{/css/createForm.css}">
 </head>
 <body>
-<h2>Employee Information</h2>
+<h2 th:text="#{createEmployee.title}">Employee Information</h2>
+<div th:replace="~{fragments/fragment1::header1}"></div>
 <div class="form-container">
     <form th:action="@{/web/employee}" th:object="${employee}" method="post">
         <div class="form-group">
-            <label for="fullName">Full Name:</label>
+            <label for="fullName" th:text="#{create.fullName}">Full Name:</label>
             <div class="text-danger" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}"></div>
             <input type="text" class="form-control form-control-lg" id="fullName" th:field="*{fullName}" required minlength="4" pattern="[a-zA-Z\s]+" th:classappend="${#fields.hasErrors('fullName')} ? 'is-invalid' : ''" title="Full Name should contain only letters and spaces">
         </div>
 
         <div class="form-group">
-            <label for="email">Email:</label>
+            <label for="email" th:text="#{create.email}">Email:</label>
             <div class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
             <input type="email" class="form-control form-control-lg" id="email" th:field="*{email}" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}" th:classappend="${#fields.hasErrors('email')} ? 'is-invalid' : ''">
         </div>
 
         <div class="form-group">
-            <label for="department">Department:</label>
+            <label for="department" th:text="#{create.department}">Department:</label>
             <select class="form-control form-control-lg" id="department" th:field="*{departmentId}" required>
                 <option th:each="dept : ${departments}" th:value="${dept.id}" th:text="${dept.name}"></option>
             </select>
         </div>
 
         <div class="form-group">
-            <label for="role">Role:</label>
+            <label for="role" th:text="#{create.role}">Role:</label>
             <select class="form-control form-control-lg" id="role" th:field="*{role}" required>
                 <option th:each="role : ${T(com.enterprise.employees.model.EmployeeRoles).values()}" th:value="${role}" th:text="${role}"></option>
             </select>
         </div>
 
         <div class="form-group">
-            <label for="skills">Skills:</label>
+            <label for="skills" th:text="#{create.skills}">Skills:</label>
             <div class="text-danger" th:if="${#fields.hasErrors('skillIds')}" th:errors="*{skillIds}"></div>
             <select class="form-control form-control-lg" id="skills" th:field="*{skillIds}" multiple="multiple" size="5">
                 <option th:each="skill : ${skills}" th:value="${skill.id}" th:text="${skill.name}"></option>
@@ -46,18 +47,18 @@
         </div>
 
         <div class="form-group">
-            <label for="username">Username:</label>
+            <label for="username" th:text="#{create.username}">Username:</label>
             <div class="text-danger" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></div>
             <input type="text" class="form-control form-control-lg" id="username" th:field="*{username}" required minlength="4" pattern="[a-zA-Z\s]+" th:classappend="${#fields.hasErrors('username')} ? 'is-invalid' : ''" title="Username should contain only letters and spaces">
         </div>
 
         <div class="form-group">
-            <label for="password">Password:</label>
+            <label for="password" th:text="#{create.password}">Password:</label>
             <div class="text-danger" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
             <input type="password" class="form-control form-control-lg" id="password" th:field="*{password}" required minlength="4" pattern="[a-zA-Z0-9]+" th:classappend="${#fields.hasErrors('password')} ? 'is-invalid' : ''" title="Password should contain only letters and numbers">
         </div>
 
-        <button type="submit" class="btn btn-custom btn-block">Submit</button>
+        <button type="submit" class="btn btn-custom btn-block" style ="width: 100%; padding: 3%;">Submit</button>
     </form>
 </div>
 

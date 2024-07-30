@@ -11,6 +11,8 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +29,7 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -39,6 +42,8 @@ public class TaskController {
     private TaskRepository taskRepository;
     @Autowired
     private FileRepository fileRepository;
+    @Autowired
+    private MessageSource messageSource;
     private final FileStorageService fileStorageService;
     private final ProjectServiceImpl projectServiceImpl;
     private final SkillServiceImpl skillService;
@@ -57,14 +62,24 @@ public class TaskController {
      */
     @GetMapping("/createTask/{id}")
     @Secured("ROLE_ADMIN")
-    public String CreateTask(@PathVariable Long id,Model model) {
+    public String CreateTask(@PathVariable Long id,@RequestParam(name = "locale", required = false) String localeParam,
+                             Model model) {
         logger.info("Creating new task");
+        Locale locale = Locale.getDefault();
+        if (localeParam != null) {
+            locale = Locale.forLanguageTag(localeParam);
+        }
+        LocaleContextHolder.setLocale(locale);
+        String message = messageSource.getMessage("createTask.title", null, locale);
+        model.addAttribute("message", message);
         TaskDTO taskDTO = new TaskDTO();
         ProjectDTO projectDTO = projectServiceImpl.findByIdDTO(id);
         Long projectId = projectDTO.getId();
         taskDTO.setProjectId(projectId);
         model.addAttribute("task", taskDTO);
         model.addAttribute("skills", skillService.getAllSkillsDTO());
+        model.addAttribute("isCreateTaskPage", true);
+        model.addAttribute("projectId", projectId);
         return "createTask";
     }
 
@@ -87,8 +102,17 @@ public class TaskController {
     }
 
     @GetMapping("/editTask/{id}")
-    public String editTask(@PathVariable Long id,Model model) {
+    public String editTask(@PathVariable Long id,
+                           @RequestParam(name="locale", required = false) String localeParam,
+                           Model model) {
         logger.info("Adding employee to task");
+        Locale locale = Locale.getDefault();
+        if (localeParam != null) {
+            locale = Locale.forLanguageTag(localeParam);
+        }
+        LocaleContextHolder.setLocale(locale);
+        String message = messageSource.getMessage("editTask.title", null, locale);
+        model.addAttribute("message", message);
         TaskDTO taskDTO = taskServiceImpl.findByIdDTO(id);
         Long projectId = taskDTO.getProjectId();
         Project project = projectServiceImpl.findById(projectId);
@@ -165,17 +189,31 @@ public class TaskController {
      */
     @GetMapping("/allTasks/{id}")
     @Secured("ROLE_ADMIN")
-    public String showAllTasks(@PathVariable("id") Long id, Model model) {
-            Project project = projectServiceImpl.findById(id);
-            List<Task> tasks = project.getTasks();
-            tasks.forEach(task -> {
-                task.setDurationInput(format(task.getDuration()));
-            });
-            logger.info("Number of tasks retrieved: {}", tasks.size());
-            model.addAttribute("tasks", tasks);
-            model.addAttribute("taskId", id);
-            model.addAttribute("statuses", Status.values());
-            return "allTasks";
+    public String showAllTasks(@PathVariable("id") Long id,
+                               @RequestParam(name = "locale", required = false) String localeParam,
+                               Model model) {
+        logger.info("Retrieving all tasks");
+        Locale locale = Locale.getDefault();
+        if (localeParam != null) {
+            locale=Locale.forLanguageTag(localeParam);
+        }
+        LocaleContextHolder.setLocale(locale);
+        String message = messageSource.getMessage("allTasks.title", null, locale);
+        model.addAttribute("message", message);
+        Project project = projectServiceImpl.findById(id);
+        Long projectId = project.getId();
+        Long taskId=project.getTasks().stream().findFirst().get().getId();
+        List<Task> tasks = project.getTasks();
+        tasks.forEach(task -> {
+            task.setDurationInput(format(task.getDuration()));
+        });
+        logger.info("Number of tasks retrieved: {}", tasks.size());
+        model.addAttribute("tasks", tasks);
+        model.addAttribute("projectId", projectId);
+        model.addAttribute("taskId", taskId);
+        model.addAttribute("statuses", Status.values());
+        model.addAttribute("isAllTasksPage", true);
+        return "allTasks";
     }
     public static String format(Duration duration){
         long days = duration.toDays();
@@ -216,7 +254,16 @@ public class TaskController {
     }
 
     @GetMapping("/showFiles/{taskId}")
-    public String showFiles(@PathVariable("taskId") Long taskId, Model model) {
+    public String showFiles(@PathVariable("taskId") Long taskId,
+                            @RequestParam(name = "locale", required = false) String localeParam,
+                            Model model) {
+        Locale locale = Locale.getDefault();
+        if (localeParam != null) {
+            locale = Locale.forLanguageTag(localeParam);
+        }
+        LocaleContextHolder.setLocale(locale);
+        String message=messageSource.getMessage("message.TasksFiles", null, locale);
+        model.addAttribute("message", message);
         Task task = taskServiceImpl.findById(taskId);
         model.addAttribute("task", task);
         model.addAttribute("fileNames", task.getFiles().stream().map(File::getFileName).toList());

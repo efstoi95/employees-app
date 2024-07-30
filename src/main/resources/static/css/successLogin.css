@@ -20,15 +20,37 @@
             background-color: #7e6501;
         }
 
-          .log-out .fa-right-from-bracket{
-           color: #fecb01;
-           transition: color 0.3s;
-           text-align: left;
-           margin-bottom: 4%;
-           margin-top:4%;
-           margin-left: 10%;
+
+        .side-button .fa-language,
+        .side-button .fa-right-from-bracket{
+            color: #fecb01;
+            transition: color 0.3s;
+            text-align: left;
+            margin-bottom: 4%;
+            margin-top:4%;
         }
 
-         .log-out .fa-right-from-bracket:hover{
-            color: #7e6501;
+        .side-button .fa-language:hover,
+        .side-button .fa-right-from-bracket:hover{
+
+           color: #7e6501;
         }
+
+         .button {
+                    display: inline-block;
+                    padding: 8px 16px;
+                    background-color: #fecb01;
+                    color: black;
+                    text-align: center;
+                    text-decoration: none;
+                    border-radius: 8px;
+                    cursor: pointer;
+                    font-size: 15px;
+                    margin-bottom: 10px;
+                    margin-right: 10px;
+                    width:125px;
+                }
+                .button:hover {
+                    background-color: #7e6501;
+                    color: #ffffff;
+                }

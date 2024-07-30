@@ -3,18 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>All Tasks</title>
+    <title th:text="#{message.tasksEmployee}">All Tasks</title>
     <div th:replace="~{fragments/fragment1 :: link}"></div>
     <link rel="stylesheet" href="/css/employeeProjects-Tasks.css">
 </head>
 <body>
 <div class="container" style="max-width: 1600px">
-    <h2>All Tasks</h2>
-    <div class="side-button">
-        <a th:href="@{/web/EmployeeProjects/{id}(id=${employeeId})}">
-            <i class="fa-solid fa-arrow-left fa-2xl"></i>
-        </a>
-    </div>
+    <h2 th:text="#{message.tasksEmployee}">All Tasks</h2>
+
+    <div th:replace="~{fragments/fragment1 :: headerUser2}"></div>
 
     <div class="split-view">
         <div class="tasks-container">
@@ -22,17 +19,17 @@
                 <table class="table table-bordered">
                     <thead class="thread-light">
                     <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Description</th>
-                        <th>Duration</th>
-                        <th>Status</th>
-                        <th>Files</th>
+                        <th th:text="#{message.id}">ID</th>
+                        <th th:text="#{message.name}">Name</th>
+                        <th th:text="#{message.description}">Description</th>
+                        <th th:text="#{allTasks.duration}">Duration</th>
+                        <th th:text="#{message.status}">Status</th>
+                        <th th:text="#{message.files}">Files</th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr th:if="${#lists.isEmpty(tasks)}">
-                        <td colspan="7">No Tasks found.</td>
+                        <td colspan="7" th:text="#{allTasks.noTasksFound}">No Tasks found.</td>
                     </tr>
                     <tr th:each="task : ${tasks}">
                         <td th:text="${task.id}"></td>
@@ -63,14 +60,14 @@
 <div th:if="${fileUploaded}" class="popup" th:style="'display:block;'">
     <div class="popup-content">
         <span class="close" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
-        <p>File uploaded successfully!</p>
+        <p th:text="#{message.fileUploaded}">File uploaded successfully!</p>
     </div>
 </div>
 
 <div th:if="${fileDeleted}" class="popup" th:style="'display:block;'">
     <div class="popup-content">
         <span class="close" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
-        <p>File deleted successfully!</p>
+        <p th:text="#{message.fileDeleted}">File deleted successfully!</p>
     </div>
 </div>
 

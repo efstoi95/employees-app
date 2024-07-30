@@ -79,6 +79,7 @@
         }
 
         .side-button .fa-house,
+        .side-button .fa-language,
         .side-button .fa-map-location-dot,
         .side-button .fa-print,
         .side-button .fa-right-from-bracket{
@@ -90,6 +91,7 @@
         }
 
         .side-button .fa-house:hover,
+        .side-button .fa-language:hover,
         .side-button .fa-map-location-dot:hover,
         .side-button .fa-print:hover,
         .side-button .fa-right-from-bracket:hover{

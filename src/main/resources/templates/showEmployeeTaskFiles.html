@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <div th:replace="~{fragments/fragment2::fontIcon}"></div>
-    <title>Show Files</title>
+    <title th:text="#{message.EmployeeTasksFiles}">Files Task</title>
     <link rel="stylesheet" href="/css/showFiles.css">
 </head>
 <body>
-<h2>Files for Task: <span th:text="${task.name}"></span></h2>
+<h2 th:text="#{message.EmployeeTasksFiles}">Files Task: <span th:text="${task.name}"></span></h2>
 
 <div class="error-message" th:if="${not #strings.isEmpty(error)}">
     <p th:text="${error}" style="background: #EFC3CA; width: 29%;"></p>
@@ -21,7 +21,7 @@
     </form>
     <!-- Display uploaded file names if available -->
     <div th:if="${not #lists.isEmpty(fileNames)}">
-        <p>Uploaded Files:</p>
+        <p th:text="#{message.UploadedFiles}">Uploaded Files:</p>
         <ul>
             <li th:each="file: ${task.files}" style="margin-bottom: 10px;">
                 <span th:text="${file.fileName}"></span>
@@ -45,7 +45,6 @@
     </div>
 </div>
 
-<div th:replace="~{fragments/fragment1 :: footer}"></div>
 <script>
     let popup = document.getElementById("popup");
     function openPopup() {

@@ -7,6 +7,11 @@ import com.enterprise.employees.service.FileStorageService;
 import com.enterprise.employees.service.PostServiceImpl;
 import com.enterprise.employees.service.ProjectService;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -26,12 +31,26 @@ public class PostProjectController {
     private final PostServiceImpl postService;
     private final ProjectService projectService;
     private final FileStorageService fileStorageService;
+    private static final Logger logger = LoggerFactory.getLogger(PostProjectController.class);
+    @Autowired
+    private MessageSource messageSource;
 
     @GetMapping("/allPosts/{projectId}")
-    public String allPosts(@PathVariable("projectId") Long projectId, Model model) {
+    public String allPosts(@PathVariable("projectId") Long projectId,  @RequestParam(name = "locale", required = false) String localeParam,
+                           Model model) {
+        logger.info("Retrieving all posts for project {}", projectId);
+        Locale locale = Locale.getDefault();
+        if (localeParam != null) {
+            locale=Locale.forLanguageTag(localeParam);
+        }
+        LocaleContextHolder.setLocale(locale);
+        String message = messageSource.getMessage("allComments.title", null, locale);
+        model.addAttribute("message", message);
         Project project = projectService.findById(projectId);
         List<Post> posts = project.getPosts();
         model.addAttribute("posts", posts);
+        model.addAttribute("isAllPostsPage", true);
+        model.addAttribute("projectId", projectId);
         return "allPosts";
     }
 

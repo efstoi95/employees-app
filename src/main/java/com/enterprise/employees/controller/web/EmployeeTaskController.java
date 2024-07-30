@@ -12,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +26,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -45,12 +48,22 @@ public class EmployeeTaskController {
     FileRepository fileRepository;
     @Autowired
     EmployeesRepository employeesRepository;
+    @Autowired
+    MessageSource messageSource;
 
     @Secured("ROLE_USER")
     @GetMapping("/EmployeeTasks/{projectId}")
     public String EmployeeTasks(@PathVariable("projectId") Long projectId,
                                 @RequestParam("employeeId") Long employeeId,
+                                @RequestParam(name="locale", required = false) String localeParam,
                                 Model model) {
+        Locale locale = Locale.getDefault();
+        if(localeParam != null) {
+            locale = Locale.forLanguageTag(localeParam);
+        }
+        LocaleContextHolder.setLocale(locale);
+        String message = messageSource.getMessage("message.projectsEmployee", null, locale);
+        model.addAttribute("message", message);
         Project existingProject = projectService.findById(projectId);
 
         List<Task> tasks = existingProject.getTasks()
@@ -63,6 +76,8 @@ public class EmployeeTaskController {
         Employee employee = employeeService.getEmployeeById(employeeId);
         model.addAttribute("tasks", tasks);
         model.addAttribute("employeeId", employeeId);
+        model.addAttribute("projectId", projectId);
+        model.addAttribute("isEmployeeTasksPage", true);
         return "EmployeeTasks";
     }
 
@@ -76,7 +91,17 @@ public class EmployeeTaskController {
     @Secured("ROLE_USER")
     @GetMapping("/showEmployeeTaskFiles/{taskId}")
     public String showFiles(@PathVariable("taskId") Long taskId,
-                            @RequestParam("employeeId") Long employeeId, Model model) {
+                            @RequestParam("employeeId") Long employeeId,
+                            @RequestParam(value = "locale", required = false) String localeParam,
+                            Model model) {
+
+        Locale locale = Locale.getDefault();
+        if(localeParam != null) {
+            locale = Locale.forLanguageTag(localeParam);
+        }
+        LocaleContextHolder.setLocale(locale);
+        String message = messageSource.getMessage("message.EmployeeTasksFiles", null, locale);
+        model.addAttribute("message", message);
         TaskDTO task = taskService.findByIdDTO(taskId);
         Employee employee = employeeService.getEmployeeById(employeeId);
         List<File> employeeTaskFiles = employee.getFiles();
