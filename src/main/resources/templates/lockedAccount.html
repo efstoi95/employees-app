@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Account Locked</title>
+    <title>Konto gesperrt</title>
     <div th:replace="~{fragments/fragment1 :: link}"></div>
     <link rel="stylesheet" th:href="@{/css/verifyCode-lockedAcc.css}">
 </head>
 <body>
 <div class="form-container">
-    <h1>Your Account is Locked</h1>
-    <p>Please verify your account to continue.</p>
+    <h1>Ihr Konto ist gesperrt</h1>
+    <p>Bitte überprüfen Sie Ihr Konto, um fortzufahren.</p>
     <div class="buttons">
         <form th:action="@{/web/sendCode/{id}(id=${employeeId})}" method="post">
-            <button type="submit" class="btn btn-custom btn-block">Send Code</button>
+            <button type="submit" class="btn btn-custom btn-block">Code senden</button>
         </form>
-        <a th:href="@{/login?logout}" class="btn btn-custom logout btn-block">Logout</a>
+        <a th:href="@{/login?logout}" class="btn btn-custom logout btn-block">Abmelden</a>
     </div>
 </div>
 <div th:replace="~{fragments/fragment1 :: footer}"></div>

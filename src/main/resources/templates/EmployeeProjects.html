@@ -42,10 +42,15 @@
                         <td th:text="${#temporals.format(proj.start, 'dd/MM/yyyy HH:mm:ss')}"></td>
                         <td th:text="${#temporals.format(proj.end, 'dd/MM/yyyy HH:mm:ss')}"></td>
                         <td th:text="${proj.finished} ? 'Closed' : 'Open'"></td>
-                        <td>
+                        <td style="width: 97px">
                             <span sec:authorize="hasRole('USER')">
                                 <a th:href="@{/web/EmployeeTasks/{projectId}(projectId=${proj.id}, employeeId=${employeeId})}" class="bounce-icon">
                                     <i class="fa-solid fa-list-check fa-xl" style="color: #fecb01; margin-left: 5%;"></i>
+                                </a>
+                            </span>
+                            <span sec:authorize="hasRole('USER')">
+                                <a th:href="@{/posts/allPostsEmployee/{id}(id=${proj.id}, employeeId=${employeeId})}" class="bounce-icon">
+                                    <i class="fa-regular fa-comment fa-xl" style="color: #fecb01; margin-left: 5%;"></i>
                                 </a>
                             </span>
                         </td>
@@ -71,14 +76,14 @@
 <div th:if="${fileUploaded}" class="popup" th:style="'display:block;'">
     <div class="popup-content">
         <span class="close" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
-        <p th:text="${message.fileUploaded}">File uploaded successfully!</p>
+        <p th:text="#{message.fileUploaded}">File uploaded successfully!</p>
     </div>
 </div>
 
 <div th:if="${fileDeleted}" class="popup" th:style="'display:block;'">
     <div class="popup-content">
         <span class="close" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
-        <p th:text="${message.fileDeleted}">File deleted successfully!</p>
+        <p th:text="#{message.fileDeleted}">File deleted successfully!</p>
     </div>
 </div>
 

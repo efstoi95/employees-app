@@ -109,7 +109,7 @@ public class ProjectController {
      * @return        the view name to display all projects
      */
     @GetMapping("/allProjects")
-    @Secured("ROLE_ADMIN")
+    //@Secured("ROLE_ADMIN")
     public String showAllProjects(@RequestParam(name = "locale", required = false) String localeParam,
                                   Model model) {
         Locale locale = Locale.getDefault();

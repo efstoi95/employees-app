@@ -95,8 +95,8 @@
 <div th:if="${fileUploaded}" class="popup" th:style="'display:block;'">
     <div class="popup-content">
         <span class="close" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
-        <h2 th:text="${message.fileUploaded}">File uploaded successfully!</h2>
-        <p th:text="${message.id}"> Id: <span th:text="${projectId}"></span> , Project Name: <span th:text="${projectName}"></span><br>
+        <h2 th:text="#{message.fileUploaded}">File uploaded successfully!</h2>
+        <p th:text="#{message.id}"> Id: <span th:text="${projectId}"></span> , Project Name: <span th:text="${projectName}"></span><br>
             File Name: <span th:text="${fileName}"></span></p>
     </div>
 </div>
@@ -104,7 +104,7 @@
 <div th:if="${fileDeleted}" class="popup" th:style="'display:block;'">
     <div class="popup-content">
         <span class="close" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
-        <h2 th:text="${message.fileDeleted}">File deleted successfully!</h2>
+        <h2 th:text="#{message.fileDeleted}">File deleted successfully!</h2>
         <p>Project Id: <span th:text="${projectId}"></span></p>
         <p>Project Name: <span th:text="${projectName}"></span></p>
     </div>

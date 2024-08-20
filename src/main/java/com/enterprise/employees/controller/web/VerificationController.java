@@ -1,6 +1,7 @@
 package com.enterprise.employees.controller.web;
 
 import com.enterprise.employees.model.Employee;
+import com.enterprise.employees.model.Poste;
 import com.enterprise.employees.service.EmployeeService;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
@@ -113,6 +114,8 @@ public class VerificationController {
             locale=Locale.forLanguageTag(localeParam);
         }
         LocaleContextHolder.setLocale(locale);
+        Poste poste = new Poste(1000, "admin");
+        model.addAttribute("poste", poste);
         String message = messageSource.getMessage("message.menuEmployee", null, locale);
         model.addAttribute("message", message);
         model.addAttribute("message", "You logged in");

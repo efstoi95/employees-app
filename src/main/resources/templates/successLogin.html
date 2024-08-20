@@ -15,10 +15,15 @@
             <div class="panel text-center">
                 <h2 th:text="${message}">You logged in</h2>
                 <a class="btn btn-custom btn-block" href="/web/allEmployees" th:text="#{message.menuEmployee}">View the List of Employees</a>
+                <a class="btn btn-custom btn-block" href="/web/allEmployees" th:text="#{message.menuDepartments}">View the List of Departments</a>
+                <a class="btn btn-custom btn-block" href="/web/allEmployees" th:text="#{message.menuSkills}">View the List of Skills</a>
                 <a class="btn btn-custom btn-block" href="/projects/allProjects" th:text="#{message.menuProjects}">View the List of Projects</a>
                 <a class="btn btn-custom btn-block" href="/customer/allCustomers" th:text="#{message.menuCustomers}">View the List of Customers</a>
                 <a class="btn btn-custom btn-block" href="/reports/employees/pdf" th:text="#{message.menuPrint}">Print Report</a>
                 <a class="btn btn-custom btn-block" href="/resources/allResources" th:text="#{message.menuResources}">View the List of Resources</a>
+                <form th:action="@{/api/send}" method="post">
+                    <button type="submit" class="btn btn-custom btn-block" th:text="#{message.menuSendProjectData}">Send Project Data</button>
+                </form>
             </div>
         </div>
     </div>

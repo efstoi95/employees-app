@@ -33,7 +33,8 @@ public class PostTaskController {
     private MessageSource messageSource;
 
     @GetMapping("/allTasksPosts/{taskId}")
-    public String allPosts(@PathVariable("taskId") Long taskId, @RequestParam(name = "locale", required = false) String localeParam,
+    public String allPosts(@PathVariable("taskId") Long taskId,
+                           @RequestParam(name = "locale", required = false) String localeParam,
                            Model model) {
 
         Locale locale = Locale.getDefault();
@@ -51,6 +52,28 @@ public class PostTaskController {
         model.addAttribute("taskId", taskId);
         model.addAttribute("isAllTasksPostsPage", true);
         return "allTasksPosts";
+    }
+    @GetMapping("/allTasksPostsEmployee/{taskId}")
+    public String allPostsEmployee(@PathVariable("taskId") Long taskId,
+                                   @RequestParam("employeeId") Long employeeId,
+                                   @RequestParam(name = "locale", required = false) String localeParam,
+                                   Model model) {
+        Locale locale = Locale.getDefault();
+        if (localeParam != null) {
+            locale=Locale.forLanguageTag(localeParam);
+        }
+        LocaleContextHolder.setLocale(locale);
+        String message = messageSource.getMessage("allComments.title", null, locale);
+        model.addAttribute("message", message);
+        Task task = taskService.findById(taskId);
+        List<Post> posts = task.getPosts();
+        Long projectId = task.getProject().getId();
+        model.addAttribute("posts", posts);
+        model.addAttribute("taskId", taskId);
+        model.addAttribute("projectId", projectId);
+        model.addAttribute("employeeId", employeeId);
+        model.addAttribute("isAllTasksPostsEmployeePage", true);
+        return "allTasksPostsEmployee";
     }
 
     @GetMapping("/createTaskPost/{projectId}/{taskId}")

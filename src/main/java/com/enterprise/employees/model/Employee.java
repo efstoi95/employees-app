@@ -1,6 +1,7 @@
 package com.enterprise.employees.model;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Max;
@@ -58,6 +59,7 @@ public class Employee implements UserDetails {
     private String verifiedCode;
 
     @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+    @JsonBackReference
     private List<Project> projects = new ArrayList<>();
 
     private List<Long> fileEmployeeIds = new ArrayList<>();

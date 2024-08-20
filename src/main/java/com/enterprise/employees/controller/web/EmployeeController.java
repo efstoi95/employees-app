@@ -1,6 +1,7 @@
 package com.enterprise.employees.controller.web;
 
 import com.enterprise.employees.model.*;
+import com.enterprise.employees.repository.ProjectRepository;
 import com.enterprise.employees.repository.TaskRepository;
 import com.enterprise.employees.service.*;
 import jakarta.mail.MessagingException;
@@ -48,6 +49,8 @@ public class EmployeeController {
     private final ProjectService projectService;
     @Autowired
     private TaskRepository taskRepository;
+    @Autowired
+    private ProjectRepository projectRepository;
     @Autowired
     private MessageSource messageSource;
 
@@ -235,6 +238,7 @@ public class EmployeeController {
             locale=Locale.forLanguageTag(localeParam);
         }
         LocaleContextHolder.setLocale(locale);
+
         String message = messageSource.getMessage("message.userInfoForm", null, locale);
         model.addAttribute("message", message);
         model.addAttribute("employeeId", id);

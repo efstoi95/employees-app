@@ -23,6 +23,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RequestMapping("/posts")
@@ -52,6 +53,27 @@ public class PostProjectController {
         model.addAttribute("isAllPostsPage", true);
         model.addAttribute("projectId", projectId);
         return "allPosts";
+    }
+    @GetMapping("/allPostsEmployee/{projectId}")
+    public String allPostsEmployee(@PathVariable("projectId") Long projectId,
+                                   @RequestParam("employeeId") Long employeeId,
+                                   @RequestParam(name = "locale", required = false) String localeParam,
+                                    Model model) {
+        logger.info("Retrieving all posts for project {}", projectId);
+        Locale locale = Locale.getDefault();
+        if (localeParam != null) {
+            locale=Locale.forLanguageTag(localeParam);
+        }
+        LocaleContextHolder.setLocale(locale);
+        String message = messageSource.getMessage("allComments.title", null, locale);
+        model.addAttribute("message", message);
+        Project project = projectService.findById(projectId);
+        List<Post> posts = project.getPosts();
+        model.addAttribute("posts", posts);
+        model.addAttribute("isAllPostsEmployeePage", true);
+        model.addAttribute("projectId", projectId);
+        model.addAttribute("employeeId", employeeId);
+        return "allPostsEmployee";
     }
 
     @GetMapping("/createPost/{projectId}")

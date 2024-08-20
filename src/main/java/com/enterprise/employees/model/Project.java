@@ -1,5 +1,6 @@
 package com.enterprise.employees.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -30,6 +31,7 @@ public class Project {
     private String description;
 
     @OneToMany(mappedBy ="project", cascade = CascadeType.MERGE,fetch = FetchType.EAGER)
+    @JsonManagedReference
     private List<Task> tasks = new ArrayList<>();
 
     @ManyToOne
@@ -45,6 +47,7 @@ public class Project {
             name = "project_employee",
             joinColumns = @JoinColumn(name = "project_id"),
             inverseJoinColumns = @JoinColumn(name = "employee_id"))
+    @JsonManagedReference
     private List<Employee> employees = new ArrayList<>();
 
     private LocalDateTime start;
@@ -52,11 +55,13 @@ public class Project {
     private LocalDateTime end;
 
     @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+    @JsonManagedReference
     private List<File> files = new ArrayList<>();
 
     private boolean finished;
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference
     private List<Post> posts = new ArrayList<>();
 
     public void addEmployee(Employee employee) {

@@ -57,6 +57,7 @@ public class ProjectServiceImpl implements ProjectService {
     public Project findById(Long id) {
         return projectRepository.findById(id).orElse(null);
     }
+
     public ProjectDTO findByIdDTO(Long id) {
         return modelMapper.map(findById(id), ProjectDTO.class);
     }
@@ -107,6 +108,13 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public Iterable<Project> findAll() {
         return projectRepository.findAll();
+    }
+
+    @Override
+    public Iterable<ProjectDTO> findAllDto() {
+        return projectRepository.findAll().stream()
+                .map(project -> modelMapper.map(project, ProjectDTO.class))
+                .collect(Collectors.toList());
     }
 
     @Override

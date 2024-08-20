@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verify Your Code</title>
+    <title>Überprüfen Sie Ihren Code</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/verifyCode-lockedAcc.css">
 </head>
 <body>
 <div class="form-container">
-    <h1>Verify Your Code</h1>
+    <h1>Überprüfen Sie Ihren Code.</h1>
     <form th:action="@{/web/verified}" th:object="${employee}" method="post">
         <input type="hidden" th:field="*{id}">
         <input type="hidden" th:field="*{fullName}">
@@ -17,7 +17,7 @@
         <input type="hidden" th:field="*{email}">
         <input type="hidden" th:field="*{username}">
         <input type="hidden" th:field="*{role}">
-        <label for="verifiedCode">Enter the 4-digit code sent to your email:</label>
+        <label for="verifiedCode">Geben Sie den 4-stelligen Code ein, der an Ihre E-Mail gesendet wurde:</label>
         <div class="text-danger" th:if="${#fields.hasErrors('verifiedCode')}" th:errors="*{verifiedCode}"></div>
         <input type="text" id="verifiedCode" class="form-control form-control-lg" field="*{verifiedCode}" name="verifiedCode" th:classappend="${#fields.hasErrors('verifiedCode')} ? 'is-invalid' : ''" required>
         <input type="submit" class="btn btn-custom btn-block" value="Verify">

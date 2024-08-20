@@ -15,5 +15,9 @@ public interface ProjectService {
 
     Iterable<Project> findAll();
 
+    Iterable<ProjectDTO> findAllDto();
+
     void update(ProjectDTO projectDTO, BindingResult bindingResult);
+
+    ProjectDTO findByIdDTO(Long id);
 }

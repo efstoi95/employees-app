@@ -55,6 +55,10 @@
                         <a th:href="@{/posts/allPosts/{id}(id=${projectId}, locale='en')}" class="button" style="width: 45%; margin: 2%;">English</a>
                         <a th:href="@{/posts/allPosts/{id}(id=${projectId}, locale='de')}" class="button" style="width: 45%; margin: 2%;">Deutsch</a>
                     </div>
+                    <div th:if="${isAllPostsEmployeePage}">
+                        <a th:href="@{/posts/allPostsEmployee/{id}(id=${projectId}, employeeId=${employeeId}, locale='en')}" class="button" style="width: 45%; margin: 2%;">English</a>
+                        <a th:href="@{/posts/allPostsEmployee/{id}(id=${projectId}, employeeId=${employeeId}, locale='de')}" class="button" style="width: 45%; margin: 2%;">Deutsch</a>
+                    </div>
                     <div th:if="${isAllTasksPostsPage}">
                         <a th:href="@{/posts/allTasksPosts/{id}(id=${taskId}, locale='en')}" class="button" style="width: 45%; margin: 2%;">English</a>
                         <a th:href="@{/posts/allTasksPosts/{id}(id=${taskId}, locale='de')}" class="button" style="width: 45%; margin: 2%;">Deutsch</a>
@@ -230,7 +234,17 @@
     </div>
     <div th:insert="~{::modal}"></div>
 </div>
-
+<div th:fragment="headerUser3">
+    <div class="side-button">
+        <a th:href="@{/web/EmployeeTasks/{id}(id=${projectId}, employeeId=${employeeId})}">
+            <i class="fa-solid fa-arrow-left fa-2xl" style="margin-right: 2%;"></i>
+        </a>
+        <a href="#" data-toggle="modal" data-target="#languageModal">
+            <i class="fa-solid fa-language fa-2xl"></i>
+        </a>
+    </div>
+    <div th:insert="~{::modal}"></div>
+</div>
 <footer>
     <div th:fragment="footer">
         <div class="container">
