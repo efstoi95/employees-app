@@ -1,5 +1,6 @@
 package com.enterprise.employees.controller.rest;
 
+import com.enterprise.employees.model.Poste;
 import com.enterprise.employees.model.Project;
 import com.enterprise.employees.model.ProjectDTO;
 import com.enterprise.employees.service.PostRestClientService;
@@ -38,6 +39,12 @@ public class PostController {
             return null;
         }
         return projectService.findByIdDTO(id);
+    }
+
+    @GetMapping("/allPosts")
+    @Secured("ROLE_ADMIN")
+    public List<Poste> getAllPosts(){
+        return postRestClientService.findAllPosts();
     }
 
 }

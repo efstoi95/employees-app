@@ -25,7 +25,7 @@ public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Size(max = 20, message = "name exceeds the maximum length of 20 characters")
+    @Size(max = 50, message = "name exceeds the maximum length of 50 characters")
     @NotBlank(message = "name is mandatory")
     private String name;
 

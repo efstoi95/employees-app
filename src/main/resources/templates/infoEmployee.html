@@ -5,27 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title th:text="#{infoEmployee.title}">Employee Form</title>
-    <div th:replace="~{fragments/fragment1 :: link}"></div>
-    <link rel="stylesheet" th:href="@{/css/infoEmployee.css}">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
 </head>
-<body>
-<div class="container" style="max-width: 1600px">
-    <h2 th:text="#{infoEmployee.title}">Employee Information</h2>
-    <div class="popup" id="popup">
-        <h2>File list Updated!</h2>
-        <p> Your file deleted successfully.! </p>
-        <button type="submit"
-                th:data-employee-id="${employeeId}" onclick="closePopup(this.getAttribute('data-employee-id'))" method="post">OK</button>
-    </div>
+<body class="font-roboto text-sm lg:text-lg">
+<div class="container mx-auto max-w-full p-5">
+    <h2 class="text-center text-2xl mb-4" th:text="#{infoEmployee.title}">Employee Information</h2>
+
     <div th:replace="~{fragments/fragment1 :: headerUser}"></div>
-    <div class="split-view">
-        <div class="info-container">
-            <div class="side-button">
-                <a th:href="@{/web/editInfoEmployee/{id}(id=${employeeId})}" class="files-link" style="margin-left: 21%;" >
-                    <i class="fa-solid fa-user-pen fa-xl"></i>
-                </a>
-            </div>
-            <div class="form-container" style="width: 60%;">
+
+    <div class="flex  justify-between gap-4">
+        <div class="w-full mx-auto md:w-3/5">
+            <div class="relative p-4 bg-white border border-gray-300 rounded-md shadow-sm">
+                <div class="absolute top-[-2rem] right-4">
+                    <a th:href="@{/web/editInfoEmployee/{id}(id=${employeeId})}" class="icon files-link">
+                        <i class="fa-solid fa-user-pen fa-xl text-yellow-400 hover:text-yellow-700"></i>
+                    </a>
+                </div>
                 <form th:action="@{/web/editedInfoEmployee}" th:object="${employee}" method="post">
                     <input type="hidden" th:field="*{id}">
                     <input type="hidden" th:field="*{fullName}">
@@ -33,45 +28,42 @@
                     <input type="hidden" th:field="*{department.name}">
                     <input type="hidden" th:field="*{role}">
 
-                    <div class="form-group">
-                        <label for="fullName" th:text="#{create.fullName}">Full Name:</label>
-                        <input type="text" class="form-control form-control-lg" id="fullName" th:field="*{fullName}" required minlength="4" pattern="[a-zA-Z\s]+" title="Full Name should contain only letters and spaces" disabled>
+                    <div class="mb-4">
+                        <label for="fullName" class="block text-gray-700" th:text="#{create.fullName}">Full Name:</label>
+                        <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md" id="fullName" th:field="*{fullName}" required disabled>
                     </div>
 
-                    <div class="form-group">
-                        <label for="email" th:text="#{create.email}">Email:</label>
-                        <input type="email" class="form-control form-control-lg" id="email" th:field="*{email}" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" disabled>
+                    <div class="mb-4">
+                        <label for="email" class="block text-gray-700" th:text="#{create.email}">Email:</label>
+                        <input type="email" class="w-full px-3 py-2 border border-gray-300 rounded-md" id="email" th:field="*{email}" required disabled>
                     </div>
 
-                    <!-- Display selected department -->
-                    <div class="form-group">
-                        <label for="department" th:text="#{create.department}">Department:</label>
-                        <input type="text" class="form-control form-control-lg" id="department" th:value="${employee.department != null ? employee.department.name : 'N/A'}" disabled>
+                    <div class="mb-4">
+                        <label for="department" class="block text-gray-700" th:text="#{create.department}">Department:</label>
+                        <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md" id="department" th:value="${employee.department != null ? employee.department.name : 'N/A'}" disabled>
                     </div>
 
-                    <!-- Display selected role -->
-                    <div class="form-group">
-                        <label for="role" th:text="#{create.role}">Role:</label>
-                        <input type="text" class="form-control form-control-lg" id="role" th:value="${employee.role}" disabled>
+                    <div class="mb-4">
+                        <label for="role" class="block text-gray-700" th:text="#{create.role}">Role:</label>
+                        <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md" id="role" th:value="${employee.role}" disabled>
                     </div>
 
-                    <div class="form-group">
-                        <label for="skills" th:text="#{create.skills}">Skills:</label>
-                        <ul id="skills">
-                            <li th:each="skill : ${employee.skills}" th:text="${skill.name}"></li>
+                    <div class="mb-4">
+                        <label for="skills" class="block text-gray-700" th:text="#{create.skills}">Skills:</label>
+                        <ul id="skills" class="list-disc list-inside text-gray-700 w-full px-3 py-2 border border-gray-300 rounded-md">
+                            <li th:each="skill : ${employee.skills}" th:text="${skill.name}"  ></li>
                         </ul>
                     </div>
 
-                    <!-- Display projects and tasks -->
-                    <div class="form-group">
-                        <label for="projects" th:text="#{allEmployees.projects}">Projects:</label>
-                        <div id="projects">
-                            <ul class="numbered-list">
-                                <li th:each="project, projectStat : ${employee.projects}" class="project">
+                    <div class="mb-4">
+                        <label for="projects" class="block text-gray-700" th:text="#{allEmployees.projects}">Projects:</label>
+                        <div id="projects" class="text-gray-700">
+                            <ul>
+                                <li class="w-full px-3 py-2 border border-gray-300 rounded-md" th:each="project, projectStat : ${employee.projects}">
                                     <strong th:text="${projectStat.index + 1} + '. ' + ${project.name}"></strong>
-                                    <ul class="numbered-list" style="margin-left: 10px;">
-                                        <li th:each="task, taskStat : ${project.tasks}" th:text=" ${taskStat.index + 1} + '. ' + ${task.name}" th:unless="${#lists.isEmpty(project.tasks)}"></li>
-                                        <li th:if="${#lists.isEmpty(project.tasks)}" th:text="#{allEmployees.none}">None</li>
+                                    <ul class="ml-4">
+                                        <li th:each="task, taskStat : ${tasks}" th:text=" ${taskStat.index + 1} + '. ' + ${task.name}" th:unless="${#lists.isEmpty(project.tasks)}"></li>
+                                        <li th:if="${#lists.isEmpty(tasks)}" th:text="#{allEmployees.none}">None</li>
                                     </ul>
                                 </li>
                             </ul>
@@ -81,20 +73,22 @@
                 </form>
             </div>
         </div>
-        <div class="files-container" id="filesContainer">
-
+        <div class="w-full md:w-2/5 mt-8 hidden" id="filesContainer">
+            <!-- Content for the files section will be loaded here -->
         </div>
     </div>
-</div>
-<div th:if="${employeeUpdated}" class="popup" th:style="'display:block;'">
-    <div class="popup-content">
-        <span class="close" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
-        <p th:text="${allEmployees.employeeEditedSuccess}">Employee updated successfully!</p>
-    </div>
-</div>
 
-<div th:replace="~{fragments/fragment1 :: footer}"></div>
-<div th:replace="~{fragments/fragment2 :: split-view3}"></div>
+    <!-- Popup for employee updated -->
+    <div th:if="${employeeUpdated}" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+        <div class="bg-white p-6 border border-gray-300 rounded-lg shadow-lg w-full max-w-lg text-center">
+            <span class="text-gray-400 float-right text-2xl font-bold cursor-pointer" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
+            <p th:text="${messageEmployeeEditedSuccess}">Employee updated successfully!</p>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/fragment1 :: footer}"></div>
+    <div th:replace="~{fragments/fragment2 :: split-view3}"></div>
+</div>
 
 </body>
 </html>

@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.Banner;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
@@ -15,7 +14,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import java.util.List;
 import java.util.Locale;
 
@@ -37,7 +35,7 @@ public class CostumerController {
      */
     @GetMapping("/allCustomers")
     public String allCustomers(@RequestParam(name = "locale", required = false) String localeParam,
-                               Model model) {
+                               Model model, RedirectAttributes redirectAttributes) {
             logger.info("Retrieving all customers");
         Locale locale = Locale.getDefault();
         if (localeParam != null) {
@@ -46,6 +44,9 @@ public class CostumerController {
         LocaleContextHolder.setLocale(locale);
         String message = messageSource.getMessage("allResources.title", null, locale);
         model.addAttribute("message", message);
+        model.addAttribute("customerCreatedSuccess", messageSource.getMessage("customerCreatedSuccess", null, locale));
+        model.addAttribute("customerUpdatedSuccess", messageSource.getMessage("customerUpdatedSuccess", null, locale));
+        model.addAttribute("customerDeletedSuccess", messageSource.getMessage("customerDeletedSuccess", null, locale));
         List<Customer> customers = (List<Customer>) customerService.findAll();
         model.addAttribute("isAllCustomerPage", true);
         model.addAttribute("customers", customers);

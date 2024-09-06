@@ -53,13 +53,16 @@ public class TaskServiceImpl implements TaskService  {
         if (maybeProject.isEmpty()) {
             throw new IllegalArgumentException("Project not found");
         }
+        if(taskRepository.existsByName(task.getName())) {
+            bindingResult.rejectValue("name", "error.task", "Task name already exists");
+
+        }
         Project project = maybeProject.get();
         List<Skill> selectedSkills = new ArrayList<>();
 
         for (Long skillId : taskDTO.getSkillsIds()) {
             skillRepository.findById(skillId).ifPresent(selectedSkills::add);
         }
-        //TODO: fixing the issue with the SkillsDTO
         task.setSkills(selectedSkills);
         String durationStr = task.getDurationInput();
         Duration duration = parseDuration(durationStr);

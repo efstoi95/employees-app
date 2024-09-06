@@ -12,28 +12,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.thymeleaf.exceptions.TemplateProcessingException;
-
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Locale;
-import java.util.stream.Collectors;
-
-import static com.enterprise.employees.controller.web.TaskController.format;
 
 @RequiredArgsConstructor
 @RequestMapping("/web")
@@ -47,6 +37,8 @@ public class EmployeeController {
     private final TaskService taskService;
     private final FileStorageService fileStorageService;
     private final ProjectService projectService;
+    private final DepartmentServiceImpl departmentService;
+    private final SkillServiceImpl skillService;
     @Autowired
     private TaskRepository taskRepository;
     @Autowired
@@ -72,8 +64,8 @@ public class EmployeeController {
         String message = messageSource.getMessage("createEmployee.title", null, locale);
         model.addAttribute("message", message);
             model.addAttribute("employee", new EmployeeDTO());
-            model.addAttribute("skills", employeeService.getAllSkills());
-            model.addAttribute("departments", employeeService.getAllDepartments());
+            model.addAttribute("skills", skillService.getAllSkills());
+            model.addAttribute("departments", departmentService.findAll());
         model.addAttribute("isCreateEmployeePage", true);
             return "createEmployee";
 
@@ -186,12 +178,10 @@ public class EmployeeController {
         model.addAttribute("message", message);
 
         Employee existingEmployee = employeeService.getEmployeeById(id);
-
         if(existingEmployee != null){
-            EmployeeDTO employeeEditDTO = modelMapper.map(existingEmployee, EmployeeDTO.class);
             model.addAttribute("skills", employeeService.getAllSkills());
             model.addAttribute("departments", employeeService.getAllDepartments());
-            model.addAttribute("employee", employeeEditDTO);
+            model.addAttribute("employee", existingEmployee);
             return "edit";
         }else{
             logger.warn("Employee with ID {} not found for editing", id);
@@ -202,16 +192,16 @@ public class EmployeeController {
     /**
      * Edits an employee by validating the provided employee object and redirecting to the success edit page.
      *
-     * @param  employeeEditDTO  the employee object to be edited
+     * @param  employeeEdit  the employee object to be edited
      * @return           the string representing the redirect URL to the success edit page
      */
     @Secured("ROLE_ADMIN")
     @PostMapping("/admin/editedEmployee")
-    public String editEmployee(@Validated @ModelAttribute("employee") EmployeeDTO employeeEditDTO,
+    public String editEmployee(@Validated @ModelAttribute("employee") Employee employeeEdit,
                                BindingResult bindingResult,
                                Model model,RedirectAttributes redirectAttributes) {
-        logger.info("Editing employee: {}", employeeEditDTO);
-        employeeService.editEmployee(employeeEditDTO, bindingResult);
+        logger.info("Editing employee: {}", employeeEdit);
+        employeeService.editEmployee(employeeEdit, bindingResult);
         if (bindingResult.hasErrors()) {
             logger.warn("Validation error encountered while editing employee: {}", bindingResult.getAllErrors());
             model.addAttribute("departments", employeeService.getAllDepartments());
@@ -220,8 +210,8 @@ public class EmployeeController {
         }
         logger.info("Employee edited successfully");
         redirectAttributes.addFlashAttribute("employeeEdited", true);
-        redirectAttributes.addFlashAttribute("employeeId", employeeEditDTO.getId());
-        redirectAttributes.addFlashAttribute("employeeName", employeeService.getEmployeeById(employeeEditDTO.getId()).getFullName());
+        redirectAttributes.addFlashAttribute("employeeId", employeeEdit.getId());
+        redirectAttributes.addFlashAttribute("employeeName", employeeService.getEmployeeById(employeeEdit.getId()).getFullName());
         return "redirect:/web/allEmployees";
     }
 
@@ -263,11 +253,14 @@ public class EmployeeController {
             locale=Locale.forLanguageTag(localeParam);
         }
         LocaleContextHolder.setLocale(locale);
-        String message = messageSource.getMessage("editInfoEmployee.title", null, locale);
-        model.addAttribute("message", message);
+        model.addAttribute("messageEmployeeEditedSuccess", messageSource.getMessage("message.employeeEditedSuccess", null, locale));
+        model.addAttribute("messageEditInfoEmployeeTitle", messageSource.getMessage("editInfoEmployee.title", null, locale));
 
         Employee existingEmployee = employeeService.getEmployeeById(id);
+
         if(existingEmployee!= null){
+            List<Task> employeeTask=existingEmployee.getTasks();
+            model.addAttribute("tasks",employeeTask);
             List<Department> departments = employeeService.getAllDepartments();
             model.addAttribute("skills",employeeService.getAllSkills());
             model.addAttribute("departments", departments);
@@ -333,12 +326,28 @@ public class EmployeeController {
      */
     @Secured("ROLE_ADMIN")
     @GetMapping("/search/name")
-    public String searchEmployee(@RequestParam(name = "name", required = false) String name,
+    public String searchEmployee(@RequestParam(name = "name", required = false) String name,@RequestParam(name = "locale", required = false) String localeParam,
                                  Model model) {
         logger.info("Searching for employee with name: {}", name);
+        Locale locale = Locale.getDefault();
+        if (localeParam != null) {
+            locale=Locale.forLanguageTag(localeParam);
+        }
+        LocaleContextHolder.setLocale(locale);
+        if (name == null || name.isEmpty()) {
+            // If name is empty or null, fetch all employees
+            logger.info("Name is empty, fetching all employees.");
+            List<Employee> employees = employeeService.getAllEmployees();
+            logger.info("Number of employees found: {}", employees.size());
+            model.addAttribute("isAllEmployeesSearchPage", true);
+            model.addAttribute("employees", employees);
+        } else {
             List<Employee> employees= employeeService.searchEmployeeByName(name);
             logger.info("Number of employees found: {}", employees.size());
             model.addAttribute("employees", employees);
+        }
+        model.addAttribute("name", name);
+        model.addAttribute("isAllEmployeesSearchPage", true);
         return "allEmployees";
     }
 
@@ -351,14 +360,30 @@ public class EmployeeController {
      */
     @Secured("ROLE_ADMIN")
     @GetMapping("/search/department")
-    public String searchEmployeeByDepartment(@RequestParam(name = "department", required = false) String department,
+    public String searchEmployeeByDepartment(@RequestParam(name = "department", required = false) String department,@RequestParam(name = "locale", required = false) String localeParam,
                                              Model model) {
         logger.info("Searching for employees in department: {}", department);
-            List<Employee> employees= employeeService.searchEmployeeByDepartment(department);
-            logger.info("Number of employees found in department {}: {}",department, employees.size());
+        Locale locale = Locale.getDefault();
+        if (localeParam != null) {
+            locale=Locale.forLanguageTag(localeParam);
+        }
+        LocaleContextHolder.setLocale(locale);
+        if (department == null || department.isEmpty()) {
+            // If department is empty or null, fetch all employees
+            logger.info("Department is empty, fetching all employees.");
+            List<Employee> employees = employeeService.getAllEmployees();
+            logger.info("Number of employees found: {}", employees.size());
+            model.addAttribute("isAllEmployeesDepartmentPage", true);
             model.addAttribute("employees", employees);
+        }else{
+            // Otherwise, fetch employees by the specified departmentlogger.info("Searching for employees in department: {}", department);
+            List<Employee> employees = employeeService.searchEmployeeByDepartment(department);
+            logger.info("Number of employees found in department {}: {}", department, employees.size());
+            model.addAttribute("employees", employees);
+        }
+        model.addAttribute("department", department);
+        model.addAttribute("isAllEmployeesDepartmentPage", true);
         return "allEmployees";
-
     }
 
 

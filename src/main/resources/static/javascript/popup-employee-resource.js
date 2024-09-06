@@ -1,8 +1,8 @@
- function openAddPopup() {
+    function openEmployeePopup() {
         document.getElementById("addEmployeePopup").style.display = "block";
     }
 
-    function closeAddPopup() {
+    function closeEmployeePopup() {
         document.getElementById("addEmployeePopup").style.display = "none";
     }
 
@@ -30,7 +30,7 @@
                 }
             }
         });
-        closeAddPopup();
+        closeEmployeePopup();
     }
 
     function addSelectedResources() {

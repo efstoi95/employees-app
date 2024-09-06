@@ -4,15 +4,15 @@
     <meta charset="UTF-8">
     <div th:replace="~{fragments/fragment2::fontIcon}"></div>
     <title>View Post</title>
-    <link rel="stylesheet" href="/css/viewPost.css">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
 </head>
-<body>
-<h1 th:text="${post.title}">Post Title</h1>
-<div class="back-to-menu">
-    <a th:href="@{/posts/allTasksPosts/{id}(id=${taskId})}">
-        <i class="fa-solid fa-arrow-left fa-2xl"></i>
+<body class="font-roboto bg-gray-100 p-8">
+<h1 class="text-3xl font-bold text-center text-gray-800" th:text="${post.title}">Post Title</h1>
+<div class="my-4 py-3">
+    <a th:href="@{/posts/allTasksPosts/{id}(id=${taskId})}" class="icon">
+        <i class="fa-solid fa-arrow-left fa-xl"></i>
     </a>
 </div>
-<div class="post-content" th:utext="${post.content}"></div>
+<div class="bg-white p-6 rounded-lg shadow-lg mt-6 w-full max-w-4xl mx-auto" th:utext="${post.content}"></div>
 </body>
 </html>

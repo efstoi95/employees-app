@@ -114,8 +114,6 @@ public class VerificationController {
             locale=Locale.forLanguageTag(localeParam);
         }
         LocaleContextHolder.setLocale(locale);
-        Poste poste = new Poste(1000, "admin");
-        model.addAttribute("poste", poste);
         String message = messageSource.getMessage("message.menuEmployee", null, locale);
         model.addAttribute("message", message);
         model.addAttribute("message", "You logged in");

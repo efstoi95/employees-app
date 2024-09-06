@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="#{allSkills.title}">All Skills</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body class="font-roboto text-sm lg:text-lg">
+<div class="container mx-auto max-w-full p-5">
+    <h2 class="text-center text-2xl mb-4" th:text="#{allSkills.title}">All Skills</h2>
+    <div th:replace="~{fragments/fragment1::header}"></div>
+    <div class="flex justify-between gap-2 mb-4">
+        <span sec:authorize="hasRole('ADMIN')">
+            <a th:href="@{/web/createSkill}" class="bg-yellow-400 text-black px-4 py-2 rounded-md hover:bg-yellow-600 hover:text-white" th:text="#{allSkills.create}">Create Skill</a>
+        </span>
+    </div>
+    <div class="flex justify-between gap-2">
+        <div class="w-full">
+            <div class="overflow-x-auto">
+                <table class="min-w-full border border-gray-300">
+                    <thead class="bg-gray-200 text-center ">
+                    <tr>
+                        <th class="p-2 border border-gray-300" th:text="#{message.id}">ID</th>
+                        <th class="p-2 border border-gray-300" th:text="#{message.name}">Name</th>
+                        <th class="p-2 border border-gray-300" th:text="#{message.action}">Action</th>
+                    </tr>
+                    </thead>
+                    <tbody class="text-center">
+                    <!-- Check if skills list is empty -->
+                    <tr th:if="${#lists.isEmpty(skills)}">
+                        <td colspan="3" class="text-center py-4" th:text="#{allSkills.noSkillsFound}">No Skills found.</td>
+                    </tr>
+                    <!-- Iterate over skills -->
+                    <tr class="border border-gray-300" th:each="skill : ${skills}">
+                        <td th:text="${skill.id}" class="border border-gray-300"></td>
+                        <td th:text="${skill.name}" class="border border-gray-300"></td>
+                        <td class="mt-2 p-2">
+                            <span sec:authorize="hasRole('ADMIN')">
+                                <a th:href="@{/web/editSkill/{id}(id=${skill.id})}" class="edit-link">
+                                    <button class="bg-white border-none">
+                                        <i class="fa-solid fa-user-pen text-yellow-400 text-xl hover:text-yellow-600 ml-4"></i>
+                                    </button>
+                                </a>
+                            </span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="w-full md:w-2/5 mt-8 hidden" id="editContainer">
+            <!-- Content from editTask.css.html will be loaded here -->
+        </div>
+    </div>
+</div>
+
+<div th:if="${skillDeleted}" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div class="bg-white p-6 border border-gray-300 rounded-lg shadow-lg w-full max-w-lg text-center">
+        <span class="text-gray-400 float-right text-2xl font-bold cursor-pointer" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
+        <h2 th:text="#{message.skillDeleted}">Skill deleted successfully!</h2>
+        <p>Skill Id: <span th:text="${skillId}"></span></p>
+        <p>Skill Name: <span th:text="${skillName}"></span></p>
+    </div>
+</div>
+
+<div th:if="${skillCreated}" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div class="bg-white p-6 border border-gray-300 rounded-lg shadow-lg w-full max-w-lg text-center">
+        <span class="text-gray-400 float-right text-2xl font-bold cursor-pointer" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
+        <h2 th:text="#{message.skillCreated}"></h2>
+        <p>Skill Name: <span th:text="${skillName}"></span></p>
+    </div>
+</div>
+
+<div th:if="${skillEdited}" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div class="bg-white p-6 border border-gray-300 rounded-lg shadow-lg w-full max-w-lg text-center">
+        <span class="text-gray-400 float-right text-2xl font-bold cursor-pointer" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
+        <h2 th:text="#{message.skillUpdated}" class="divide-y divide-gray-200"></h2>
+        <p>Skill Id: <span th:text="${skillId}"></span></p>
+        <p>Skill Name: <span th:text="${skillName}"></span></p>
+    </div>
+</div>
+
+<div th:replace="~{fragments/fragment1 :: footer}"></div>
+<div th:replace="~{fragments/fragment2 :: split-view2}"></div>
+
+</body>
+</html>

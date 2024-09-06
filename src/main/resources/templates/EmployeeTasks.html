@@ -4,51 +4,50 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="#{message.tasksEmployee}">All Tasks</title>
-    <div th:replace="~{fragments/fragment1 :: link}"></div>
-    <link rel="stylesheet" href="/css/employeeProjects-Tasks.css">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
 </head>
-<body>
-<div class="container" style="max-width: 1600px">
-    <h2 th:text="#{message.tasksEmployee}">All Tasks</h2>
-
-    <div th:replace="~{fragments/fragment1 :: headerUser2}"></div>
-
-    <div class="split-view">
-        <div class="tasks-container">
-            <div class="table-responsive">
-                <table class="table table-bordered">
-                    <thead class="thread-light">
+<body class="font-roboto text-sm lg:text-lg">
+<div class="container mx-auto max-w-full p-5">
+    <h2 class="text-center text-2xl mb-4" th:text="#{message.tasksEmployee}">All Tasks</h2>
+    <div th:replace="~{fragments/fragment1::headerUser2}"></div>
+    <div class="flex justify-between gap-2">
+        <div class="w-full">
+            <div class="overflow-x-auto">
+                <table class="min-w-full border border-gray-300">
+                    <thead class="bg-gray-200">
                     <tr>
-                        <th th:text="#{message.id}">ID</th>
-                        <th th:text="#{message.name}">Name</th>
-                        <th th:text="#{message.description}">Description</th>
-                        <th th:text="#{allTasks.duration}">Duration</th>
-                        <th th:text="#{message.status}">Status</th>
-                        <th th:text="#{message.action}">Action</th>
-                        <th th:text="#{message.files}">Files</th>
+                        <th class="p-2 text-left border border-gray-300" th:text="#{message.id}">ID</th>
+                        <th class="p-2 text-left border border-gray-300" th:text="#{message.name}">Name</th>
+                        <th class="p-2 text-left border border-gray-300" th:text="#{message.description}">Description</th>
+                        <th class="p-2 text-left border border-gray-300" th:text="#{allTasks.duration}">Duration</th>
+                        <th class="p-2 text-left border border-gray-300" th:text="#{message.status}">Status</th>
+                        <th class="p-2 text-left border border-gray-300" th:text="#{message.action}">Action</th>
+                        <th class="p-2 text-left border border-gray-300" th:text="#{message.files}">Files</th>
                     </tr>
                     </thead>
                     <tbody>
+                    <!-- Check if tasks list is empty -->
                     <tr th:if="${#lists.isEmpty(tasks)}">
-                        <td colspan="7" th:text="#{allTasks.noTasksFound}">No Tasks found.</td>
+                        <td colspan="7" class="text-center py-4" th:text="#{allTasks.noTasksFound}">No Tasks found.</td>
                     </tr>
-                    <tr th:each="task : ${tasks}">
-                        <td th:text="${task.id}"></td>
-                        <td th:text="${task.name}"></td>
-                        <td th:text="${task.description}"></td>
-                        <td th:text="${task.durationInput}"></td>
-                        <td th:text="${task.finished} ? 'Closed' : 'Open'"></td>
-                        <td>
-                             <span sec:authorize="hasRole('ADMIN') or hasRole('USER')">
-                                <a th:href="@{/posts/allTasksPostsEmployee/{id}(id=${task.id}, employeeId=${employeeId})}" class="bounce-icon">
-                                    <i class="fa-regular fa-comment fa-xl" style="color: #fecb01; margin-left: 5%;"></i>
+                    <!-- Iterate over tasks -->
+                    <tr class="border border-gray-300" th:each="task : ${tasks}">
+                        <td th:text="${task.id}" class="border border-gray-300"></td>
+                        <td class="p-2 border border-gray-300" th:text="${task.name}"></td>
+                        <td class="p-2 border border-gray-300" th:text="${task.description}"></td>
+                        <td class="p-2 border border-gray-300" th:text="${task.durationInput}"></td>
+                        <td class="p-2 border border-gray-300" th:text="${task.finished} ? 'Closed' : 'Open'"></td>
+                        <td class="mt-2 p-2 flex space-x-4">
+                            <span sec:authorize="hasRole('ADMIN') or hasRole('USER')">
+                                <a th:href="@{/posts/allTasksPostsEmployee/{id}(id=${task.id}, employeeId=${employeeId})}">
+                                    <i class="fa-regular fa-comment fa-xl text-yellow-400 hover:text-yellow-600"></i>
                                 </a>
                             </span>
                         </td>
-                        <td>
+                        <td class="p-2 border border-gray-300">
                             <span sec:authorize="hasRole('USER')">
                                 <a href="#" th:href="@{/web/showEmployeeTaskFiles/{id}(id=${task.id}, employeeId=${employeeId})}" class="files-link">
-                                     <i class="fa-solid fa-folder-open fa-xl" style="color: #fecb01;"></i>
+                                    <i class="fa-solid fa-folder-open fa-xl text-yellow-400 hover:text-yellow-600"></i>
                                 </a>
                             </span>
                         </td>
@@ -57,30 +56,28 @@
                 </table>
             </div>
         </div>
-
-        <div class="files-container" id="filesContainer">
-
+        <div class="w-full md:w-2/5 mt-8 hidden" id="filesContainer">
+            <!-- Content from showtaskFiles.html will be loaded here -->
         </div>
     </div>
-
 </div>
 
-<div th:if="${fileUploaded}" class="popup" th:style="'display:block;'">
-    <div class="popup-content">
-        <span class="close" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
-        <p th:text="#{message.fileUploaded}">File uploaded successfully!</p>
+<div th:if="${fileUploaded}" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div class="bg-white p-6 border border-gray-300 rounded-lg shadow-lg w-full max-w-lg text-center">
+        <span class="text-gray-400 float-right text-2xl font-bold cursor-pointer" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
+        <h2 th:text="#{message.fileUploaded}">File uploaded successfully!</h2>
     </div>
 </div>
 
-<div th:if="${fileDeleted}" class="popup" th:style="'display:block;'">
-    <div class="popup-content">
-        <span class="close" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
-        <p th:text="#{message.fileDeleted}">File deleted successfully!</p>
+<div th:if="${fileDeleted}" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div class="bg-white p-6 border border-gray-300 rounded-lg shadow-lg w-full max-w-lg text-center">
+        <span class="text-gray-400 float-right text-2xl font-bold cursor-pointer" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
+        <h2 th:text="#{message.fileDeleted}">File deleted successfully!</h2>
     </div>
 </div>
 
-<div th:replace="~{fragments/fragment1 :: footer}"></div>
-<div th:replace="~{fragments/fragment2 :: split-view3}"></div>
+<div th:replace="~{fragments/fragment1::footer}"></div>
+<div th:replace="~{fragments/fragment2::split-view3}"></div>
 
 </body>
 </html>

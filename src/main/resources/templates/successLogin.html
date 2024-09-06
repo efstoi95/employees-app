@@ -3,31 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <title>User Information Form</title>
+    <title>Menu</title>
     <div th:replace="~{fragments/fragment1 :: link}"></div>
-    <link rel="stylesheet" th:href="@{/css/successLogin.css}">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
 </head>
 <body>
 <div th:replace="~{fragments/fragment1 :: header1}"></div>
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="panel text-center">
-                <h2 th:text="${message}">You logged in</h2>
-                <a class="btn btn-custom btn-block" href="/web/allEmployees" th:text="#{message.menuEmployee}">View the List of Employees</a>
-                <a class="btn btn-custom btn-block" href="/web/allEmployees" th:text="#{message.menuDepartments}">View the List of Departments</a>
-                <a class="btn btn-custom btn-block" href="/web/allEmployees" th:text="#{message.menuSkills}">View the List of Skills</a>
-                <a class="btn btn-custom btn-block" href="/projects/allProjects" th:text="#{message.menuProjects}">View the List of Projects</a>
-                <a class="btn btn-custom btn-block" href="/customer/allCustomers" th:text="#{message.menuCustomers}">View the List of Customers</a>
-                <a class="btn btn-custom btn-block" href="/reports/employees/pdf" th:text="#{message.menuPrint}">Print Report</a>
-                <a class="btn btn-custom btn-block" href="/resources/allResources" th:text="#{message.menuResources}">View the List of Resources</a>
-                <form th:action="@{/api/send}" method="post">
-                    <button type="submit" class="btn btn-custom btn-block" th:text="#{message.menuSendProjectData}">Send Project Data</button>
-                </form>
-            </div>
+<main>
+    <div class="container max-w-lg lg:max-w-3xl  mx-auto mt-24">
+        <div class=" flex flex-col mt-12 p-8 border-2 border-gray-300 rounded-lg bg-white shadow-lg text-center">
+            <h2 class="text-2xl font-semibold" th:text="${message}">You logged in</h2>
+            <a class="btn-menu"
+               href="/web/allEmployees"
+               th:text="#{message.menuEmployee}"></a>
+            <a class="btn-menu"
+               href="/web/allDepartments"
+               th:text="#{message.menuDepartments}"></a>
+            <a class=" btn-menu"
+               href="/web/allSkills"
+               th:text="#{message.menuSkills}"></a>
+            <a class=" btn-menu"
+               href="/projects/allProjects"
+               th:text="#{message.menuProjects}"></a>
+            <a class= "btn-menu"
+               href="/customer/allCustomers"
+               th:text="#{message.menuCustomers}"></a>
+            <a class=" btn-menu"
+               href="/resources/allResources"
+               th:text="#{message.menuResources}"></a>
         </div>
     </div>
+</main>
+<div>
+    <div th:replace="~{fragments/fragment1 :: footer}"></div>
 </div>
-<div th:replace="~{fragments/fragment1 :: footer}"></div>
 </body>
 </html>

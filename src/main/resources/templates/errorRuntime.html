@@ -1,17 +1,17 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Error</title>
-    <link rel="stylesheet" href="/css/error.css">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
 </head>
-<body>
-<div class="container">
-    <h2>Page Not Found</h2>
-    <p>Oops! Something went wrong.</p>
-    <p th:text="${error}"></p>
-    <a href="/login" >Press to continue</a>
-
+<body class="bg-gray-100  font-roboto flex items-center justify-center h-screen">
+<div class="bg-white p-8 rounded-lg shadow-lg text-center w-full max-w-lg">
+    <h2 class="text-6xl m-0">Page Not Found</h2>
+    <p class="text-xl mt-5">Oops! Something went wrong.</p>
+    <p class="mt-5" th:text="${error}"></p>
+    <a href="/login" class="inline-block px-5 py-3 bg-yellow-400 text-black text-lg mt-5 rounded-md hover:bg-yellow-700 hover:text-white">Press to continue</a>
 </div>
 </body>
 </html>

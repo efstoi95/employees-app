@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="#{allDepartments.title}">All Departments</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body class="font-roboto text-sm lg:text-lg">
+<div class="container mx-auto max-w-full p-5">
+    <h2 class="text-center text-2xl mb-4" th:text="#{allDepartments.title}">All Departments</h2>
+    <div th:replace="~{fragments/fragment1::header}"></div>
+    <div class="flex justify-between gap-2 mb-4">
+        <span sec:authorize="hasRole('ADMIN')">
+            <a th:href="@{/web/createDepartment}" class="bg-yellow-400 text-black px-4 py-2 rounded-md hover:bg-yellow-600 hover:text-white" th:text="#{allDepartments.create}">Create Department</a>
+        </span>
+    </div>
+    <div class="flex justify-between gap-2">
+        <div class="w-full">
+            <div class="overflow-x-auto">
+                <table class="min-w-full border border-gray-300 ">
+                    <thead class="bg-gray-200">
+                    <tr>
+                        <th class="p-2 border border-gray-300" th:text="#{message.id}">ID</th>
+                        <th class="p-2 border border-gray-300" th:text="#{message.name}">Name</th>
+                        <th class="p-2 border border-gray-300" th:text="#{message.action}">Action</th>
+                    </tr>
+                    </thead>
+                    <tbody class="text-center">
+                    <!-- Check if departments list is empty -->
+                    <tr th:if="${#lists.isEmpty(departments)}">
+                        <td colspan="3" class="text-center py-4" th:text="#{allDepartments.noDepartmentsFound}">No Departments found.</td>
+                    </tr>
+                    <!-- Iterate over departments -->
+                    <tr class="border border-gray-300" th:each="department : ${departments}">
+                        <td th:text="${department.id}" class="border border-gray-300"></td>
+                        <td th:text="${department.name}" class="border border-gray-300"></td>
+                        <td class="mt-2 p-2">
+                            <span sec:authorize="hasRole('ADMIN')">
+                                <a th:href="@{/web/editDepartment/{id}(id=${department.id})}" class="edit-link">
+                                    <button class="bg-white border-none">
+                                        <i class="fa-solid fa-user-pen text-yellow-400 text-xl hover:text-yellow-600 ml-4"></i>
+                                    </button>
+                                </a>
+                            </span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="w-full md:w-2/5 mt-8 hidden" id="editContainer">
+            <!-- Content from editTask.css.html will be loaded here -->
+        </div>
+    </div>
+</div>
+
+<div th:if="${departmentDeleted}" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div class="bg-white p-6 border border-gray-300 rounded-lg shadow-lg w-full max-w-lg text-center">
+        <span class="text-gray-400 float-right text-2xl font-bold cursor-pointer" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
+        <h2 th:text="#{message.departmentDeleted}">Department deleted successfully!</h2>
+        <p>Department Id: <span th:text="${departmentId}"></span></p>
+        <p>Department Name: <span th:text="${departmentName}"></span></p>
+    </div>
+</div>
+
+<div th:if="${departmentCreated}" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div class="bg-white p-6 border border-gray-300 rounded-lg shadow-lg w-full max-w-lg text-center">
+        <span class="text-gray-400 float-right text-2xl font-bold cursor-pointer" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
+        <h2 th:text="#{message.departmentCreated}">New Department created successfully!</h2>
+        <p>Department Name: <span th:text="${departmentName}"></span></p>
+    </div>
+</div>
+
+<div th:if="${departmentUpdated}" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div class="bg-white p-6 border border-gray-300 rounded-lg shadow-lg w-full max-w-lg text-center">
+        <span class="text-gray-400 float-right text-2xl font-bold cursor-pointer" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
+        <h2 th:text="#{message.departmentUpdated}">Department updated successfully!</h2>
+        <p>Department Id: <span th:text="${departmentId}"></span></p>
+        <p>Department Name: <span th:text="${departmentName}"></span></p>
+    </div>
+</div>
+
+<div th:replace="~{fragments/fragment1 :: footer}"></div>
+<div th:replace="~{fragments/fragment2 :: split-view2}"></div>
+
+</body>
+</html>

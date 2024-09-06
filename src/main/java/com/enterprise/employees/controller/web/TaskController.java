@@ -94,6 +94,7 @@ public class TaskController {
         if(bindingResult.hasErrors()){
             model.addAttribute("task", taskDTO);
             model.addAttribute("skills", skillService.getAllSkillsDTO());
+            model.addAttribute("projectId", projectId);
             return "createTask";
         }
         redirectAttributes.addFlashAttribute("taskCreated", true);
@@ -202,7 +203,6 @@ public class TaskController {
         model.addAttribute("message", message);
         Project project = projectServiceImpl.findById(id);
         Long projectId = project.getId();
-        Long taskId=project.getTasks().stream().findFirst().get().getId();
         List<Task> tasks = project.getTasks();
         tasks.forEach(task -> {
             task.setDurationInput(format(task.getDuration()));
@@ -210,7 +210,6 @@ public class TaskController {
         logger.info("Number of tasks retrieved: {}", tasks.size());
         model.addAttribute("tasks", tasks);
         model.addAttribute("projectId", projectId);
-        model.addAttribute("taskId", taskId);
         model.addAttribute("statuses", Status.values());
         model.addAttribute("isAllTasksPage", true);
         return "allTasks";
@@ -251,6 +250,7 @@ public class TaskController {
         redirectAttributes.addFlashAttribute("status", status);
         redirectAttributes.addFlashAttribute("taskName", task.getName());
         return "redirect:/tasks/allTasks/" + task.getProject().getId();
+
     }
 
     @GetMapping("/showFiles/{taskId}")
@@ -392,6 +392,8 @@ public class TaskController {
             headers.add(HttpHeaders.CONTENT_TYPE, "image/png");
         }  else if (fileName.endsWith(".jpg")) {
             headers.add(HttpHeaders.CONTENT_TYPE, "image/jpg");
+        } else if (fileName.endsWith(".jpeg")) {
+            headers.add(HttpHeaders.CONTENT_TYPE, "image/jpeg");
         }else {
             throw new IllegalArgumentException("Unsupported file type: " + fileName);
         }
