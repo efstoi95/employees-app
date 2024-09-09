@@ -4,78 +4,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="#{allProjects.title}">All Projects</title>
-    <div th:replace="~{fragments/fragment1::link}"></div>
-    <link rel="stylesheet" th:href="@{/css/allProjects-Tasks-Resources.css}">
+    <title th:text="#{allProjects.title}"></title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
 </head>
-<body>
-<div class="container" style="max-width: 1900px">
-    <h2 th:text="#{allProjects.title}">All Projects</h2>
-
+<body class="font-roboto text-sm lg:text-lg">
+<div class="container mx-auto max-w-full p-5">
+    <h2 class="text-center text-2xl mb-4" th:text="#{allProjects.title}"></h2>
     <div th:replace="~{fragments/fragment1::header}"></div>
-    <div class="create-button-container">
+    <div class="flex justify-between gap-2 mb-4">
         <span sec:authorize="hasRole('ADMIN')">
-            <a th:href="@{/projects/createProject}" class="button" style="width:10%" th:text="#{allProjects.create}">Create Project</a>
+            <a th:href="@{/projects/createProject}" class="bg-yellow-400 text-black px-4 py-2 rounded-md hover:bg-yellow-600 hover:text-white " th:text="#{allProjects.create}"></a>
         </span>
     </div>
-    <div class="split-view">
-        <div class="tasks-container">
-            <div class="table-responsive">
-                <table class="table table-bordered">
-                    <thead>
+    <div class="flex justify-between gap-2">
+        <div class="w-full">
+            <div class="overflow-x-auto">
+                <table class="min-w-full  border border-gray-300">
+                    <thead class="bg-gray-200">
                     <tr>
-                        <th th:text="#{message.id}">ID</th>
-                        <th th:text="#{message.name}">Name</th>
-                        <th th:text="#{message.description}">Description</th>
-                        <th th:text="#{allProjects.startDate}">Start Date</th>
-                        <th th:text="#{allProjects.endDate}">End Date</th>
-                        <th th:text="#{message.status}">Status</th>
-                        <th th:text="#{message.action}">Action</th>
-                        <th th:text="#{message.files}">Files</th>
+                        <th class="p-2 text-left  border border-gray-300" th:text="#{message.id}"></th>
+                        <th class="p-2 text-left  border border-gray-300" th:text="#{message.name}"></th>
+                        <th class="p-2 text-left  border border-gray-300" th:text="#{message.description}"></th>
+                        <th class="p-2 text-left  border border-gray-300" th:text="#{allProjects.startDate}"></th>
+                        <th class="p-2 text-left  border border-gray-300" th:text="#{allProjects.endDate}"></th>
+                        <th class="p-2 text-left  border border-gray-300" th:text="#{message.status}"></th>
+                        <th class="p-2 text-left  border border-gray-300" th:text="#{message.action}"></th>
+                        <th class="p-2 text-left  border border-gray-300" th:text="#{message.files}"></th>
                      </tr>
                     </thead>
                     <tbody>
             <!-- Check if projects list is empty -->
                     <tr th:if="${#lists.isEmpty(projects)}">
-                        <td colspan="7" th:text="#{message.ProjectsNotFound}">No Projects found.</td>
+                        <td colspan="7" class="text-center py-4" th:text="#{message.ProjectsNotFound}"></td>
                     </tr>
             <!-- Iterate over projects -->
-                    <tr th:each="proj : ${projects}">
-                        <td th:text="${proj.id}"></td>
-                        <td>
-                            <a href="#" th:href="@{/projects/editProject/{id}(id=${proj.id})}" th:text="${proj.name}" class="edit-link"
+                    <tr class="border border-gray-300" th:each="proj : ${projects}">
+                        <td th:text="${proj.id}" class="border border-gray-300"></td>
+                        <td class="border border-gray-300">
+                            <a href="#" th:href="@{/projects/editProject/{id}(id=${proj.id})}" th:text="${proj.name}" class=" hover:underline hover:underline-offset-4 edit-link"
                             style="color:black; "></a>
                         </td>
-                        <td th:text="${proj.description}"></td>
-                        <td th:text="${#temporals.format(proj.start, 'dd/MM/yyyy HH:mm:ss')}"></td>
-                        <td th:text="${#temporals.format(proj.end, 'dd/MM/yyyy HH:mm:ss')}"></td>
-                        <td th:text="${proj.finished} ? 'Closed' : 'Open'"></td>
-                        <td style="width: 14%;">
+                        <td class="p-2 border border-gray-300 " th:text="${proj.description}"></td>
+                        <td class="p-2 border border-gray-300 " th:text="${#temporals.format(proj.start, 'dd/MM/yyyy HH:mm:ss')}"></td>
+                        <td class="p-2 border border-gray-300 " th:text="${#temporals.format(proj.end, 'dd/MM/yyyy HH:mm:ss')}"></td>
+                        <td class="p-2 border border-gray-300 " th:text="${proj.finished} ? 'Closed' : 'Open'"></td>
+                        <td class="mt-2  p-2 flex space-x-4  ">
                             <span sec:authorize="hasRole('ADMIN')">
                                 <a th:href="@{/projects/deleteProject/{id}(id=${proj.id})}">
-                                    <button  style="border: none;" class="bounce-icon" >
-                                        <i class="fa-solid fa-trash fa-xl" style="color: #ff6666;"></i>
+                                    <button class="bg-white border-none" >
+                                        <i class="fa-solid fa-trash text-red-500 text-xl hover:text-red-700 fa-xl" ></i>
                                     </button>
                                 </a>
                             </span>
-
                             <span sec:authorize="hasRole('ADMIN')">
-                                <a th:href="@{/tasks/allTasks/{id}(id=${proj.id})}" class="bounce-icon">
-                                    <i class="fa-solid fa-list-check fa-xl" style="color: #fecb01; margin-left: 5%;"></i>
+                                <a th:href="@{/tasks/allTasks/{id}(id=${proj.id})}" class="icon">
+                                    <i class="fa-solid fa-list-check fa-xl"></i>
                                 </a>
                             </span>
-
                             <span sec:authorize="hasRole('ADMIN')">
-                                <a th:href="@{/posts/allPosts/{id}(id=${proj.id})}" class="bounce-icon">
-                                    <i class="fa-regular fa-comment fa-xl" style="color: #fecb01; margin-left: 5%;"></i>
+                                <a th:href="@{/posts/allPosts/{id}(id=${proj.id})}" class="icon">
+                                    <i class="fa-regular fa-comment fa-xl"></i>
                                 </a>
                             </span>
                         </td>
-                        <td>
-<!--                          -->
+                        <td class="p-2 border border-gray-300">
                             <span sec:authorize="hasRole('ADMIN')">
-                                <a href="#" th:href="@{/projects/showFiles/{id}(id=${proj.id})}" class="bounce-icon files-link">
-                                    <i class="fa-solid fa-folder-open fa-xl" style="color: #fecb01;"></i>
+                                <a href="#" th:href="@{/projects/showFiles/{id}(id=${proj.id})}" class=" icon files-link">
+                                    <i class="fa-solid fa-folder-open fa-xl" ></i>
                                 </a>
                             </span>
                         </td>
@@ -84,53 +79,54 @@
                 </table>
             </div>
         </div>
-        <div class="edit-container" id="editContainer">
+        <div class="w-full md:w-2/5 mt-8 hidden" id="editContainer">
             <!-- Content from editTask.css.html will be loaded here -->
         </div>
-        <div class="files-container" id="filesContainer">
+        <div class="w-full md:w-2/5 mt-8 hidden" id="filesContainer">
             <!-- Content from showtaskFiles.html will be loaded here -->
         </div>
     </div>
 </div>
-<div th:if="${fileUploaded}" class="popup" th:style="'display:block;'">
-    <div class="popup-content">
-        <span class="close" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
-        <h2 th:text="#{message.fileUploaded}">File uploaded successfully!</h2>
-        <p th:text="#{message.id}"> Id: <span th:text="${projectId}"></span> , Project Name: <span th:text="${projectName}"></span><br>
-            File Name: <span th:text="${fileName}"></span></p>
+<div th:if="${fileUploaded}" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div class="bg-white p-6 border border-gray-300 rounded-lg shadow-lg w-full max-w-lg text-center">
+        <span class="text-gray-400 float-right text-2xl font-bold cursor-pointer" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
+        <h2 th:text="#{message.fileUploaded}"></h2>
+        <p>Project Id: <span th:text="${projectId}"></span></p>
+        <p>Project Name: <span th:text="${projectName}"></span></p>
+        <p>File Name: <span th:text="${fileName}"></span></p>
     </div>
 </div>
 
-<div th:if="${fileDeleted}" class="popup" th:style="'display:block;'">
-    <div class="popup-content">
-        <span class="close" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
+<div th:if="${fileDeleted}" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div class="bg-white p-6 border border-gray-300 rounded-lg shadow-lg w-full max-w-lg text-center">
+        <span class="text-gray-400 float-right text-2xl font-bold cursor-pointer" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
         <h2 th:text="#{message.fileDeleted}">File deleted successfully!</h2>
         <p>Project Id: <span th:text="${projectId}"></span></p>
         <p>Project Name: <span th:text="${projectName}"></span></p>
     </div>
 </div>
 
-<div th:if="${projectDeleted}" class="popup" th:style="'display:block;'">
-    <div class="popup-content">
-        <span class="close" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
-        <h2 th:text="${message.projectDeleted}">Project deleted successfully!</h2>
+<div th:if="${projectDeleted}" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div class="bg-white p-6 border border-gray-300 rounded-lg shadow-lg w-full max-w-lg text-center">
+        <span class="text-gray-400 float-right text-2xl font-bold cursor-pointer" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
+        <h2 th:text="${projectDeletedMessage}">Project deleted successfully!</h2>
         <p>Project Id: <span th:text="${projectId}"></span></p>
         <p>Project Name: <span th:text="${projectName}"></span></p>
     </div>
 </div>
 
-<div th:if="${projectCreated}" class="popup" th:style="'display:block;'">
-    <div class="popup-content">
-        <span class="close" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
-        <h2 th:text="${message.projectCreated}">New Project created successfully!</h2>
+<div th:if="${projectCreated}" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div class="bg-white p-6 border border-gray-300 rounded-lg shadow-lg w-full max-w-lg text-center">
+        <span class="text-gray-400 float-right text-2xl font-bold cursor-pointer" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
+        <h2 th:text="${projectCreatedMessage}">New Project created successfully!</h2>
         <p>Project Name: <span th:text="${projectName}"></span></p>
     </div>
 </div>
 
-<div th:if="${projectUpdated}" class="popup" th:style="'display:block;'">
-    <div class="popup-content">
-        <span class="close" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
-        <h2 th:text="${message.projectUpdated}">Project updated successfully!</h2>
+<div th:if="${projectUpdated}" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div class="bg-white p-6 border border-gray-300 rounded-lg shadow-lg w-full max-w-lg text-center">
+        <span class="text-gray-400 float-right text-2xl font-bold cursor-pointer" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
+        <h2 th:text="${projectUpdatedMessage}">Project updated successfully!</h2>
         <p>Project Id: <span th:text="${projectId}"></span></p>
         <p>Project Name: <span th:text="${projectName}"></span></p>
     </div>

@@ -25,7 +25,8 @@ public class Post {
     @Size(max = 100, message = "Title exceeds the maximum length of 100 characters")
     private String title;
 
-
+    @Lob
+    @Column(columnDefinition = "LONGTEXT")
     private String content;
 
     @ManyToOne

@@ -3,63 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text ="#{editProject.title}">Edit Project</title>
-    <div th:replace="~{fragments/fragment1 :: link}"></div>
-    <link rel="stylesheet" th:href="@{/css/editEmployee.css}">
+    <title th:text="#{editProject.title}">Edit Project</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
 </head>
-<body>
-<div class="form-container">
-    <form th:action="@{/projects/editedProject}" th:object="${proj}" method="post">
-        <input type="hidden" th:field="*{id}">
+<body class="font-roboto bg-gray-100 text-gray-800">
+<main>
+    <div class="max-w-xl mx-auto bg-white p-8 rounded-lg shadow-md">
+        <form th:action="@{/projects/editedProject}" th:object="${proj}" method="post">
+            <input type="hidden" th:field="*{id}">
 
-        <div class="form-group">
-            <label for="name" th:text="#{message.projectName}">Project:</label>
-            <div class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
-            <input type="text" class="form-control form-control-lg" id="name" th:field="*{name}" readonly>
-        </div>
+            <div class="mb-4">
+                <label for="name" class="block text-lg font-medium text-gray-700" th:text="#{message.projectName}">Project Name:</label>
+                <div class="text-red-500 text-sm" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+                <input type="text" id="name" class="input bg-gray-100" th:field="*{name}" readonly>
+            </div>
 
-        <div class="form-group">
-            <label for="description" th:text="#{message.description}">Description:</label>
-            <div class="text-danger" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
-            <textarea class="form-control form-control-lg" id="description" th:field="*{description}" readonly></textarea>
-        </div>
+            <div class="mb-4">
+                <label for="description" class="block text-lg font-medium text-gray-700" th:text="#{message.description}">Description:</label>
+                <div class="text-red-500 text-sm" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
+                <textarea id="description" class="input bg-gray-100" th:field="*{description}" readonly></textarea>
+            </div>
 
-        <div class="form-group">
-            <label for="start" th:text="#{allProjects.startDate}" >Start:</label>
-            <div class="text-danger" th:if="${#fields.hasErrors('start')}" th:errors="*{start}"></div>
-            <input type="text" class="form-control form-control-lg" id="start" th:field="*{start}" readonly>
-        </div>
+            <div class="mb-4">
+                <label for="start" class="block text-lg font-medium text-gray-700" th:text="#{allProjects.startDate}">Start Date:</label>
+                <div class="text-red-500 text-sm" th:if="${#fields.hasErrors('start')}" th:errors="*{start}"></div>
+                <input type="datetime-local" id="start" class="input bg-gray-100" th:field="*{startFormatted}"   readonly>
+            </div>
 
-        <div class="form-group">
-            <label for="end" th:text="#{allProjects.endDate}">End:</label>
-            <div class="text-danger" th:if="${#fields.hasErrors('end')}" th:errors="*{end}"></div>
-            <input type="text" class="form-control form-control-lg" id="end" th:field="*{end}" readonly>
-        </div>
+            <div class="mb-4">
+                <label for="end" class="block text-lg font-medium text-gray-700" th:text="#{allProjects.endDate}">End Date:</label>
+                <div class="text-red-500 text-sm" th:if="${#fields.hasErrors('end')}" th:errors="*{end}"></div>
+                <input type="datetime-local" id="end" class="input bg-gray-100" th:field="*{endFormatted}" readonly>
+            </div>
 
-        <div class="form-group">
-            <label th:text="#{message.assignedEmployees}">Assign Employees:</label>
-            <div class="text-danger" th:if="${#fields.hasErrors('employeeIds')}" th:errors="*{employeeIds}"></div>
-            <select class="form-control form-control-lg" id="employees" th:field="*{employeeIds}" multiple="multiple" size="5">
-                <option th:each="employee : ${employees}" th:value="${employee.id}" th:text="${employee.fullName}"></option>
-            </select>
-        </div>
+            <div class="mb-4">
+                <label for="employees" class="block text-lg font-medium text-gray-700" th:text="#{message.assignedEmployees}">Assign Employees:</label>
+                <div class="text-red-500 text-sm" th:if="${#fields.hasErrors('employeeIds')}" th:errors="*{employeeIds}"></div>
+                <select id="employees" class="input" th:field="*{employeeIds}" multiple="multiple" size="5">
+                    <option th:each="employee : ${employees}" th:value="${employee.id}" th:text="${employee.fullName}"></option>
+                </select>
+            </div>
 
-        <div class="form-group">
-            <label for="customer" th:text="#{message.setCustomer}">Set Customer:</label>
-            <div class="text-danger" th:if="${#fields.hasErrors('customerId')}" th:errors="*{customerId}"></div>
-            <select id="customer" class="form-control form-control-lg" th:field="*{customerId}" required>
-                <option th:each="customer : ${customers}"
-                        th:value="${customer.id}"
-                        th:attr="data-fullName=${customer.fullName}, data-city=${customer.city}, data-address=${customer.address}, data-postalCode=${customer.postalCode}"
-                        th:selected="${customer.id == proj.customerId}">
-                    <span th:text="${customer.fullName}"></span>
-                </option>
-            </select>
-        </div>
+            <div class="mb-4">
+                <label for="customer" class="block text-lg font-medium text-gray-700" th:text="#{message.setCustomer}">Set Customer:</label>
+                <div class="text-red-500 text-sm" th:if="${#fields.hasErrors('customerId')}" th:errors="*{customerId}"></div>
+                <select id="customer" class="input" th:field="*{customerId}" required>
+                    <option th:each="customer : ${customers}"
+                            th:value="${customer.id}"
+                            th:attr="data-fullName=${customer.fullName}, data-city=${customer.city}, data-address=${customer.address}, data-postalCode=${customer.postalCode}"
+                            th:selected="${customer.id == proj.customerId}">
+                        <span th:text="${customer.fullName}"></span>
+                    </option>
+                </select>
+            </div>
 
-        <button type="submit" class="btn btn-custom btn-block">Submit</button>
-    </form>
-</div>
-<div th:replace="~{fragments/fragment1 :: scripts}"></div>
+            <button type="submit" class="w-full py-3 text-lg text-black bg-yellow-400 hover:bg-yellow-600 hover:text-white rounded transition-all duration-300">Submit</button>
+        </form>
+    </div>
+</main>
+<footer>
+    <div th:replace="~{fragments/fragment1::scripts}"></div>
+</footer>
 </body>
 </html>

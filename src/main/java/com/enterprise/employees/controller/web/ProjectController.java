@@ -28,6 +28,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -118,8 +120,10 @@ public class ProjectController {
         }
         LocaleContextHolder.setLocale(locale);
         String message = messageSource.getMessage("allProjects.title", null, locale);
+        model.addAttribute("projectUpdatedMessage", messageSource.getMessage("message.projectUpdated", null, locale));
+        model.addAttribute("projectDeletedMessage", messageSource.getMessage("message.projectDeleted", null, locale));
+        model.addAttribute("projectCreatedMessage", messageSource.getMessage("message.projectCreated", null, locale));
         model.addAttribute("message", message);
-
 
         logger.info("Retrieving all projects");
         List<ProjectDTO> projects = projectServiceImpl.findAllProjects();
@@ -153,6 +157,9 @@ public class ProjectController {
         Project project = projectServiceImpl.findById(id);
         ProjectDTO projectDTO = modelMapper.map(project, ProjectDTO.class);
         List<EmployeeDTO> employees = employeeService.findEmployeesWithUserRoleDTO();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+        projectDTO.setStartFormatted(projectDTO.getStart() != null ? projectDTO.getStart().format(formatter) : null);
+        projectDTO.setEndFormatted(projectDTO.getEnd() != null ? projectDTO.getEnd().format(formatter) : null);
         model.addAttribute("proj", projectDTO);
         model.addAttribute("employees", employees);
         model.addAttribute("customers", customerService.findallDTO());
@@ -176,6 +183,12 @@ public class ProjectController {
                                 RedirectAttributes redirectAttributes) {
         logger.info("Editing project: {}", projectDTO);
         projectDTO.setEmployeeIds(selectedEmployeesIds);
+
+        // Convert formatted strings back to LocalDateTime
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+        projectDTO.setStart(projectDTO.getStartFormatted() != null ? LocalDateTime.parse(projectDTO.getStartFormatted(), formatter) : null);
+        projectDTO.setEnd(projectDTO.getEndFormatted() != null ? LocalDateTime.parse(projectDTO.getEndFormatted(), formatter) : null);
+
         // Proceed with your project update logic
         projectServiceImpl.update(projectDTO, bindingResult);
         if (bindingResult.hasErrors()) {
@@ -366,8 +379,10 @@ public class ProjectController {
             headers.add(HttpHeaders.CONTENT_TYPE, "text/plain; charset=UTF-8");
         } else if (fileName.endsWith(".png")) {
             headers.add(HttpHeaders.CONTENT_TYPE, "image/png");
-        }  else if (fileName.endsWith(".jpg")) {
+        } else if (fileName.endsWith(".jpg")) {
             headers.add(HttpHeaders.CONTENT_TYPE, "image/jpg");
+        }  else if (fileName.endsWith(".jpeg")) {
+            headers.add(HttpHeaders.CONTENT_TYPE, "image/jpeg");
         }else {
             throw new IllegalArgumentException("Unsupported file type: " + fileName);
         }

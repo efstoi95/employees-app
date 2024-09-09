@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+    .btn-menu {
+        @apply w-full mt-2 py-3 text-lg text-black bg-yellow-400 hover:bg-yellow-600 hover:text-white rounded transition-all duration-300;
+    }
+    .icon {
+        @apply text-yellow-400 hover:text-yellow-700 transition-colors duration-300 py-2;
+    }
+    .input{
+        @apply mt-1 block w-full px-3 py-4 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm;
+    }
+    .popup{
+        @apply hidden fixed inset-0 z-10 w-full h-full overflow-auto bg-black bg-opacity-40;
+    }
+
+}

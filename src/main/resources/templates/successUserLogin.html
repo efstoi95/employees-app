@@ -3,28 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>User Information Form</title>
-  <!-- Bootstrap CSS -->
-  <div th:replace="~{fragments/fragment1 :: link}"></div>
-  <link rel="stylesheet" th:href="@{/css/successLogin.css}">
+  <title>Menu</title>
+  <link rel="stylesheet" th:href="@{/css/main.css}">
 </head>
 <body>
 <div th:replace="~{fragments/fragment1 :: header1}"></div>
-<div class="container">
-  <div hidden="hidden" th:text="${projects}"></div>
-  <div class="row justify-content-center">
-    <div class="col-md-8">
-      <div class="panel text-center">
-        <h2 th:text="${message}"></h2>
-        <a class="btn btn-custom btn-block" th:href="@{/web/infoEmployee/{id}(id=${employeeId})}" th:text="#{message.menuEmployeeInfo}">Register Information</a>
-        <a class="btn btn-custom btn-block" th:href="@{/web/EmployeeProjects/{id}(id=${employeeId})}" th:text="#{message.menuEmployeeProject}">Assigned Projects</a>
-        <form action="#" th:action="@{/api/send}" method="post">
-          <button type="submit" class="btn btn-custom btn-block" th:text="#{message.menuUser}">Send information</button>
-        </form>
+<main>
+  <div class="container max-w-lg lg:max-w-3xl  mx-auto mt-24">
+      <div class=" flex flex-col mt-12 p-8 border-2 border-gray-300 rounded-lg bg-white shadow-lg text-center">
+        <h2 class="text-2xl font-semibold" th:text="${message}"></h2>
+        <a class="btn-menu"
+           th:href="@{/web/infoEmployee/{id}(id=${employeeId})}"
+           th:text="#{message.menuEmployeeInfo}"></a>
+        <a class="btn-menu"
+           th:href="@{/web/EmployeeProjects/{id}(id=${employeeId})}"
+           th:text="#{message.menuEmployeeProject}"></a>
       </div>
-    </div>
   </div>
-</div>
+</main>
 <div th:replace="~{fragments/fragment1 :: footer}"></div>
 </body>
 </html>

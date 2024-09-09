@@ -37,6 +37,8 @@ public class ProjectDTO {
     private LocalDateTime start;
 
     private LocalDateTime end;
+    private String startFormatted;
+    private String endFormatted;
 
     private List<byte[]> fileContent = new ArrayList<>();
 

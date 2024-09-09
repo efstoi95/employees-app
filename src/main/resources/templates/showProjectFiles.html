@@ -4,37 +4,35 @@
     <meta charset="UTF-8">
     <div th:replace="~{fragments/fragment2::fontIcon}"></div>
     <title  th:text="#{message.ProjectFiles}">Files Projects</title>
-    <link rel="stylesheet" href="/css/showFiles.css">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
 </head>
-<body>
-<h2 th:text="#{message.ProjectFiles}">Files Project: <span th:text="${project.name}"></span></h2>
-
-<div class="error-message" th:if="${not #strings.isEmpty(error)}">
-    <p th:text="${error}" style="background: #EFC3CA; width: 29%;"></p>
+<body class="font-roboto w-full">
+<div class=" flex justify-center rounded-lg mx-auto my-4 bg-red-200 w-1/3 p-2" th:if="${not #strings.isEmpty(error)}">
+    <p th:text="${error}"></p>
 </div>
 
 <!-- Display uploaded files -->
-<div class="upload-form">
-    <form method="post" th:action="@{/projects/upload/{projectId}(projectId=${project.id})}" enctype="multipart/form-data" style="padding: 2%;">
-        <input type="file" name="file" />
-        <button type="submit">Upload</button>
+<div class=" max-w-xl mx-auto mt-2 p-4 rounded-md w-full">
+    <form method="post" th:action="@{/projects/upload/{projectId}(projectId=${project.id})}" enctype="multipart/form-data" class="pb-2">
+        <input type="file" name="file" class="mb-2 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"/>
+        <button type="submit"  class=" text-left px-4 py-2 bg-yellow-400 text-black  rounded-lg cursor-pointer text-sm hover:bg-yellow-700 hover:text-white">Upload</button>
     </form>
     <!-- Display uploaded file names if available -->
     <div th:if="${not #lists.isEmpty(fileNames)}">
-        <p th:text="#{message.UploadedFiles}">Uploaded Files:</p>
-        <ul>
-            <li th:each="file : ${project.files}" style="margin-bottom: 10px;">
-                <span th:text="${file.fileName}"></span>
-                <a th:href="@{/projects/downloadFile/{projectId}/{fileName}(projectId=${project.id}, fileName=${file.fileName})}" style="margin-left: 15px;" >
-                    <i class="fa-solid fa-download fa-xl, bounce-icon" style="color: #74C0FC;"></i>
+        <p th:text="#{message.UploadedFiles}" class=" text-left font-semibold">Uploaded Files:</p>
+        <ul class=" border border-gray-300 rounded-lg">
+            <li th:each="file : ${project.files}" class="mb-2 p-2  rounded-md flex items-center justify-between">
+                <span th:text="${file.fileName}" ></span>
+                <a th:href="@{/projects/downloadFile/{projectId}/{fileName}(projectId=${project.id}, fileName=${file.fileName})}">
+                    <i class="fa-solid fa-download fa-xl" style="color: #74C0FC;"></i>
                 </a>
-                <a th:href="@{/projects/viewFile/{projectId}/{fileName}(projectId=${project.id}, fileName=${file.fileName})}" style="margin-left: 15px;" target="_blank">
-                    <i class="fa-solid fa-eye fa-xl, bounce-icon" style="color: #28a745;"></i>
+                <a th:href="@{/projects/viewFile/{projectId}/{fileName}(projectId=${project.id}, fileName=${file.fileName})}">
+                    <i class="fa-solid fa-eye fa-xl" style="color: #28a745;"></i>
                 </a>
                 <!-- Form to delete file -->
-                <form method="post" th:action="@{/projects/deleteFile/{projectId}/{fileId}(projectId=${project.id}, fileId=${file.id})}" style="display:inline;">
-                    <button  style="border: none;" class="bounce-icon" >
-                        <i class="fa-solid fa-trash fa-xl" style="color: #ed0202;"></i>
+                <form method="post" th:action="@{/projects/deleteFile/{projectId}/{fileId}(projectId=${project.id}, fileId=${file.id})}">
+                    <button type="submit" class="bg-transparent p-0 hover:text-red-700 text-red-500">
+                        <i class="fa-solid fa-trash fa-xl"></i>
                     </button>
                 </form>
             </li>

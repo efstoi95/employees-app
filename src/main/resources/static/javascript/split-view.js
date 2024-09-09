@@ -1,3 +1,4 @@
+
  document.addEventListener('DOMContentLoaded', (event) => {
         function initializeEditTaskScripts() {
             // Attach event listeners for the plus buttons to open the respective popups

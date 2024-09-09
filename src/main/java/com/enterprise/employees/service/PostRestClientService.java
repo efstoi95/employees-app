@@ -1,5 +1,6 @@
 package com.enterprise.employees.service;
 
+import com.enterprise.employees.model.Poste;
 import com.enterprise.employees.model.Project;
 import com.enterprise.employees.model.ProjectDTO;
 import org.springframework.core.ParameterizedTypeReference;
@@ -15,10 +16,10 @@ import java.util.List;
 public class PostRestClientService {
 
     private final RestClient restClient = RestClient.create();
+    String url= "https://jsonplaceholder.typicode.com/posts";
 
 
     public List<ProjectDTO> postProjectData(List<ProjectDTO> projects){
-        String url= "https://jsonplaceholder.typicode.com/posts";
         List<ProjectDTO> responseList = new ArrayList<>();
         try {
             for (ProjectDTO project : projects) {
@@ -39,4 +40,10 @@ public class PostRestClientService {
         }
     }
 
+    public List<Poste> findAllPosts() {
+        return restClient.get()
+                .uri(url)
+                .retrieve()
+                .body(new ParameterizedTypeReference<List<Poste>>() {});
+    }
 }

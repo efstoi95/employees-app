@@ -1,137 +1,136 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title th:text ="#{editTask.title}">Edit Task</title>
-    <!-- Bootstrap CSS -->
-    <div th:replace="~{fragments/fragment1 :: link}"></div>
-    <link rel="stylesheet" th:href="@{/css/editTask.css}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="#{editTask.title}">Edit Task</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
 </head>
-<body>
+<body class="font-roboto bg-gray-100 text-gray-800">
+<main>
+    <div class="max-w-xl mx-auto bg-white p-8 rounded-lg shadow-md">
+        <form th:action="@{/tasks/editedTask}" th:object="${task}" method="post">
+            <input type="hidden" th:field="*{id}">
+            <input type="hidden" th:field="*{projectId}">
 
-<div class="form-container">
-    <form th:action="@{/tasks/editedTask}" th:object="${task}" method="post" >
-        <input type="hidden" th:field="*{id}">
-        <input type="hidden" th:field="*{projectId}">
-
-        <div class="form-group">
-            <label for="name" th:text ="#{message.name}">Name:</label>
-            <div class="error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
-            <input type="text" class="form-control form-control-lg" id="name" th:field="*{name}"  required minlength="4" th:style="${#fields.hasErrors('name')} ? 'background-color: #FF7F7F;' : ''" >
-        </div>
-
-        <div class="form-group">
-            <label th:text ="#{message.projectName}">Project:</label>
-            <span class="form-control form-control-lg" th:text="${projectName}"></span>
-        </div>
-
-        <div class="form-group">
-            <label for="description" th:text ="#{message.description}">Description:</label>
-            <div class="error" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
-            <input type="text" id="description" th:field="*{description}" class="form-control form-control-lg" required minlength="4" th:style="${#fields.hasErrors('description')} ? 'background-color: #FF7F7F;' : ''">
-        </div>
-
-        <div class="form-group">
-            <label for="durationInput" th:text ="#{allTasks.duration}">Duration:</label>
-            <div class="error" th:if="${#fields.hasErrors('durationInput')}" th:errors="*{durationInput}"></div>
-            <input type="text" id="durationInput" th:field="*{durationInput}" class="form-control form-control-lg" required minlength="1" title="Duration cannot be empty">
-        </div>
-
-        <div class="form-group">
-            <label for="resources" th:text ="#{message.resources}">Resources:</label>
-            <button type="button" onclick="openResourcePopup()">+</button>
-            <select id="resources" name="resources" multiple="multiple" size="5" class="form-control">
-                <option th:each="resource : ${assignedResources}"
-                        th:value="${resource.id}"
-                        th:text="${resource.name}"
-                        th:selected="${resourcesIds.contains(resource.id)}">
-                </option>
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label for="eligibleEmployees" th:text ="#{message.eligEmployees}">Eligible Employees:</label>
-            <button type="button" onclick="openAddPopup()">+</button>
-            <select id="eligibleEmployees" name="eligibleEmployees" multiple="multiple" size="5" class="form-control">
-                <option th:each="employee : ${assignedEmployees}"
-                        th:value="${employee.id}"
-                        th:text="${employee.fullName}"
-                        th:selected="${eligibleEmployeesIds.contains(employee.id)}">
-                </option>
-            </select>
-        </div>
-
-        <input type="submit" value="Submit" class="btn btn-primary">
-    </form>
-
-    <!-- The add Popup -->
-    <div id="addEmployeePopup" class="popup">
-        <div class="popup-content">
-            <span class="close" onclick="closeAddPopup()">&times;</span>
-            <h2 th:text ="#{message.selectEligEmployees}">Select Eligible Employees</h2>
-            <table class="table-content">
-                <thead>
-                <tr>
-                    <th th:text ="#{message.name}">Name</th>
-                    <th th:text ="#{message.check}">Checked</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:if="${#lists.isEmpty(employees)}">
-                    <td colspan="2" th:text ="#{allEmployees.noEmployeesFound}">No Employees found.</td>
-                </tr>
-                <tr th:each="employee : ${employees}">
-                    <td th:text="${employee.fullName}"></td>
-                    <td>
-                        <div class="employee-checkbox">
-                            <label>
-                                <input type="checkbox" th:id="'employee-' + ${employee.id}" th:value="${employee.id}">
-                            </label>
-                        </div>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-            <div>
-                <button type="button" onclick="addSelectedEmployees()" class="popup-button" th:text ="#{message.selectedEmployees}">Add Selected Employees</button>
+            <div class="mb-4">
+                <label for="name" class="block text-lg font-medium text-gray-700" th:text="#{message.name}">Name:</label>
+                <div class="text-red-500 text-sm" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+                <input type="text" id="name" class="input" th:field="*{name}" required minlength="4" th:classappend="${#fields.hasErrors('name')} ? 'border-red-500' : ''" title="Name should contain at least 4 characters">
             </div>
-        </div>
-    </div>
 
-    <div id="addResourcePopup" class="popup">
-        <div class="popup-content">
-            <span class="close" onclick="closeResourcePopup()">&times;</span>
-            <h2>Select Resources</h2>
-            <table class="table-content">
-                <thead>
-                <tr>
-                    <th th:text ="#{message.name}">Name</th>
-                    <th th:text ="#{message.check}">Checked</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:if="${#lists.isEmpty(resources)}">
-                    <td colspan="2" th:text ="#{message.noResourceFound}">No Resources found.</td>
-                </tr>
-                <tr th:each="resource : ${resources}">
-                    <td th:text="${resource.name}"></td>
-                    <td>
-                        <div class="resource-checkbox">
-                            <label>
-                                <input type="checkbox" th:id="'resource-' + ${resource.id}" th:value="${resource.id}">
-                            </label>
-                        </div>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-            <div>
-                <button type="button" onclick="addSelectedResources()" class="popup-button" th:text ="#{message.selectedResources}">Add Selected Resources</button>
+            <div class="mb-4">
+                <label class="block text-lg font-medium text-gray-700" th:text="#{message.projectName}">Project:</label>
+                <span class="block border border-gray-300 rounded-md p-2 bg-gray-100" th:text="${projectName}"></span>
             </div>
-        </div>
+
+            <div class="mb-4">
+                <label for="description" class="block text-lg font-medium text-gray-700" th:text="#{message.description}">Description:</label>
+                <div class="text-red-500 text-sm" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
+                <input type="text" id="description" class="input " th:field="*{description}" required minlength="4" th:classappend="${#fields.hasErrors('description')} ? 'border-red-500' : ''" title="Description should contain at least 4 characters">
+            </div>
+
+            <div class="mb-4">
+                <label for="durationInput" class="block text-lg font-medium text-gray-700" th:text="#{allTasks.duration}">Duration:</label>
+                <div class="text-red-500 text-sm" th:if="${#fields.hasErrors('durationInput')}" th:errors="*{durationInput}"></div>
+                <input type="text" id="durationInput" class="input" th:field="*{durationInput}" required minlength="1" title="Duration cannot be empty">
+            </div>
+
+            <div class="mb-4">
+                <label for="resources" class="block text-lg font-medium text-gray-700" th:text="#{message.resources}">Resources:</label>
+                <button type="button" onclick="openResourcePopup()" class="text-2xl text-black hover:text-yellow-400 hover:underline">+</button>
+                <select id="resources" name="resources" multiple="multiple" size="5" class="mt-1 block w-full px-3 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm">
+                    <option th:each="resource : ${assignedResources}"
+                            th:value="${resource.id}"
+                            th:text="${resource.name}"
+                            th:selected="${resourcesIds.contains(resource.id)}">
+                    </option>
+                </select>
+            </div>
+
+            <div class="mb-4">
+                <label for="eligibleEmployees" class="block text-lg font-medium text-gray-700" th:text="#{message.eligEmployees}">Eligible Employees:</label>
+                <button type="button" onclick="openEmployeePopup()" class="text-2xl text-black hover:text-yellow-400 hover:underline">+</button>
+                <select id="eligibleEmployees" name="eligibleEmployees" multiple="multiple" size="5" class="mt-1 block w-full px-3 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm">
+                    <option th:each="employee : ${assignedEmployees}"
+                            th:value="${employee.id}"
+                            th:text="${employee.fullName}"
+                            th:selected="${eligibleEmployeesIds.contains(employee.id)}">
+                    </option>
+                </select>
+            </div>
+
+            <button type="submit" class="w-full py-3 text-lg text-black bg-yellow-400 hover:bg-yellow-600 hover:text-white rounded transition-all duration-300">Submit</button>
+        </form>
     </div>
+</main>
+<footer>
     <div th:replace="~{fragments/fragment1 :: scripts}"></div>
+</footer>
 
+<!-- The add Popup -->
+<div id="addEmployeePopup" class="popup hidden">
+    <div class=" bg-white mx-auto  border my-5 border-gray-400  max-w-lg text-center  rounded-lg shadow-md p-4">
+        <span class="cursor-pointer float-right text-gray-700 hover:text-gray-400  text-3xl" onclick="closeEmployeePopup()">&times;</span>
+        <h2 class="text-lg font-semibold" th:text="#{message.selectEligEmployees}">Select Eligible Employees</h2>
+        <table class="min-w-full divide-y divide-gray-200 mt-4 mx-auto ">
+            <thead>
+            <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" th:text="#{message.name}">Name</th>
+                <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider" th:text="#{message.check}">Checked</th>
+            </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+            <tr th:if="${#lists.isEmpty(employees)}">
+                <td colspan="2" class="px-6 py-4 text-center text-gray-500" th:text="#{allEmployees.noEmployeesFound}">No Employees found.</td>
+            </tr>
+            <tr th:each="employee : ${employees}">
+                <td class="text-left ps-3 py-2" th:text="${employee.fullName}"></td>
+                <td class="ps-3 py-2">
+                    <div class="ps-3">
+                        <input type="checkbox" th:id="'employee-' + ${employee.id}" th:value="${employee.id}" class="h-4 w-4 text-yellow-600 focus:ring-yellow-500 border-gray-300 rounded">
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="mt-4">
+            <button type="button" onclick="addSelectedEmployees()" class=" w-full py-3 rounded-md cursor-pointer bg-yellow-400 hover:bg-yellow-600 hover:text-white" th:text="#{message.selectedEmployees}">Add Selected Employees</button>
+        </div>
+    </div>
+</div>
 
+<div id="addResourcePopup" class="popup  hidden">
+    <div class="bg-white mx-auto  border my-5 border-gray-400  max-w-lg text-center  rounded-lg shadow-md p-4">
+        <span class="cursor-pointer float-right text-gray-700 hover:text-gray-400  text-3xl" onclick="closeResourcePopup()">&times;</span>
+        <h2 class="text-lg font-semibold" th:text="#{message.selectResources}">Select Resources</h2>
+        <table class="min-w-full divide-y divide-gray-200 mt-4 mx-auto">
+            <thead>
+            <tr>
+                <th class="px-6 py-3 text-left  text-gray-500 uppercase tracking-wider" th:text="#{message.name}">Name</th>
+                <th class="px-6 py-3 text-center text-gray-500 uppercase tracking-wider" th:text="#{message.check}">Checked</th>
+            </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+            <tr th:if="${#lists.isEmpty(resources)}">
+                <td colspan="2" class="px-6 py-4 text-center text-gray-500" th:text="#{message.noResourceFound}">No Resources found.</td>
+            </tr>
+            <tr th:each="resource : ${resources}" >
+                <td class="text-left ps-3 py-2" th:text="${resource.name}"></td>
+                <td class="ps-3 py-2">
+                    <div class="ps-3">
+                        <input type="checkbox" th:id="'resource-' + ${resource.id}" th:value="${resource.id}" class="h-4 w-4 text-yellow-600 focus:ring-yellow-500 border-gray-300 rounded">
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="mt-4">
+            <button type="button" onclick="addSelectedResources()" class="w-full py-3 rounded-md cursor-pointer bg-yellow-400 hover:bg-yellow-600 hover:text-white" th:text="#{message.selectedResources}">Add Selected Resources</button>
+        </div>
+    </div>
+</div>
+
+    <div th:replace="~{fragments/fragment1 :: scripts}"></div>
 </body>
 </html>

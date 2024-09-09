@@ -33,3 +33,5 @@ build/
 .vscode/
 logs
 User service created
+###frontend###
+/src/main/frontend/node_modules/

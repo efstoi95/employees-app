@@ -246,8 +246,8 @@ public class EmployeeTaskController {
             headers.add(HttpHeaders.CONTENT_TYPE, "text/plain; charset=UTF-8");
         } else if (fileName.endsWith(".png")) {
             headers.add(HttpHeaders.CONTENT_TYPE, "image/png");
-        }  else if (fileName.endsWith(".jpg")) {
-            headers.add(HttpHeaders.CONTENT_TYPE, "image/jpg");
+        }  else if (fileName.endsWith(".jpeg")) {
+            headers.add(HttpHeaders.CONTENT_TYPE, "image/jpeg");
         }else {
             throw new IllegalArgumentException("Unsupported file type: " + fileName);
         }

@@ -157,9 +157,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 
     @Override
-    public void editEmployee(EmployeeDTO employeeEditDTO, BindingResult bindingResult) {
+    public void editEmployee(Employee employee, BindingResult bindingResult) {
 
-        Employee employee = modelMapper.map(employeeEditDTO, Employee.class);
+
         // Fetch the existing employee by ID
         Employee existingEmployee = employeesRepository.findById(employee.getId()).orElse(null);
 

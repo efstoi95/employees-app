@@ -3,117 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="#{allEmployees.title}">All Employees</title>
-    <div th:replace="~{fragments/fragment1::link}"></div>
-    <link rel="stylesheet" th:href="@{/css/allEmployees-Customers.css}">
+    <title th:text="#{allEmployees.title}"></title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
 </head>
-<body>
-<div class="container" style="max-width: 1780px">
-    <h2 th:text="#{allEmployees.title}">All Employees</h2>
+<body class="font-roboto text-sm lg:text-lg">
+<div class="container mx-auto max-w-full p-5">
+    <h2 class="text-center text-2xl mb-4" th:text="#{allEmployees.title}"></h2>
     <div th:replace="~{fragments/fragment1::header}"></div>
-    <div class="split-view">
-        <div class="tasks-container">
-            <div class="table-responsive">
-                <!-- Filtering options -->
-                <form action="/web/search/department" method="get">
-                    <label for="department" th:text="#{allEmployees.filterByDepartment}">Filter by Department:</label>
-                    <select id="department" name="department" class="form-control d-inline-block w-auto">
-                        <option value="" th:text="#{allEmployees.allDepartments}">All Departments</option>
-                        <option value="Finance" th:text="#{allEmployees.finance}">Finance</option>
-                        <option value="Hr" th:text="#{allEmployees.hr}">Hr</option>
-                        <option value="Software" th:text="#{allEmployees.software}">Software</option>
-                    </select>
-                    <button type="submit" class="button" th:text="#{allEmployees.applyFilter}">Apply Filter</button>
-                </form>
-                <form action="/web/search/name" method="get" class="mt-2">
-                    <input type="text" name="name" placeholder="Enter name to search" class="form-control d-inline-block w-auto" th:placeholder="#{allEmployees.enterNameToSearch}">
-                    <button type="submit" class="button" th:text="#{allEmployees.search}">Search</button>
-                </form>
 
-                <div class="table-responsive mt-3">
-                    <table class="table table-bordered">
-                        <thead>
-                        <tr>
-                            <th th:text="#{message.id}">ID</th>
-                            <th th:text="#{message.name}">Name</th>
-                            <th th:text="#{allEmployees.email}">Email</th>
-                            <th th:text="#{allEmployees.department}">Department</th>
-                            <th th:text="#{message.action}">Action</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <!-- Check if employees list is empty -->
-                        <tr th:if="${#lists.isEmpty(employees)}">
-                            <td colspan="5"  th:text="#{allEmployees.noEmployeesFound}">No employees found.</td>
-                        </tr>
-                        <!-- Iterate over employees -->
-                        <tr th:each="employee : ${employees}">
-                            <td th:text="${employee.id}"></td>
-                            <td onmouseover="showTooltip(this)" onmouseout="hideTooltip(this)">
-                                <span th:text="${employee.fullName}"></span>
-                                <div class="tooltip">
-                                    <span th:text="'Email: ' + ${employee.email}"></span><br>
-                                    <span th:text="'Department: ' + (${employee.department} != null ? ${employee.department.name} : 'N/A')"></span><br>
-                                    <span th:text="'Role: ' + ${employee.role}"></span><br>
-                                    <span th:text="'Verified: ' + (${employee.verified} ? 'Yes' : 'No')"></span><br>
-                                    <span  th:text="#{allEmployees.projects}">Projects:</span>
-                                    <th:block th:if="${#lists.isEmpty(employee.projects)}">
-                                        <span th:text="#{allEmployees.none}">None</span><br>
-                                    </th:block>
-                                    <ol th:if="${!#lists.isEmpty(employee.projects)}">
-                                        <li th:each="project : ${employee.projects}" th:text="${project.name}"></li>
-                                    </ol>
-                                    <span th:text="#{allEmployees.tasks}">Tasks:</span>
-                                    <th:block th:if="${#lists.isEmpty(employee.tasks)}">
-                                        <span th:text="#{allEmployees.none}">None</span>
-                                    </th:block>
-                                    <ol th:if="${!#lists.isEmpty(employee.tasks)}">
-                                        <li th:each="task : ${employee.tasks}" th:text="${task.name}"></li>
-                                    </ol>
-                                </div>
-                            </td>
-                            <td th:text="${employee.email}"></td>
-                            <td th:text="${employee.department.name}"></td>
-                            <td>
-                                <span sec:authorize="hasRole('ADMIN')">
-                                    <a th:href="@{/web/admin/delete/{id}(id=${employee.id})}">
-                                        <button  style="border: none;" class="bounce-icon" >
-                                            <i class="fa-solid fa-trash fa-xl" style="color: #ff6666;"></i>
-                                        </button>
-                                    </a>
-                                </span>
-                                <span sec:authorize="hasRole('ADMIN')">
-                                    <a th:href="@{/web/admin/edit/{id}(id=${employee.id})}" class="files-link">
-                                         <i class="fa-solid fa-user-pen fa-xl" style="color: #fecb01; margin-left: 10%;"></i>
-                                    </a>
-                                </span>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
+    <div class="flex justify-between gap-2">
+        <div class="w-full">
+            <div class="overflow-x-auto">
+                <!-- Filtering options -->
+                <div class="flex justify-between items-center mb-4">
+                    <form action="/web/search/department" method="get" class="flex items-center">
+                        <label for="department" class="mr-2" th:text="#{allEmployees.filterByDepartment}"></label>
+                        <select id="department" name="department" class= "w-auto p-2 border border-gray-300 rounded-md" onchange="this.form.submit()">
+                            <option value="" disabled selected th:text="#{message.SelectDepartment}"></option>
+                            <option value="" th:text="#{allEmployees.allDepartments}"></option>
+                            <option value="IT" th:text="#{allEmployees.it}"></option>
+                            <option value="Hr" th:text="#{allEmployees.hr}"></option>
+                            <option value="Software" th:text="#{allEmployees.software}"></option>
+                        </select>
+                    </form>
+
+                    <form action="/web/search/name" method="get" class="flex items-center ml-auto">
+                        <input type="text" name="name" placeholder="Enter name to search" class=" w-auto p-2 border border-gray-300 rounded-md" th:placeholder="#{allEmployees.enterNameToSearch}">
+                        <button type="submit" class="ml-2 bg-white border-none">
+                            <i class="fa-solid fa-magnifying-glass text-yellow-400 text-xl hover:text-yellow-600"></i>
+                        </button>
+                    </form>
                 </div>
+
+                <table class="min-w-full border border-gray-300">
+                    <thead class="bg-gray-200">
+                    <tr>
+                        <th class="p-2 text-left border border-gray-300" th:text="#{message.id}"></th>
+                        <th class="p-2 text-left border border-gray-300" th:text="#{message.name}"></th>
+                        <th class="p-2 text-left border border-gray-300" th:text="#{allEmployees.email}"></th>
+                        <th class="p-2 text-left border border-gray-300" th:text="#{allEmployees.department}"></th>
+                        <th class="p-2 text-left border border-gray-300" th:text="#{message.action}"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <!-- Check if employees list is empty -->
+                    <tr th:if="${#lists.isEmpty(employees)}">
+                        <td colspan="5" class="text-center py-4" th:text="#{allEmployees.noEmployeesFound}"></td>
+                    </tr>
+                    <!-- Iterate over employees -->
+                    <tr class="border border-gray-300" th:each="employee : ${employees}" >
+                        <td class="p-2 border border-gray-300" th:text="${employee.id}"></td>
+                        <td class=" p-2 border border-gray-300" onmouseover="showTooltip(this)" onmouseout="hideTooltip(this)">
+                            <span th:text="${employee.fullName}"></span>
+                            <div class="tooltip hidden absolute bg-white border border-gray-300 p-4 shadow-md z-50">
+                                <span th:text="'Email: ' + ${employee.email}"></span><br>
+                                <span th:text="'Department: ' + (${employee.department} != null ? ${employee.department.name} : 'N/A')"></span><br>
+                                <span th:text="'Role: ' + ${employee.role}"></span><br>
+                                <span th:text="'Verified: ' + (${employee.verified} ? 'Yes' : 'No')"></span><br>
+                                <span th:text="#{allEmployees.projects}"></span>
+                                <th:block th:if="${#lists.isEmpty(employee.projects)}">
+                                    <span th:text="#{allEmployees.none}"></span><br>
+                                </th:block>
+                                <ol th:if="${!#lists.isEmpty(employee.projects)}" class="list-decimal ml-4">
+                                    <li th:each="project : ${employee.projects}" th:text="${project.name}"></li>
+                                </ol>
+                                <span th:text="#{allEmployees.tasks}"></span>
+                                <th:block th:if="${#lists.isEmpty(employee.tasks)}">
+                                    <span th:text="#{allEmployees.none}"></span>
+                                </th:block>
+                                <ol th:if="${!#lists.isEmpty(employee.tasks)}" class="list-decimal ml-4">
+                                    <li th:each="task : ${employee.tasks}" th:text="${task.name}"></li>
+                                </ol>
+                            </div>
+                        </td>
+                        <td class="p-2 border border-gray-300" th:text="${employee.email}"></td>
+                        <td class="p-2 border border-gray-300" th:text="${employee.department.name}"></td>
+                        <td class="p-2   flex space-x-4">
+                            <span sec:authorize="hasRole('ADMIN')">
+                                <a th:href="@{/web/admin/delete/{id}(id=${employee.id})}">
+                                    <button class="bg-white border-none">
+                                        <i class="fa-solid fa-trash fa-xl text-red-500 text-xl hover:text-red-700"></i>
+                                    </button>
+                                </a>
+                            </span>
+                            <span sec:authorize="hasRole('ADMIN')">
+                                <a th:href="@{/web/admin/edit/{id}(id=${employee.id})}" class="files-link">
+                                    <i class="fa-solid fa-user-pen fa-xl text-yellow-400 text-xl hover:text-yellow-600 ml-4"></i>
+                                </a>
+                            </span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
-        <div class="files-container" id="filesContainer" style="margin-top: 8%;">
-
+        <div class="w-full md:w-2/5 mt-8 hidden" id="filesContainer">
+            <!-- Content from showEmployeeFiles.html will be loaded here -->
         </div>
     </div>
 </div>
-<div th:if="${employeeEdited}" class="popup" th:style="'display:block;'">
-    <div class="popup-content">
-        <span class="close" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
-        <p th:text="#{allEmployees.employeeEditedSuccess}"> Employee edited successfully!<br>
-            Id: <span th:text="${employeeId}"></span> , Name: <span th:text="${employeeName}"></span></p>
+
+<div th:if="${employeeEdited}" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div class="bg-white p-6 border border-gray-300 rounded-lg shadow-lg w-full max-w-lg text-center">
+        <span class="text-gray-400 float-right text-2xl font-bold cursor-pointer" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
+        <p th:text="#{allEmployees.employeeEditedSuccess}">
+            <br>Id: <span th:text="${employeeId}"></span> , Name: <span th:text="${employeeName}"></span>
+        </p>
     </div>
 </div>
 
-<div th:if="${employeeDeleted}" class="popup" th:style="'display:block;'">
-    <div class="popup-content">
-        <span class="close" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
-        <p th:text="#{allEmployees.employeeDeletedSuccess}"> Employee deleted successfully!<br>
-            Id: <span th:text="${employeeId}"></span> , Name: <span th:text="${employeeName}"></span></p>
+<div th:if="${employeeDeleted}" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div class="bg-white p-6 border border-gray-300 rounded-lg shadow-lg w-full max-w-lg text-center">
+        <span class="text-gray-400 float-right text-2xl font-bold cursor-pointer" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
+        <p th:text="#{allEmployees.employeeDeletedSuccess}">
+            <br>Id: <span th:text="${employeeId}"></span> , Name: <span th:text="${employeeName}"></span>
+        </p>
     </div>
 </div>
+
 <div th:replace="~{fragments/fragment2 :: split-view}"></div>
 <div th:replace="~{fragments/fragment1 :: footer}"></div>
 

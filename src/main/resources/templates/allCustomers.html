@@ -3,72 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>All Customers</title>
-    <div th:replace="~{fragments/fragment1::link}"></div>
-    <link rel="stylesheet" th:href="@{/css/allEmployees-Customers.css}">
-
+    <title th:text="#{allCustomers.title}"></title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
 </head>
-<body>
-<div class="container" style="max-width: 1780px">
-    <h2 th:text="#{allCustomers.title}">All Customers</h2>
+<body class="font-roboto text-sm lg:text-lg">
+<div class="container mx-auto max-w-full p-5">
+    <h2 class="text-center text-2xl mb-4" th:text="#{allCustomers.title}"></h2>
     <div th:replace="~{fragments/fragment1::header}"></div>
-    <div class="left-side-button">
-        <a th:href="@{/customer/createCustomer}" class="button" style="width: auto" th:text="#{allCustomers.create}">Create Customer</a>
+
+    <div class="flex justify-between gap-2 mb-4">
+        <a th:href="@{/customer/createCustomer}" class="bg-yellow-400 text-black px-4 py-2 rounded-md hover:bg-yellow-600 hover:text-white" th:text="#{allCustomers.create}"></a>
     </div>
-    <div class="split-view">
-        <div class="tasks-container">
-            <div class="table-responsive mt-3">
-                <table class="table table-bordered">
-                    <thead>
+
+    <div class="flex justify-between gap-2  ">
+        <div class="w-full">
+            <div class="overflow-x-auto">
+                <table class="min-w-full  border border-gray-300">
+                    <thead class="bg-gray-200">
                     <tr>
-                        <th th:text="#{message.id}">ID</th>
-                        <th th:text="#{message.name}">Name</th>
-                        <th th:text="#{message.description}">Description</th>
-                        <th th:text="#{message.action}">Action</th>
+                        <th class="p-2 text-left  border border-gray-300" th:text="#{message.id}"></th>
+                        <th class="p-2 text-left  border border-gray-300" th:text="#{message.name}"></th>
+                        <th class="p-2 text-left  border border-gray-300" th:text="#{message.description}"></th>
+                        <th class="p-2 text-left  border border-gray-300" th:text="#{message.action}"></th>
                     </tr>
                     </thead>
                     <tbody>
                     <!-- Check if customers list is empty -->
                     <tr th:if="${#lists.isEmpty(customers)}">
-                        <td colspan="4">No Customers found.</td>
+                        <td colspan="4" class="text-center py-4" th:text="#{allCustomers.noCustomersFound}"></td>
                     </tr>
                     <!-- Iterate over customers -->
-                    <tr th:each="customer : ${customers}">
-                        <td th:text="${customer.id}"></td>
-                        <td onmouseover="showTooltip(this)" onmouseout="hideTooltip(this)">
+                    <tr th:each="customer : ${customers}" class="border border-gray-300">
+                        <td class="p-2 border border-gray-300" th:text="${customer.id}"></td>
+                        <td class=" p-2 border border-gray-300" onmouseover="showTooltip(this)" onmouseout="hideTooltip(this)">
                             <span th:text="${customer.fullName}"></span>
-                            <div class="tooltip">
+                            <div class="tooltip hidden absolute bg-white border border-gray-300 p-4 shadow-md z-50">
                                 <span th:text="'Email: ' + ${customer.email}"></span><br>
                                 <span th:text="'Address: ' + ${customer.address}"></span><br>
                                 <span th:text="'City: ' + ${customer.city}"></span><br>
                                 <span th:text="'Postal Code: ' + ${customer.postalCode}"></span><br>
-                                <span>Projects:</span>
+                                <span th:text="#{allCustomers.projects}"></span>
                                 <th:block th:if="${#lists.isEmpty(customer.projects)}">
-                                    <span>None</span><br>
+                                    <span th:text="#{allCustomers.none}"></span><br>
                                 </th:block>
-                                <ol th:if="${!#lists.isEmpty(customer.projects)}">
+                                <ol th:if="${!#lists.isEmpty(customer.projects)}" class="list-decimal ml-4">
                                     <li th:each="project : ${customer.projects}" th:text="${project.name}"></li>
                                 </ol>
                             </div>
                         </td>
-                        <td th:text="${customer.description}"></td>
-                        <td>
+                        <td class="p-2 border border-gray-300" th:text="${customer.description}"></td>
+                        <td class="p-2 flex space-x-4 ">
                             <span sec:authorize="hasRole('ADMIN')">
                                 <a th:href="@{/customer/deleteCustomer/{id}(id=${customer.id})}">
-                                    <button style="border: none;" class="bounce-icon">
-                                        <i class="fa-solid fa-trash fa-xl" style="color: #ff6666;"></i>
+                                    <button class="bg-white border-none">
+                                        <i class="fa-solid fa-trash fa-xl text-red-500 text-xl hover:text-red-700"></i>
                                     </button>
                                 </a>
                             </span>
                             <span sec:authorize="hasRole('ADMIN')">
                                 <a th:href="@{/customer/updateCustomer/{id}(id=${customer.id})}" class="files-link">
-                                    <i class="fa-solid fa-user-pen fa-xl" style="color: #fecb01; margin-left: 4%;"></i>
+                                    <i class="fa-solid fa-user-pen fa-xl text-yellow-400 text-xl hover:text-yellow-600 ml-4"></i>
                                 </a>
                             </span>
                             <!-- Conditionally show the map icon if the customer has projects -->
-                            <span sec:authorize="hasRole('ADMIN')">
-                                <a th:href="@{/customer/showCustomer/{id}(id=${customer.id})}" th:if="${!#lists.isEmpty(customer.projects)}">
-                                    <i class="fa-solid fa-map-location-dot fa-xl" style="color: #fecb01; margin-left: 4%;"></i>
+                            <span sec:authorize="hasRole('ADMIN')" th:if="${!#lists.isEmpty(customer.projects)}">
+                                <a th:href="@{/customer/showCustomer/{id}(id=${customer.id})}">
+                                    <i class="fa-solid fa-map-location-dot fa-xl text-yellow-400 text-xl hover:text-yellow-600 ml-4"></i>
                                 </a>
                             </span>
                         </td>
@@ -77,35 +77,37 @@
                 </table>
             </div>
         </div>
-        <div class="files-container" id="filesContainer">
-
-        </div>
+        <div class="w-full md:w-2/5 mt-8 hidden" id="filesContainer"></div>
     </div>
 </div>
 
-<div th:if="${customerDeleted}" class="popup" th:style="'display:block;'">
-    <div class="popup-content">
-        <span class="close" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
-        <h2>Customer deleted successfully!</h2>
-        <p>Customer Id: <span th:text="${customerId}"></span></p>
-        <p>Customer Name: <span th:text="${customerName}"></span></p>
+<div th:if="${customerCreated}" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div class="bg-white p-6 border border-gray-300 rounded-lg shadow-lg w-full max-w-lg text-center">
+        <span class="text-gray-400 float-right text-2xl font-bold cursor-pointer" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
+        <h2 th:text="#{customerCreatedSuccess}"></h2>
+        <p>Name: <span th:text="${customerName}"></span></p>
+
+
     </div>
 </div>
 
-<div th:if="${customerCreated}" class="popup" th:style="'display:block;'">
-    <div class="popup-content">
-        <span class="close" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
-        <h2>New Customer created successfully!</h2>
-        <p>Customer Name: <span th:text="${customerName}"></span></p>
+<div th:if="${customerUpdated}" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div class="bg-white p-6 border border-gray-300 rounded-lg shadow-lg w-full max-w-lg text-center">
+        <span class="text-gray-400 float-right text-2xl font-bold cursor-pointer" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
+        <h2 th:text="#{customerUpdatedSuccess}"></h2>
+        <p>Id: <span th:text="${customerId}"></span></p>
+        <p>Name: <span th:text="${customerName}"></span></p>
+
     </div>
 </div>
 
-<div th:if="${customerUpdated}" class="popup" th:style="'display:block;'">
-    <div class="popup-content">
-        <span class="close" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
-        <h2>Customer updated successfully!</h2>
-        <p>Customer Id: <span th:text="${customerId}"></span></p>
-        <p>Customer Name: <span th:text="${customerName}"></span></p>
+<div th:if="${customerDeleted}" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div class="bg-white p-6 border border-gray-300 rounded-lg shadow-lg w-full max-w-lg text-center">
+        <span class="text-gray-400 float-right text-2xl font-bold cursor-pointer" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
+        <h2 th:text="#{customerDeletedSuccess}"></h2>
+        <p>Id: <span th:text="${customerId}"></span></p>
+        <p>Name: <span th:text="${customerName}"></span></p>
+
     </div>
 </div>
 <div th:replace="~{fragments/fragment2 :: split-view}"></div>

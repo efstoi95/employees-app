@@ -40,9 +40,9 @@ public interface EmployeeService {
     /**
      * Updates an existing employee in the database with the provided details.
      *
-     * @param  employeeEditDTO  the employee object containing the updated details
+     * @param  employeeEdit  the employee object containing the updated details
      */
-    void editEmployee(EmployeeDTO employeeEditDTO, BindingResult bindingResult);
+    void editEmployee(Employee employeeEdit, BindingResult bindingResult);
     /**
      * Updates the information of an existing employee in the database.
      *

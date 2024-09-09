@@ -5,41 +5,46 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="#{createProject.title}">Project Information</title>
     <div th:replace="~{fragments/fragment1 :: link}"></div>
-    <link rel="stylesheet" th:href="@{/css/createForm.css}">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
 </head>
-<body>
-<h2 th:text="#{createProject.title}">Project Information</h2>
-<div th:replace="~{fragments/fragment1 :: header2}"></div>
-<div class="form-container">
-    <form th:action="@{/projects/createdProject}" th:object="${proj}" method="post">
-        <input type="hidden" th:field="*{id}">
+<body class="font-roboto bg-gray-100 text-gray-800">
+<header>
+    <h2 class="text-2xl font-bold text-center text-gray-700 py-4" th:text="#{createProject.title}">Project Information</h2>
+    <div th:replace="~{fragments/fragment1 :: header2}"></div>
+</header>
+<main>
+    <div class="max-w-xl mx-auto bg-white p-8 rounded-lg shadow-md">
+        <form th:action="@{/projects/createdProject}" th:object="${proj}" method="post">
+            <input type="hidden" th:field="*{id}">
 
-        <div class="form-group">
-            <label for="name" th:text="#{message.name}">Name:</label>
-            <div class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
-            <input type="text" class="form-control form-control-lg" id="name" th:field="*{name}" required minlength="4" pattern="[a-zA-Z\s]+" th:classappend="${#fields.hasErrors('name')} ? 'is-invalid' : ''" title="Name should contain only letters and spaces">
-        </div>
+            <div class="mb-4">
+                <label for="name" class="block text-lg font-medium text-gray-700" th:text="#{message.name}">Name:</label>
+                <div class="text-red-500 text-sm" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+                <input type="text" id="name" class="input" th:field="*{name}" required minlength="1" pattern="[a-zA-Z\s]+" th:classappend="${#fields.hasErrors('name')} ? 'border-red-500' : ''" title="Name should contain only letters and spaces">
+            </div>
 
-        <div class="form-group">
-            <label for="description" th:text="#{message.description}">Description:</label>
-            <div class="text-danger" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
-            <input type="text" class="form-control form-control-lg" id="description" th:field="*{description}" th:classappend="${#fields.hasErrors('description')} ? 'is-invalid' : ''">
-        </div>
+            <div class="mb-4">
+                <label for="description" class="block text-lg font-medium text-gray-700" th:text="#{message.description}">Description:</label>
+                <div class="text-red-500 text-sm" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
+                <input type="text" id="description" class="input" th:field="*{description}" th:classappend="${#fields.hasErrors('description')} ? 'border-red-500' : ''">
+            </div>
 
-        <div class="form-group">
-            <label for="start" th:text="#{allProjects.startDate}">Start Date:</label>
-            <input type="datetime-local" class="form-control form-control-lg" id="start" th:field="*{start}" th:classappend="${#fields.hasErrors('start')} ? 'is-invalid' : ''">
-        </div>
+            <div class="mb-4">
+                <label for="start" class="block text-lg font-medium text-gray-700" th:text="#{allProjects.startDate}">Start Date:</label>
+                <input type="datetime-local" id="start" class="input" th:field="*{start}" th:classappend="${#fields.hasErrors('start')} ? 'border-red-500' : ''">
+            </div>
 
-        <div class="form-group">
-            <label for="end" th:text="#{allProjects.endDate}">End Date:</label>
-            <input type="datetime-local" class="form-control form-control-lg" id="end" th:field="*{end}" th:classappend="${#fields.hasErrors('end')} ? 'is-invalid' : ''">
-        </div>
+            <div class="mb-4">
+                <label for="end" class="block text-lg font-medium text-gray-700" th:text="#{allProjects.endDate}">End Date:</label>
+                <input type="datetime-local" id="end" class="input" th:field="*{end}" th:classappend="${#fields.hasErrors('end')} ? 'border-red-500' : ''">
+            </div>
 
-        <button type="submit" class="btn btn-custom btn-block" style ="width: 100%; padding: 3%;" >Submit</button>
-    </form>
-</div>
-
-<div th:replace="~{fragments/fragment1 :: footer}"></div>
+            <button type="submit" class="w-full py-3 text-lg text-black bg-yellow-400 hover:bg-yellow-600 hover:text-white rounded transition-all duration-300">Submit</button>
+        </form>
+    </div>
+</main>
+<footer>
+    <div th:replace="~{fragments/fragment1 :: footer}"></div>
+</footer>
 </body>
 </html>

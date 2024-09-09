@@ -3,54 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title  th:text="#{createCustomer.title}">Customer Information</title>
-    <div th:replace="~{fragments/fragment1::link}"></div>
-    <link rel="stylesheet" th:href="@{/css/createForm.css}">
+    <title th:text="#{createCustomer.title}">Customer Information</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
 </head>
-<body>
-<h2 th:text="#{createCustomer.title}">Customer Information</h2>
-<div th:replace="~{fragments/fragment1::header4}"></div>
-<div class="form-container">
-    <form th:action="@{/customer/createdCustomer}" th:object="${customer}" method="post">
-        <div class="form-group">
-            <label for="fullName" th:text="#{create.fullName}">Full Name:</label>
-            <div class="text-danger" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}"></div>
-            <input type="text" class="form-control form-control-lg" id="fullName" th:field="*{fullName}" required minlength="4" pattern="[a-zA-Z\s]+" th:classappend="${#fields.hasErrors('fullName')} ? 'is-invalid' : ''" title="Full Name should contain only letters and spaces">
-        </div>
+<body class="font-roboto bg-gray-100 text-gray-800">
+<header>
+    <h2 class="text-2xl font-bold text-center text-gray-700 py-4" th:text="#{createCustomer.title}">Customer Information</h2>
+    <div th:replace="~{fragments/fragment1::header4}"></div>
+</header>
+<main>
+    <div class="max-w-xl mx-auto bg-white p-8 rounded-lg shadow-md">
+        <form th:action="@{/customer/createdCustomer}" th:object="${customer}" method="post">
+            <div class="mb-4">
+                <label for="fullName" class="block text-lg font-medium text-gray-700" th:text="#{create.fullName}">Full Name:</label>
+                <div class="text-red-500 text-sm" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}"></div>
+                <input type="text" id="fullName" class="input" th:field="*{fullName}" required minlength="4" pattern="[a-zA-Z\s]+" th:classappend="${#fields.hasErrors('fullName')} ? 'border-red-500' : ''" title="Full Name should contain only letters and spaces">
+            </div>
 
-        <div class="form-group">
-            <label for="email" th:text="#{create.email}">Email:</label>
-            <div class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
-            <input type="email" class="form-control form-control-lg" id="email" th:field="*{email}" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}" th:classappend="${#fields.hasErrors('email')} ? 'is-invalid' : ''">
-        </div>
+            <div class="mb-4">
+                <label for="email" class="block text-lg font-medium text-gray-700" th:text="#{create.email}">Email:</label>
+                <div class="text-red-500 text-sm" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                <input type="email" id="email" class="input" th:field="*{email}" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}" th:classappend="${#fields.hasErrors('email')} ? 'border-red-500' : ''">
+            </div>
 
-        <div class="form-group">
-            <label for="description" th:text="#{message.description}">Description:</label>
-            <textarea id="description" class="form-control form-control-lg" name="description" th:field="*{description}" required></textarea>
-        </div>
+            <div class="mb-4">
+                <label for="description" class="block text-lg font-medium text-gray-700" th:text="#{message.description}">Description:</label>
+                <textarea id="description" class="input py-5" name="description" th:field="*{description}" required></textarea>
+            </div>
 
-        <div class="form-group">
-            <label for="address" th:text="#{create.address}">Address:</label>
-            <div class="text-danger" th:if="${#fields.hasErrors('address')}" th:errors="*{address}"></div>
-            <input type="text" class="form-control form-control-lg" id="address" th:field="*{address}" th:classappend="${#fields.hasErrors('address')} ? 'is-invalid' : ''">
-        </div>
+            <div class="mb-4">
+                <label for="address" class="block text-lg font-medium text-gray-700" th:text="#{create.address}">Address:</label>
+                <div class="text-red-500 text-sm" th:if="${#fields.hasErrors('address')}" th:errors="*{address}"></div>
+                <input type="text" id="address" class="input" th:field="*{address}" th:classappend="${#fields.hasErrors('address')} ? 'border-red-500' : ''">
+            </div>
 
-        <div class="form-group">
-            <label for="city" th:text="#{create.city}">City:</label>
-            <div class="text-danger" th:if="${#fields.hasErrors('city')}" th:errors="*{city}"></div>
-            <input type="text" class="form-control form-control-lg" id="city" th:field="*{city}" required pattern="[a-zA-Z\s]+" th:classappend="${#fields.hasErrors('city')} ? 'is-invalid' : ''">
-        </div>
+            <div class="mb-4">
+                <label for="city" class="block text-lg font-medium text-gray-700" th:text="#{create.city}">City:</label>
+                <div class="text-red-500 text-sm" th:if="${#fields.hasErrors('city')}" th:errors="*{city}"></div>
+                <input type="text" id="city" class="input" th:field="*{city}" required pattern="[a-zA-Z\s]+" th:classappend="${#fields.hasErrors('city')} ? 'border-red-500' : ''">
+            </div>
 
-        <div class="form-group">
-            <label for="postalCode" th:text="#{create.postalCode}">Postal Code:</label>
-            <div class="text-danger" th:if="${#fields.hasErrors('postalCode')}" th:errors="*{postalCode}"></div>
-            <input type="text" class="form-control form-control-lg" id="postalCode" th:field="*{postalCode}" required pattern="\d{5}" title="Postal code must be exactly 5 digits" th:classappend="${#fields.hasErrors('postalCode')} ? 'is-invalid' : ''">
-        </div>
+            <div class="mb-4">
+                <label for="postalCode" class="block text-lg font-medium text-gray-700" th:text="#{create.postalCode}">Postal Code:</label>
+                <div class="text-red-500 text-sm" th:if="${#fields.hasErrors('postalCode')}" th:errors="*{postalCode}"></div>
+                <input type="text" id="postalCode" class="input" th:field="*{postalCode}" required pattern="\d{5}" title="Postal code must be exactly 5 digits" th:classappend="${#fields.hasErrors('postalCode')} ? 'border-red-500' : ''">
+            </div>
 
-        <button type="submit" class="btn btn-custom btn-block" style ="width: 100%; padding: 3%;">Submit</button>
-    </form>
-</div>
-
-<div th:replace="~{fragments/fragment1 :: footer}"></div>
+            <button type="submit" class="w-full py-3 text-lg text-black bg-yellow-400 hover:bg-yellow-600 hover:text-white rounded transition-all duration-300">Submit</button>
+        </form>
+    </div>
+</main>
+<footer>
+    <div th:replace="~{fragments/fragment1 :: footer}"></div>
+</footer>
 </body>
 </html>

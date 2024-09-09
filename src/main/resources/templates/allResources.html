@@ -3,58 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>All Projects</title>
-    <div th:replace="~{fragments/fragment1::link}"></div>
-    <link rel="stylesheet" th:href="@{/css/allProjects-Tasks-Resources.css}">
+    <title th:text="#{allResources.title}">All Resources</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
 </head>
-<body>
-<div class="container" style="max-width: 1900px">
-    <h2 th:text="#{allResources.title}">All Resources</h2>
+<body class="font-roboto text-sm lg:text-lg">
+<div class="container mx-auto max-w-full p-5">
+    <h2 class="text-center text-2xl mb-4" th:text="#{allResources.title}">All Resources</h2>
     <div th:replace="~{fragments/fragment1::header}"></div>
-    <div class="create-button-container">
+    <div class="flex justify-between gap-2 mb-4">
         <span sec:authorize="hasRole('ADMIN')">
-            <a th:href="@{/resources/createResource}" class="button" style="width:10%" th:text="#{allResources.create}">Create Resource</a>
+            <a th:href="@{/resources/createResource}" class="bg-yellow-400 text-black px-4 py-2 rounded-md hover:bg-yellow-600 hover:text-white" th:text="#{allResources.create}">Create Resource</a>
         </span>
     </div>
-    <div class="split-view">
-        <div class="tasks-container">
-            <div class="table-responsive">
-                <table class="table table-bordered">
-                    <thead>
+    <div class="flex justify-between gap-2">
+        <div class="w-full">
+            <div class="overflow-x-auto">
+                <table class="min-w-full border border-gray-300">
+                    <thead class="bg-gray-200">
                     <tr>
-                        <th th:text="#{message.id}">ID</th>
-                        <th th:text="#{message.name}">Name</th>
-                        <th th:text="#{message.description}">Description</th>
-                        <th th:text="#{message.action}">Action</th>
-                        <th th:text="#{message.files}">Files</th>
+                        <th class="p-2 text-left border border-gray-300" th:text="#{message.id}">ID</th>
+                        <th class="p-2 text-left border border-gray-300" th:text="#{message.name}">Name</th>
+                        <th class="p-2 text-left border border-gray-300" th:text="#{message.description}">Description</th>
+                        <th class="p-2 text-left border border-gray-300" th:text="#{message.action}">Action</th>
+                        <th class="p-2 text-left border border-gray-300" th:text="#{message.files}">Files</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <!-- Check if projects list is empty -->
+                    <!-- Check if resources list is empty -->
                     <tr th:if="${#lists.isEmpty(resources)}">
-                        <td colspan="4">No Resources found.</td>
+                        <td colspan="5" class="text-center py-4" th:text="#{message.ResourcesNotFound}">No Resources found.</td>
                     </tr>
-                    <!-- Iterate over projects -->
-                    <tr th:each="resource : ${resources}">
-                        <td th:text="${resource.id}"></td>
-                        <td>
-                            <a href="#" th:href="@{/resources/editResource/{id}(id=${resource.id})}" th:text="${resource.name}" class="edit-link"
-                               style="color: black;"></a>
+                    <!-- Iterate over resources -->
+                    <tr class="border border-gray-300" th:each="resource : ${resources}">
+                        <td th:text="${resource.id}" class="border border-gray-300"></td>
+                        <td class="border border-gray-300">
+                            <a href="#" th:href="@{/resources/editResource/{id}(id=${resource.id})}" th:text="${resource.name}" class="hover:underline hover:underline-offset-4 edit-link" style="color:black;"></a>
                         </td>
-                        <td th:text="${resource.description}"></td>
-                        <td> <!-- Moved the action column here -->
+                        <td class="p-2 border border-gray-300" th:text="${resource.description}"></td>
+                        <td class="mt-2 p-2 flex space-x-4">
                             <span sec:authorize="hasRole('ADMIN')">
                                 <a th:href="@{/resources/deleteResource/{id}(id=${resource.id})}">
-                                    <button  style="border: none;" class="bounce-icon" >
-                                        <i class="fa-solid fa-trash fa-xl" style="color: #ff6666;"></i>
+                                    <button class="bg-white border-none">
+                                        <i class="fa-solid fa-trash text-red-500 text-xl hover:text-red-700 fa-xl"></i>
                                     </button>
                                 </a>
                             </span>
                         </td>
-                        <td>
-                              <span sec:authorize="hasRole('ADMIN')">
-                                <a href="#" th:href="@{/resources/showResourceFiles/{id}(id=${resource.id})}" class="bounce-icon files-link">
-                                    <i class="fa-solid fa-folder-open fa-xl" style="color: #fecb01;"></i>
+                        <td class="p-2 border border-gray-300">
+                            <span sec:authorize="hasRole('ADMIN')">
+                                <a href="#" th:href="@{/resources/showResourceFiles/{id}(id=${resource.id})}" class="icon files-link">
+                                    <i class="fa-solid fa-folder-open fa-xl"></i>
                                 </a>
                             </span>
                         </td>
@@ -63,61 +61,63 @@
                 </table>
             </div>
         </div>
-        <div class="edit-container" id="editContainer">
+        <div class="w-full md:w-2/5 mt-8 hidden" id="editContainer">
             <!-- Content from editTask.css.html will be loaded here -->
         </div>
-        <div class="files-container" id="filesContainer">
+        <div class="w-full md:w-2/5 mt-8 hidden" id="filesContainer">
             <!-- Content from showtaskFiles.html will be loaded here -->
         </div>
     </div>
 </div>
-<div th:if="${fileUploaded}" class="popup" th:style="'display:block;'">
-    <div class="popup-content">
-        <span class="close" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
-        <h2>Resource uploaded successfully!</h2>
-        <p> Id: <span th:text="${resourceId}"></span> ,  Name: <span th:text="${resourceName}"></span><br>
-            File Name: <span th:text="${fileName}"></span></p>
+
+<!-- Popups -->
+<div th:if="${fileUploaded}" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div class="bg-white p-6 border border-gray-300 rounded-lg shadow-lg w-full max-w-lg text-center">
+        <span class="text-gray-400 float-right text-2xl font-bold cursor-pointer" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
+        <h2 th:text="#{message.fileUploaded}">File uploaded successfully!</h2>
+        <p>Resource Id: <span th:text="${resourceId}"></span></p>
+        <p>Resource Name: <span th:text="${resourceName}"></span></p>
+        <p>File Name: <span th:text="${fileName}"></span></p>
     </div>
 </div>
 
-<div th:if="${fileDeleted}" class="popup" th:style="'display:block;'">
-    <div class="popup-content">
-        <span class="close" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
-        <h2>File deleted successfully!</h2>
+<div th:if="${fileDeleted}" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div class="bg-white p-6 border border-gray-300 rounded-lg shadow-lg w-full max-w-lg text-center">
+        <span class="text-gray-400 float-right text-2xl font-bold cursor-pointer" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
+        <h2 th:text="#{message.fileDeleted}">File deleted successfully!</h2>
         <p>Resource Id: <span th:text="${resourceId}"></span></p>
         <p>Resource Name: <span th:text="${resourceName}"></span></p>
     </div>
 </div>
 
-<div th:if="${resourceDeleted}" class="popup" th:style="'display:block;'">
-    <div class="popup-content">
-        <span class="close" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
-        <h2>Resource deleted successfully!</h2>
+<div th:if="${resourceDeleted}" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div class="bg-white p-6 border border-gray-300 rounded-lg shadow-lg w-full max-w-lg text-center">
+        <span class="text-gray-400 float-right text-2xl font-bold cursor-pointer" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
+        <h2 th:text="${resourceDeletedMessage}">Resource deleted successfully!</h2>
         <p>Resource Id: <span th:text="${resourceId}"></span></p>
         <p>Resource Name: <span th:text="${resourceName}"></span></p>
     </div>
 </div>
 
-<div th:if="${resourceCreated}" class="popup" th:style="'display:block;'">
-    <div class="popup-content">
-        <span class="close" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
-        <h2>New Resource created successfully!</h2>
+<div th:if="${resourceCreated}" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div class="bg-white p-6 border border-gray-300 rounded-lg shadow-lg w-full max-w-lg text-center">
+        <span class="text-gray-400 float-right text-2xl font-bold cursor-pointer" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
+        <h2 th:text="${resourceCreatedMessage}">New Resource created successfully!</h2>
         <p>Resource Name: <span th:text="${resourceName}"></span></p>
     </div>
 </div>
 
-<div th:if="${resourceUpdated}" class="popup" th:style="'display:block;'">
-    <div class="popup-content">
-        <span class="close" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
-        <h2>Resource updated successfully!</h2>
+<div th:if="${resourceUpdated}" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div class="bg-white p-6 border border-gray-300 rounded-lg shadow-lg w/full max-w-lg text-center">
+        <span class="text-gray-400 float-right text-2xl font-bold cursor-pointer" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
+        <h2 th:text="${resourceUpdatedMessage}">Resource updated successfully!</h2>
         <p>Resource Id: <span th:text="${resourceId}"></span></p>
         <p>Resource Name: <span th:text="${resourceName}"></span></p>
     </div>
 </div>
-<div th:replace="~{fragments/fragment2 :: split-view2}"></div>
+
 <div th:replace="~{fragments/fragment1 :: footer}"></div>
-
-
+<div th:replace="~{fragments/fragment2 :: split-view2}"></div>
 
 </body>
 </html>

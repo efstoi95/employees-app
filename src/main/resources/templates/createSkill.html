@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:background-color="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="#{allSkills.create}">Create Skill</title>
+    <div th:replace="~{fragments/fragment1::link}"></div>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body class="font-roboto bg-gray-100 text-gray-800">
+<header>
+    <h2 class="text-2xl font-bold text-center text-gray-700 py-4" th:text="#{allSkills.create}">Create Skill</h2>
+    <div th:replace="~{fragments/fragment1::skillHeader}"></div>
+</header>
+<main>
+    <div class="max-w-xl mx-auto bg-white p-8 rounded-lg shadow-md">
+        <form th:action="@{/web/createdSkill}" th:object="${skill}" method="post">
+            <div class="mb-4">
+                <label for="name" class="block text-lg font-medium text-gray-700" th:text="#{message.name}">Name:</label>
+                <div class="text-red-500 text-sm" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+                <input type="text" id="name" class="input" th:field="*{name}" required minlength="1" pattern="[a-zA-Z\s]+" th:classappend="${#fields.hasErrors('name')} ? 'border-red-500' : ''" title="Name should contain only letters and spaces">
+            </div>
+
+            <button type="submit" class="w-full py-3 text-lg text-black bg-yellow-400 hover:bg-yellow-600 hover:text-white rounded transition-all duration-300">Submit</button>
+        </form>
+    </div>
+</main>
+<footer>
+    <div th:replace="~{fragments/fragment1 :: footer}"></div>
+</footer>
+</body>
+</html>

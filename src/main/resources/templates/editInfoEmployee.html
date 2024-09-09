@@ -1,36 +1,39 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:background-color="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="#{editInfoEmployee.title}">Edit Information</title>
-    <div th:replace="~{fragments/fragment1 :: link}"></div>
-    <link rel="stylesheet" th:href="@{/css/editEmployee.css}">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
 </head>
-<body>
-<div class="form-container" style="width: 150%; margin-top:22%">
-    <form th:action="@{/web/editedInfoEmployee}" th:object="${employee}" method="post">
-        <input type="hidden" th:field="*{id}">
-        <input type="hidden" th:field="*{fullName}">
-        <input type="hidden" th:field="*{email}">
-        <input type="hidden" th:field="*{department.name}">
-        <input type="hidden" th:field="*{role}">
+<body class="font-roboto bg-gray-100 text-gray-800">
+<main>
+    <div class="max-w-xl mx-auto bg-white p-8 rounded-lg shadow-md">
+        <form th:action="@{/web/editedInfoEmployee}" th:object="${employee}" method="post">
+            <input type="hidden" th:field="*{id}">
+            <input type="hidden" th:field="*{fullName}">
+            <input type="hidden" th:field="*{email}">
+            <input type="hidden" th:field="*{department.name}">
+            <input type="hidden" th:field="*{role}">
 
-        <div class="form-group">
-            <label for="username" th:text="#{create.username}">Username:</label>
-            <div class="text-danger" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></div>
-            <input type="text" class="form-control form-control-lg" id="username" th:field="*{username}" required minlength="4" pattern="[a-zA-Z\s]+" th:classappend="${#fields.hasErrors('username')} ? 'is-invalid' : ''" title="Username should contain only letters and spaces">
-        </div>
+            <div class="mb-4">
+                <label for="username" class="block text-lg font-medium text-gray-700" th:text="#{create.username}">Username:</label>
+                <div class="text-red-500 text-sm" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></div>
+                <input type="text" id="username" class="input" th:field="*{username}" required minlength="4" pattern="[a-zA-Z\s]+" th:classappend="${#fields.hasErrors('username')} ? 'border-red-500' : ''" title="Username should contain only letters and spaces">
+            </div>
 
-        <div class="form-group">
-            <label for="password" th:text="#{create.password}">Password:</label>
-            <div class="text-danger" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
-            <input type="password" class="form-control form-control-lg" id="password" th:field="*{password}" required minlength="4" pattern="[a-zA-Z0-9]+" th:classappend="${#fields.hasErrors('password')} ? 'is-invalid' : ''" title="Password should contain only letters and numbers">
-        </div>
-        <button type="submit" class="btn btn-custom btn-block">Submit</button>
+            <div class="mb-4">
+                <label for="password" class="block text-lg font-medium text-gray-700" th:text="#{create.password}">Password:</label>
+                <div class="text-red-500 text-sm" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+                <input type="password" id="password" class="input" th:field="*{password}" required minlength="4" pattern="[a-zA-Z0-9]+" th:classappend="${#fields.hasErrors('password')} ? 'border-red-500' : ''" title="Password should contain only letters and numbers">
+            </div>
 
-    </form>
-</div>
-<div th:replace="~{fragments/fragment1 :: scripts}"></div>
+            <button type="submit" class="w-full py-3 text-lg text-black bg-yellow-400 hover:bg-yellow-600 hover:text-white rounded transition-all duration-300">Submit</button>
+        </form>
+    </div>
+</main>
+<footer>
+    <div th:replace="~{fragments/fragment1::scripts}"></div>
+</footer>
 </body>
 </html>

@@ -3,51 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="#{allTasks.title}">All Tasks</title>
-    <div th:replace="~{fragments/fragment1::link}"></div>
-    <link rel="stylesheet" th:href="@{/css/allProjects-Tasks-Resources.css}">
+    <title th:text="#{allTasks.title}"></title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+
 </head>
-<body>
-<div class="container" style="max-width: 2000px">
+<body class="font-roboto text-sm lg:text-lg">
+<div class="container mx-auto max-w-full p-5">
     <input type="hidden" th:field="${projectId}">
-    <h2 th:text="#{allTasks.title}">All Tasks</h2>
+    <h2 class="text-center text-2xl mb-4" th:text="#{allTasks.title}"></h2>
     <div th:replace="~{fragments/fragment1::header2}"></div>
-    <div class="create-button-container">
+    <div class="flex justify-between gap-2 mb-4">
         <span sec:authorize="hasRole('ADMIN')">
-            <a th:href="@{/tasks/createTask/{id}(id=${projectId})}" class="button" th:text="#{allTasks.create}">Create Task</a>
+            <a th:href="@{/tasks/createTask/{id}(id=${projectId})}" class="bg-yellow-400 text-black px-4 py-2 rounded-md hover:bg-yellow-600 hover:text-white" th:text="#{allTasks.create}"></a>
         </span>
     </div>
-    <div class="split-view">
-        <div class="tasks-container">
-            <div class="table-responsive">
-                <table class="table table-bordered">
-                    <thead class="thread-light">
+    <div class="flex justify-between gap-2">
+        <div class="w-full">
+            <div class="overflow-x-auto">
+                <table class="min-w-full  border border-gray-300">
+                    <thead class="bg-gray-200">
                     <tr>
-                        <th th:text="#{message.id}">ID</th>
-                        <th th:text="#{message.name}">Name</th>
-                        <th th:text="#{message.description}">Description</th>
-                        <th th:text="#{allTasks.duration}">Duration</th>
-                        <th th:text="#{message.status}">Status</th>
-                        <th th:text="#{message.action}">Action</th>
-                        <th th:text="#{message.files}">Files</th>
+                        <th class="p-2 text-left  border border-gray-300" th:text="#{message.id}"></th>
+                        <th class="p-2 text-left  border border-gray-300" th:text="#{message.name}"></th>
+                        <th class="p-2 text-left  border border-gray-300" th:text="#{message.description}"></th>
+                        <th class="p-2 text-left  border border-gray-300" th:text="#{allTasks.duration}"></th>
+                        <th class="p-2 text-left  border border-gray-300" th:text="#{message.status}"></th>
+                        <th class="p-2 text-left  border border-gray-300" th:text="#{message.action}"></th>
+                        <th class="p-2 text-left  border border-gray-300" th:text="#{message.files}"></th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr th:if="${#lists.isEmpty(tasks)}">
-                        <td colspan="7" th:text="#{allTasks.noTasksFound}">No Tasks found.</td>
+                        <td colspan="7" class="text-center py-4" th:text="#{allTasks.noTasksFound}"></td>
                     </tr>
-                    <tr th:each="task : ${tasks}">
-                        <td th:text="${task.id}"></td>
-                        <td>
-                            <a href="#" th:href="@{/tasks/editTask/{id}(id=${task.id})}" th:text="${task.name}" class="edit-link"
+                    <tr class="border border-gray-300" th:each="task : ${tasks}">
+                        <td th:text="${task.id}" class="border border-gray-300"></td>
+                        <td class="border border-gray-300">
+                            <a href="#" th:href="@{/tasks/editTask/{id}(id=${task.id})}" th:text="${task.name}" class="hover:underline hover:underline-offset-4 edit-link"
                             style="color: black"></a>
                         </td>
-                        <td th:text="${task.description}"></td>
-                        <td th:text="${task.durationInput}"></td>
-                        <td>
-                            <form th:action="@{/tasks/updateStatus}" method="post">
+                        <td class="p-2 border border-gray-300 " th:text="${task.description}"></td>
+                        <td class="p-2 border border-gray-300 " th:text="${task.durationInput}"></td>
+                        <td class="p-2 border border-gray-300 ">
+                            <form th:action="@{/tasks/updateStatus}" method="post" class="mx-auto border border-gray-300">
                                 <input type="hidden" th:value="${task.id}" name="taskId"/>
-                                <select name="status" required class="form-control" onchange="this.form.submit()">
+                                <select name="status"  onchange="this.form.submit()">
                                     <option value="" disabled selected>Select</option>
                                     <option th:each="status : ${statuses}"
                                             th:value="${status}"
@@ -57,25 +57,24 @@
                                 </select>
                             </form>
                         </td>
-                        <td>
+                        <td class="mt-2  p-2 flex space-x-4  ">
                             <span sec:authorize="hasRole('ADMIN')">
                                 <a th:href="@{/tasks/deleteTask/{id}(id=${task.id})}">
-                                    <button  style="border: none;" class="bounce-icon" >
-                                        <i class="fa-solid fa-trash fa-xl" style="color: #ff6666;"></i>
+                                    <button  class="bg-white border-none" >
+                                        <i class="fa-solid fa-trash text-red-500 text-xl hover:text-red-700 fa-xl" ></i>
                                     </button>
                                 </a>
                             </span>
-
                             <span sec:authorize="hasRole('ADMIN')">
-                                <a th:href="@{/posts/allTasksPosts/{id}(id=${task.id})}" class="bounce-icon">
-                                    <i class="fa-regular fa-comment fa-xl" style="color: #fecb01; margin-left: 5%;"></i>
+                                <a th:href="@{/posts/allTasksPosts/{id}(id=${task.id})}" class="icon">
+                                    <i class="fa-regular fa-comment fa-xl"></i>
                                 </a>
                             </span>
                         </td>
-                        <td>
+                        <td class="p-2 border border-gray-300">
                             <span sec:authorize="hasRole('ADMIN')">
-                                <a href="#" th:href="@{/tasks/showFiles/{id}(id=${task.id})}" class="bounce-icon files-link">
-                                    <i class="fa-solid fa-folder-open fa-xl" style="color: #fecb01;"></i>
+                                <a href="#" th:href="@{/tasks/showFiles/{id}(id=${task.id})}" class="icon files-link">
+                                    <i class="fa-solid fa-folder-open fa-xl" ></i>
                                 </a>
                             </span>
                         </td>
@@ -84,66 +83,63 @@
                 </table>
             </div>
         </div>
-        <div class="edit-container" id="editContainer">
+        <div class="w-full md:w-2/5 mt-8 hidden"  id="editContainer">
             <!-- Content from editTask.css.html will be loaded here -->
         </div>
-        <div class="files-container" id="filesContainer">
+        <div class="w-full md:w-2/5 mt-8 hidden"  id="filesContainer">
             <!-- Content from showtaskFiles.html will be loaded here -->
         </div>
     </div>
 
 </div>
 
-<div th:if="${statusUpdated}" class="popup" th:style="'display:block;'">
-    <div class="popup-content">
-        <span class="close" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
+<div th:if="${statusUpdated}" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div class="bg-white p-6 border border-gray-300 rounded-lg shadow-lg w-full max-w-lg text-center">
+        <span class="text-gray-400 float-right text-2xl font-bold cursor-pointer" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
         <h2 th:text="#{message.statusUpdated}">Status updated successfully!</h2>
-        <p th:text="#{allTasks.taskName}">Task Name: <span th:text="${taskName}"></span></p>
-        <p th:text="#{message.status}">Status: <span th:text="${status}"></span></p>
+        <p>Task Name: <span th:text="${taskName}"></span></p>
+        <p>Status <span th:text="${status}"></span></p>
     </div>
 </div>
 
-<div th:if="${fileUploaded}" class="popup" th:style="'display:block;'">
-    <div class="popup-content">
-        <span class="close" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
+<div th:if="${fileUploaded}"  class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div class="bg-white p-6 border border-gray-300 rounded-lg shadow-lg w-full max-w-lg text-center">
+        <span class="text-gray-400 float-right text-2xl font-bold cursor-pointer" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
         <h2 th:text="#{message.fileUploaded}">File uploaded successfully!</h2>
-        <p th:text="#{allTasks.taskName}">Task Name: <span th:text="${taskName}"></span></p>
-        <p th:text="#{message.fileName}">File Name: <span th:text="${fileName}"></span></p>
+        <p>Task Name: <span th:text="${taskName}"></span></p>
+        <p>File Name: <span th:text="${fileName}"></span></p>
     </div>
 </div>
 
-<div th:if="${fileDeleted}" class="popup" th:style="'display:block;'">
-    <div class="popup-content">
-        <span class="close" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
+<div th:if="${fileDeleted}" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div class="bg-white p-6 border border-gray-300 rounded-lg shadow-lg w-full max-w-lg text-center">
+        <span class="text-gray-400 float-right text-2xl font-bold cursor-pointer" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
         <h2 th:text="#{message.fileDeleted}">File deleted successfully!</h2>
-        <p th:text="#{allTasks.taskName}">Task Name: <span th:text="${taskName}"></span></p>
+        <p>Task Name: <span th:text="${taskName}"></span></p>
     </div>
 </div>
 
-<div th:if="${taskDeleted}" class="popup" th:style="'display:block;'">
-    <div class="popup-content">
-        <span class="close" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
+<div th:if="${taskDeleted}" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div class="bg-white p-6 border border-gray-300 rounded-lg shadow-lg w-full max-w-lg text-center">
+        <span  class="text-gray-400 float-right text-2xl font-bold cursor-pointer" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
         <h2 th:text="#{allTasks.taskDeleted}">Task deleted successfully!</h2>
-        <!--<p>Task Id: <span th:text="${taskId}"></span></p>-->
-        <p th:text="#{allTasks.taskName}">Task Name: <span th:text="${taskName}"></span></p>
+        <p>Task Name: <span th:text="${taskName}"></span></p>
     </div>
 </div>
 
-<div th:if="${taskCreated}" class="popup" th:style="'display:block;'">
-    <div class="popup-content">
-        <span class="close" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
+<div th:if="${taskCreated}" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div class="bg-white p-6 border border-gray-300 rounded-lg shadow-lg w-full max-w-lg text-center">
+        <span class="text-gray-400 float-right text-2xl font-bold cursor-pointer" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
         <h2 th:text="#{allTasks.taskCreated}">New Task created successfully!</h2>
-        <!-- <p>Task Id: <span th:text="${taskId}"></span></p>-->
-        <p th:text="#{allTasks.taskName}">Task Name: <span th:text="${taskName}"></span></p>
+        <p>Task Name: <span th:text="${taskName}"></span></p>
     </div>
 </div>
 
-<div th:if="${taskUpdated}" class="popup" th:style="'display:block;'">
-    <div class="popup-content">
-        <span class="close" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
+<div th:if="${taskUpdated}" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div class="bg-white p-6 border border-gray-300 rounded-lg shadow-lg w-full max-w-lg text-center">
+        <span class="text-gray-400 float-right text-2xl font-bold cursor-pointer" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
         <h2 th:text="#{allTasks.taskUpdated}">Task updated successfully!</h2>
-<!--        <p>Task Id: <span th:text="${taskId}"></span></p>-->
-        <p th:text="#{allTasks.taskName}">Task Name: <span th:text="${taskName}"></span></p>
+        <p>Task Name: <span th:text="${taskName}"></span></p>
     </div>
 </div>
 <script src="/javascript/popup-employee-resource.js"></script>

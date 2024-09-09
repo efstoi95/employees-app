@@ -125,4 +125,19 @@ public class PostTaskController {
             throw new IllegalArgumentException("Post not found with id: " + postId);
         }
     }
+
+    @GetMapping("/viewPostTaskEmployee/{postId}")
+    public String viewPostProjectEmployee(@PathVariable("postId") Long postId, Model model) {
+        Optional<Post> optionalPost = Optional.ofNullable(postService.findById(postId));
+        if (optionalPost.isPresent()) {
+            Employee employee = (Employee) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            Post post = optionalPost.get();
+            model.addAttribute("taskId", post.getTask().getId());
+            model.addAttribute("employeeId", employee.getId());
+            model.addAttribute("post", post);
+            return "viewPostTaskEmployee";
+        } else {
+            throw new IllegalArgumentException("Post not found with id: " + postId);
+        }
+    }
 }

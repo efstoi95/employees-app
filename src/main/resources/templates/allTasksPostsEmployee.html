@@ -4,45 +4,48 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="#{allComments.title}">All Comments</title>
-    <div th:replace="~{fragments/fragment1::link}"></div>
-    <link rel="stylesheet" th:href="@{/css/allPosts.css}">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
 </head>
-<body>
-<div class="container" style="max-width: 2000px">
-    <h2 th:text="#{allComments.title}">All Comments</h2>
-    <div th:replace="~{fragments/fragment1::header3}"></div>
-    <div class="create-button-container">
+<body class="font-roboto text-sm lg:text-lg">
+<div class="container mx-auto max-w-full p-5">
+    <h2 class="text-center text-2xl mb-4" th:text="#{allComments.title}">All Comments</h2>
+    <div th:replace="~{fragments/fragment1::headerUser3}"></div>
+
+    <div class="flex justify-between gap-2 mb-4">
         <span sec:authorize="hasRole('ADMIN') or hasRole('USER')">
-            <a th:href="@{/posts/createTaskPost/{projectId}/{taskId}(projectId=${projectId}, taskId=${taskId})}" class="button" th:text="#{allComments.create}">Create Comment</a>
+            <a th:href="@{/posts/createTaskPost/{projectId}/{taskId}(projectId=${projectId}, taskId=${taskId})}"
+               class="bg-yellow-400 text-black px-4 py-2 rounded-md hover:bg-yellow-600 hover:text-white"
+               th:text="#{allComments.create}">Create Comment</a>
         </span>
     </div>
-    <div class="table-responsive">
-        <table class="table table-bordered">
-            <thead class="thread-light">
+
+    <div class="overflow-x-auto">
+        <table class="min-w-full border border-gray-300">
+            <thead class="bg-gray-200">
             <tr>
-                <th th:text="#{message.id}">ID</th>
-                <th th:text="#{allComments.title}">Title</th>
-                <th th:text="#{allComments.author}">Author</th>
-                <th th:text="#{allComments.published}">Published</th>
-                <th th:text="#{message.action}">Action</th>
+                <th class="p-2 text-left border border-gray-300" th:text="#{message.id}">ID</th>
+                <th class="p-2 text-left border border-gray-300" th:text="#{allComments.title}">Title</th>
+                <th class="p-2 text-left border border-gray-300" th:text="#{allComments.author}">Author</th>
+                <th class="p-2 text-left border border-gray-300" th:text="#{allComments.published}">Published</th>
+                <th class="p-2 text-left border border-gray-300" th:text="#{message.action}">Action</th>
             </tr>
             </thead>
             <tbody>
             <tr th:if="${#lists.isEmpty(posts)}">
-                <td colspan="5" th:text="#{allComments.noPostsFound}">No Comments found.</td>
+                <td colspan="5" class="text-center py-4" th:text="#{allComments.noPostsFound}">No Comments found.</td>
             </tr>
-            <tr th:each="post : ${posts}">
-                <td th:text="${post.id}"></td>
-                <td>
+            <tr th:each="post : ${posts}" class="border border-gray-300">
+                <td th:text="${post.id}" class="p-2 border border-gray-300"></td>
+                <td class="p-2 border border-gray-300">
                     <a th:text="${post.title}"></a>
                 </td>
-                <td th:text="${post.author.fullName}"></td>
-                <td th:text="${#temporals.format(post.createdAt, 'dd/MM/yyyy HH:mm:ss')}"></td>
-                <td>
+                <td class="p-2 border border-gray-300" th:text="${post.author.fullName}"></td>
+                <td class="p-2 border border-gray-300" th:text="${#temporals.format(post.createdAt, 'dd/MM/yyyy HH:mm:ss')}"></td>
+                <td class="mt-2 p-2 flex space-x-4">
                     <span sec:authorize="hasRole('ADMIN') or hasRole('USER')">
-                        <a th:href="@{/posts/viewTaskPost/{postId}(postId=${post.id})}">
-                            <button  style="border: none;" class="bounce-icon" >
-                                <i class="fa-solid fa-eye fa-xl, bounce-icon" style="color: #28a745;" ></i>
+                        <a th:href="@{/posts/viewPostTaskEmployee/{postId}(postId=${post.id})}">
+                            <button class="bg-white border-none">
+                                <i class="fa-solid fa-eye fa-xl" style="color: #28a745;"></i>
                             </button>
                         </a>
                     </span>
@@ -53,23 +56,24 @@
     </div>
 </div>
 
-<div th:if="${postDeleted}" class="popup" th:style="'display:block;'">
-    <div class="popup-content">
-        <span class="close" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
+<div th:if="${postDeleted}" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div class="bg-white p-6 border border-gray-300 rounded-lg shadow-lg w-full max-w-lg text-center">
+        <span class="text-gray-400 float-right text-2xl font-bold cursor-pointer" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
         <h2 th:text="#{allComments.postDeleted}">Post deleted successfully!</h2>
-        <p th:text="#{allComments.id}">Id: <span th:text="${postId}"></span></p>
-        <p th:text="#{allComments.postTitle}">Post Name: <span th:text="${postTitle}"></span></p>
+        <p>Id: <span th:text="${postId}"></span></p>
+        <p>Post Title: <span th:text="${postTitle}"></span></p>
     </div>
 </div>
 
-<div th:if="${postCreated}" class="popup" th:style="'display:block;'">
-    <div class="popup-content">
-        <span class="close" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
+<div th:if="${postCreated}" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div class="bg-white p-6 border border-gray-300 rounded-lg shadow-lg w-full max-w-lg text-center">
+        <span class="text-gray-400 float-right text-2xl font-bold cursor-pointer" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
         <h2 th:text="#{allComments.postCreated}">New Post created successfully!</h2>
-        <p th:text="#{allComments.id}">Id: <span th:text="${postId}"></span></p>
-        <p th:text="#{allComments.postTitle}">Post Name: <span th:text="${postTitle}"></span></p>
+        <p>Id: <span th:text="${postId}"></span></p>
+        <p>Post Title: <span th:text="${postTitle}"></span></p>
     </div>
 </div>
+
 <div th:replace="~{fragments/fragment1 :: footer}"></div>
 
 </body>

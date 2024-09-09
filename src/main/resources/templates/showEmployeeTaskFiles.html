@@ -3,56 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <div th:replace="~{fragments/fragment2::fontIcon}"></div>
-    <title th:text="#{message.EmployeeTasksFiles}">Files Task</title>
-    <link rel="stylesheet" href="/css/showFiles.css">
+    <title th:text="#{message.EmployeeTasksFiles}">Files for Task</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
 </head>
-<body>
-<h2 th:text="#{message.EmployeeTasksFiles}">Files Task: <span th:text="${task.name}"></span></h2>
+<body class="font-roboto w-full">
 
-<div class="error-message" th:if="${not #strings.isEmpty(error)}">
-    <p th:text="${error}" style="background: #EFC3CA; width: 29%;"></p>
+<!-- Error message display -->
+<div class="flex justify-center rounded-lg mx-auto my-4 bg-red-200 w-1/3 p-2" th:if="${not #strings.isEmpty(error)}">
+    <p th:text="${error}"></p>
 </div>
 
+<!-- Page title -->
+<h2 th:text="#{message.EmployeeTasksFiles}" class="text-center text-2xl font-semibold my-4">Files for Task: <span th:text="${task.name}"></span></h2>
+
 <!-- Display uploaded files -->
-<div class="upload-form">
-    <form method="post" th:action="@{/web/upload/{taskId}(taskId=${task.id})}" enctype="multipart/form-data">
-        <input type="file" name="file" />
-        <button type="submit">Upload</button>
+<div class="max-w-xl mx-auto mt-2 p-4 rounded-md w-full">
+    <form method="post" th:action="@{/web/upload/{taskId}(taskId=${task.id})}" enctype="multipart/form-data" class="pb-2">
+        <input type="file" name="file" class="mb-2 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"/>
+        <button type="submit" class="text-left px-4 py-2 bg-yellow-400 text-black rounded-lg cursor-pointer text-sm hover:bg-yellow-700 hover:text-white">Upload</button>
     </form>
+
     <!-- Display uploaded file names if available -->
     <div th:if="${not #lists.isEmpty(fileNames)}">
-        <p th:text="#{message.UploadedFiles}">Uploaded Files:</p>
-        <ul>
-            <li th:each="file: ${task.files}" style="margin-bottom: 10px;">
+        <p th:text="#{message.UploadedFiles}" class="text-left font-semibold">Uploaded Files:</p>
+        <ul class="border border-gray-300 rounded-lg">
+            <li th:each="file : ${task.files}" class="mb-2 p-2 rounded-md flex items-center justify-between">
                 <span th:text="${file.fileName}"></span>
-                <a th:href="@{/web/downloadFile/{taskId}/{fileName}(taskId=${task.id}, fileName=${file.fileName})}" style="margin-left: 15px;" >
+                <a th:href="@{/web/downloadFile/{taskId}/{fileName}(taskId=${task.id}, fileName=${file.fileName})}">
                     <i class="fa-solid fa-download fa-xl" style="color: #74C0FC;"></i>
                 </a>
-                <a th:href="@{/web/viewFile/{taskId}/{fileName}(taskId=${task.id}, fileName=${file.fileName})}" style="margin-left: 15px;" target="_blank">
+                <a th:href="@{/web/viewFile/{taskId}/{fileName}(taskId=${task.id}, fileName=${file.fileName})}" target="_blank">
                     <i class="fa-solid fa-eye fa-xl" style="color: #28a745;"></i>
                 </a>
                 <!-- Form to delete file -->
                 <form method="post"
                       th:if="${employeeFileMap.containsKey(file.id) || #authorization.expression('hasRole(''ADMIN'')')}"
-                      th:action="@{/web/deleteFile/{taskId}/{fileId}(taskId=${task.id}, fileId=${file.id}, employeeId=${employee.id})}"
-                      style="display:inline;">
-                    <button  style="border: none;" class="bounce-icon" >
-                        <i class="fa-solid fa-trash fa-xl" style="color: #ed0202;"></i>
+                      th:action="@{/web/deleteFile/{taskId}/{fileId}(taskId=${task.id}, fileId=${file.id}, employeeId=${employee.id})}">
+                    <button type="submit" class="bg-transparent p-0 hover:text-red-700 text-red-500">
+                        <i class="fa-solid fa-trash fa-xl"></i>
                     </button>
                 </form>
             </li>
         </ul>
     </div>
 </div>
-
-<script>
-    let popup = document.getElementById("popup");
-    function openPopup() {
-        popup.classList.add("open-popup");
-    }
-    function closePopup() {
-        popup.classList.remove("open-popup");
-    }
-</script>
 </body>
 </html>

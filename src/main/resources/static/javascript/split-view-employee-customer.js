@@ -1,17 +1,8 @@
-  function showTooltip(element) {
-        var tooltip = element.querySelector('.tooltip');
-        console.log(tooltip);
-        tooltip.classList.add('show');
-        var rect = element.getBoundingClientRect();
-        console.log(rect);
-        tooltip.style.top = rect.top + window.scrollY + element.offsetHeight + 'px';
-        tooltip.style.left = rect.left + window.scrollX + 'px';
+ function showTooltip(element) {
+        element.querySelector('.tooltip').classList.remove('hidden');
     }
-
     function hideTooltip(element) {
-        var tooltip = element.querySelector('.tooltip');
-        console.log(tooltip);
-        tooltip.classList.remove('show');
+        element.querySelector('.tooltip').classList.add('hidden');
     }
 
     document.addEventListener('DOMContentLoaded', (event) => {

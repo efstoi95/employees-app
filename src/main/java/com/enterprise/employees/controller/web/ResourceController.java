@@ -51,6 +51,9 @@ public class ResourceController {
         }
         LocaleContextHolder.setLocale(locale);
         String message = messageSource.getMessage("allResources.title", null, locale);
+        model.addAttribute("resourceCreatedMessage", messageSource.getMessage("resourceCreatedMessage", null, locale));
+        model.addAttribute("resourceUpdatedMessage", messageSource.getMessage("resourceUpdatedMessage", null, locale));
+        model.addAttribute("resourceDeletedMessage", messageSource.getMessage("resourceDeletedMessage", null, locale));
 
         model.addAttribute("message", message);
         List<ResourceDTO> resources = resourceService.findAllDTO();

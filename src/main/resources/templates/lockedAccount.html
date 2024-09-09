@@ -4,18 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Konto gesperrt</title>
-    <div th:replace="~{fragments/fragment1 :: link}"></div>
-    <link rel="stylesheet" th:href="@{/css/verifyCode-lockedAcc.css}">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
 </head>
-<body>
-<div class="form-container">
-    <h1>Ihr Konto ist gesperrt</h1>
-    <p>Bitte überprüfen Sie Ihr Konto, um fortzufahren.</p>
-    <div class="buttons">
+<body class="flex flex-col justify-center items-center h-screen bg-gray-100">
+<div class="bg-white p-8 rounded-lg shadow-lg text-center w-full max-w-lg">
+    <h1 class="text-2xl font-semibold text-gray-800 mb-6">Ihr Konto ist gesperrt</h1>
+    <p class="text-lg text-gray-600 mb-8">Bitte überprüfen Sie Ihr Konto, um fortzufahren.</p>
+    <div class="space-y-4">
         <form th:action="@{/web/sendCode/{id}(id=${employeeId})}" method="post">
-            <button type="submit" class="btn btn-custom btn-block">Code senden</button>
+            <button type="submit" class="w-full bg-yellow-400 text-black text-lg py-3 rounded-md hover:bg-yellow-700 hover:text-white transition">
+                Code senden
+            </button>
         </form>
-        <a th:href="@{/login?logout}" class="btn btn-custom logout btn-block">Abmelden</a>
+        <a th:href="@{/login?logout}" class="block w-full bg-red-600 text-white text-lg py-3 rounded-md hover:bg-red-700 transition">
+            Abmelden
+        </a>
     </div>
 </div>
 <div th:replace="~{fragments/fragment1 :: footer}"></div>

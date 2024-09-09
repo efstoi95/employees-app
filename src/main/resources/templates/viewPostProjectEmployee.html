@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <div th:replace="~{fragments/fragment2::fontIcon}"></div>
+    <title>View Post</title>
+    <link rel="stylesheet" href="/css/viewPost.css">
+</head>
+<body>
+<h1 th:text="${post.title}">Post Title</h1>
+<div class="back-to-menu">
+    <a th:href="@{/posts/allPostsEmployee/{id}(id=${projectId}, employeeId=${employeeId})}">
+        <i class="fa-solid fa-arrow-left fa-xl"></i>
+    </a>
+</div>
+<div class="post-content" th:utext="${post.content}"></div>
+</body>
+</html>

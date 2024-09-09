@@ -17,13 +17,11 @@ import java.util.List;
 @SpringBootApplication
 public class EmployeesApplication implements CommandLineRunner {
 
+	@Autowired
+	private DepartmentRepository departmentRepository;
 
 	@Autowired
-	DepartmentRepository departmentRepository;
-	@Autowired
-	SkillRepository skillRepository;
-
-
+	private SkillRepository skillRepository;
 
 
 
@@ -35,11 +33,32 @@ public class EmployeesApplication implements CommandLineRunner {
 	public static void main(String[] args) {
 		SpringApplication.run(EmployeesApplication.class, args);
 
+
 	}
 
 
 	@Override
 	public void run(String... args) throws Exception {
+		if(departmentRepository.count() == 0) {
+
+			Department department = new Department();
+			department.setName("IT");
+			departmentRepository.save(department);
+
+			Department department2 = new Department();
+			department2.setName("HR");
+			departmentRepository.save(department2);
+
+			Department department3 = new Department();
+			department3.setName("Software");
+			departmentRepository.save(department3);
+
+			if (skillRepository.count() == 0) {
+				Skill skill = new Skill();
+				skill.setName("Management");
+				skillRepository.save(skill);
+			}
+		}
 
 		//getPosts();
 

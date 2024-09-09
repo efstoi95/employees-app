@@ -21,6 +21,12 @@ public class SkillServiceImpl implements SkillService {
     public List<Skill> getAllSkills() {
         return skillRepository.findAll();
     }
+
+    @Override
+    public Skill findById(Long id) {
+        return skillRepository.findById(id).orElseThrow(() -> new RuntimeException("Skill not found"));
+    }
+
     @Override
     public List<SkillDTO> getAllSkillsDTO() {
         List<Skill> skills = skillRepository.findAll();
@@ -43,6 +49,11 @@ public class SkillServiceImpl implements SkillService {
     @Override
     public List<Skill> findSkillsByIds(List<Long> skillsId) {
         return skillRepository.findAllById(skillsId);
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        skillRepository.deleteById(id);
     }
 
 
